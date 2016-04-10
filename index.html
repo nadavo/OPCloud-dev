@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="joint.css" />
+    <script src="jquery.min.js"></script>
+    <script src="lodash.min.js"></script>
+    <script src="backbone-min.js"></script>
+    <script src="joint.js"></script>
+    <title>OPCloud Example With JointJS</title>
+    <h1 style="text-align:center;font-family:Tahoma;">OPCloud Example With JointJS</h1>
+</head>
+<body>
+<div id="myholder" align="center"></div>
+<script type="text/javascript">
+
+    var graph = new joint.dia.Graph;
+
+    var paper = new joint.dia.Paper({
+        el: $('#myholder'),
+        width: 1000,
+        height: 1000,
+        model: graph,
+        gridSize: 1
+    });
+
+    var rect = new joint.shapes.basic.Rect({
+        position: { x: 250, y: 100 },
+        size: { width: 100, height: 50 },
+        attrs: { rect: { fill: '#41A317' }, text: { text: 'Object', fill: 'white' } }
+    });
+
+    var rect2 = rect.clone();
+    rect2.translate(400);
+
+    var elli = new joint.shapes.basic.Ellipse({
+        position: { x: 450, y: 100 },
+        size: { width: 100, height: 50 },
+        attrs: { ellipse: { fill: '#2B60DE' }, text: { text: 'Process', fill: 'white' } }
+    });
+
+    var link1 = new joint.dia.Link({
+        source: { id: rect.id },
+        target: { id: elli.id },
+        attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
+    });
+
+    var link2 = new joint.dia.Link({
+        source: { id: elli.id },
+        target: { id: rect2.id },
+        attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
+    });
+
+    //link1.set('smooth',true);
+    //link2.set('smooth',true);
+
+    graph.addCells([rect, rect2, elli, link1, link2]);
+
+</script>
+</body>
+</html>
