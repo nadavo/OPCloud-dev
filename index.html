@@ -50,10 +50,32 @@
         attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
     });
 
+    var r1 = new joint.shapes.basic.Rect({
+        position: { x: 20, y: 20 },
+        size: { width: 200, height: 200 },
+        attrs: { rect: { fill: '#41A317' }, text: { text: 'TV-screen', fill: 'white' } }
+    });
+    var r2 = new joint.shapes.basic.Rect({
+        position: { x: 70, y: 170 },
+        size: { width: 50, height: 40 },
+        attrs: { rect: { fill: '#41A317' }, text: { text: 'pre-tested', fill: 'white' } }
+    });
+
+    var r3 = new joint.shapes.basic.Rect({
+        position: { x: 150, y: 170 },
+        size: { width: 50, height: 40 },
+        attrs: { rect: { fill: '#41A317' }, text: { text: 'tested', fill: 'white' } }
+    });
+
+    r1.embed(r2); // what does it do??
+    r1.embed(r3); // what does it do??
+
     //link1.set('smooth',true);
     //link2.set('smooth',true);
 
-    graph.addCells([rect, rect2, elli, link1, link2]);
+    graph.addCells([r1,r2,r3,rect, rect2, elli, link1, link2]);
+    // AVIV IS THE DOG
+
 
 </script>
 </body>
