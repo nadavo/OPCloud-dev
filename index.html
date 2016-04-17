@@ -1,56 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="joint.css"/>
+    <link rel="stylesheet" href="joint.css" />
     <script src="jquery.min.js"></script>
     <script src="lodash.min.js"></script>
     <script src="backbone-min.js"></script>
     <script src="joint.js"></script>
+    <script src="joint.shapes.erd.js"></script>
     <title>OPCloud Example With JointJS</title>
-    <h1 style="text-align:center;font-family:Tahoma;">OPCloud Example With JointJS</h1>
+    <h1>OPCloud Example With JointJS</h1>
 </head>
 <body>
 <div id="myholder" align="center"></div>
 <script type="text/javascript">
 
     var graph = new joint.dia.Graph;
-
+    //Working Desktop
     var paper = new joint.dia.Paper({
         el: $('#myholder'),
-        width: 1000,
+        width: 1800,
         height: 1000,
         model: graph,
         gridSize: 1
     });
 
     var rect = new joint.shapes.basic.Rect({
+        size: {width: 100, height: 50},
         position: { x: 150, y: 100 },
         size: { width: 100, height: 50 },
-        attrs: { rect: { fill: '#41A317' , filter: { name: 'dropShadow', args: { dx: 4, dy: 10, blur: 0, color: 'grey' } } },
+        attrs: { rect: { fill: '#DCDCDC' , stroke:'#006400'} , filter: { name: 'dropShadow', args: { dx: 4, dy: 10, blur: 0, color: 'grey' } } },
                  text: { text: 'Raw Material', fill: 'white' } }
     });
 
-    /*var rect2 = rect.clone();
-    rect2.translate(500);*/
+    var rect2 = rect.clone();
+    rect2.translate(400);
 
-    var elli = new joint.shapes.basic.Ellipse({
-        position: { x: 250, y: 300 },
-        size: { width: 100, height: 50 },
-        attrs: { ellipse: { fill: '#2B60DE' }, text: { text: 'Manufacturing', fill: 'white' } }
+    var p1 = new joint.shapes.basic.Ellipse({
+        position: {x: 450, y: 100},
+        size: {width: 100, height: 50},
+        attrs: {ellipse: {fill: '#DCDCDC', stroke:'#00008B'}, text: {text: 'Process', fill: 'black'}}
     });
 
-    var elli2 = new joint.shapes.basic.Ellipse({
-        position: { x: 500, y: 300 },
-        size: { width: 100, height: 50 },
-        attrs: { ellipse: { fill: '#2B60DE' }, text: { text: 'Testing', fill: 'white' } }
-    });
-
-
-    var r1 = new joint.shapes.basic.Rect({
-        position: { x: 400, y: 100 },
-        size: { width: 300, height: 120 },
-        attrs: { rect: { fill: '#41A317' }, text: { text: 'Product', fill: 'white' } }
-    });
+    var p2=p1.clone();
+    p2.translate(-200);
 
     var link1 = new joint.dia.Link({
         source: { id: rect.id },
@@ -63,17 +55,27 @@
         target: { id: r1.id },
         attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
     });
-
-    var r2 = new joint.shapes.basic.Rect({
-        position: { x: 410, y: 170 },
-        size: { width: 80, height: 40 },
-        attrs: { rect: { fill: '#41A317' }, text: { text: 'pre-tested', fill: 'white' } }
+    //Object with states
+    var StatefullObj = new joint.shapes.basic.Rect({
+        position: {x: 20, y: 20},
+        size: {width: 300, height: 70},
+        attrs: {rect: {fill: '#DCDCDC', stroke:'#006400'} , text: {text: 'Object', fill: 'black'}}
+    });
+    var State1 = new joint.shapes.basic.Rect({
+        position: {x: 50, y: 60},
+        size: {width: 50, height: 20},
+        attrs: {rect: {fill: '#DCDCDC', stroke:'#006400'} , text: {text: 'Object', fill: 'black'}}
     });
 
-    var r3 = new joint.shapes.basic.Rect({
-        position: { x: 610, y: 170 },
-        size: { width: 80, height: 40 },
-        attrs: { rect: { fill: '#41A317' }, text: { text: 'tested', fill: 'white' } }
+    var State2 = new joint.shapes.basic.Rect({
+        position: {x: 150, y: 60},
+        size: {width: 50, height: 20},
+        attrs: {rect: {fill: '#DCDCDC', stroke:'#006400'} , text: {text: 'Object', fill: 'black'}}
+    });
+    var State3 = new joint.shapes.basic.Rect({
+        position: {x: 250, y: 60},
+        size: {width: 50, height: 20},
+        attrs: {rect: {fill: '#DCDCDC', stroke:'#006400'} , text: {text: 'Object', fill: 'black'}}
     });
 
     var r4 = new joint.shapes.basic.Rect({
@@ -101,17 +103,36 @@
     objectShadow.attr('rect/filter', { name: 'dropShadow', args: { dx: 4, dy: 10, blur: 0, color: 'grey' } });
     graph.addCell(objectShadow);*/
 
-    r1.embed(r2); // what does it do??
-    r1.embed(r3); // what does it do??
-    r1.embed(r4);
+
+    StatefullObj.embed(State1);
+    StatefullObj.embed(State2);
+    StatefullObj.embed(State3);
+    var weak = new joint.shapes.erd.WeakEntity({
+        position: { x: 550, y: 90 },
+        size: { width: 70, height: 30 },
+        attrs: {rect: { fill: 'green',rx: 20, ry: 20, 'stroke-width': 2, stroke: 'black' },
+        text: {
+            fill: 'white',
+            text: 'tested',
+            'letter-spacing': 0,
+            style: { 'text-shadow': '1px 0 1px #333333' }},
+        '.inner': {
+            fill: 'green',
+            stroke: 'black', rx: 20, ry: 20,
+            points: '155,5 155,55 5,55 5,5'
+        },
+        '.outer': {
+            fill: 'white',
+            stroke: 'black',rx: 20, ry: 20,
+            points: '160,0 160,60 0,60 0,0',
+            filter: { name: 'dropShadow',  args: { dx: 0.5, dy: 2, blur: 2, color: '#333333' }}
+        }
+        }});
 
     //link1.set('smooth',true);
     //link2.set('smooth',true);
-
-    graph.addCells([r1,r2,r3, r4, rect, elli, elli2, link1, link2, link3, link4]);
-    // AVIV IS THE DOG
-    //Oleg -Test
-    //Or's test
+    //graph.addCells([StatefullObj, state1, state2, state3]);
+    graph.addCells([StatefullObj, State1, State2, State3, rect, rect2, p1, p2, link1, link2, weak]);
 
     graph.on('change:position', function(cell) {
 

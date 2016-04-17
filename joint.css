@@ -238,3 +238,9 @@ Do not allow adding new vertices: .connection-wrap { pointer-events: none; }
     display: table-cell;
     padding: 0px 5px 0px 5px;
 }
+h1 {
+    text-align: center;
+    color: black;
+    font-family: "Comic Sans MS";
+    font-size: 300%;
+}
