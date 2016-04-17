@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="joint.css" />
+    <link rel="stylesheet" href="joint.css"/>
     <script src="jquery.min.js"></script>
     <script src="lodash.min.js"></script>
     <script src="backbone-min.js"></script>
@@ -24,22 +24,33 @@
     });
 
     var rect = new joint.shapes.basic.Rect({
-        position: { x: 250, y: 100 },
-        size: { width: 200, height: 50 },
-        attrs: { rect: { fill: '#41A317' }, text: { text: 'Object', fill: 'white' } }
+        position: { x: 150, y: 100 },
+        size: { width: 100, height: 50 },
+        attrs: { rect: { fill: '#41A317' , filter: { name: 'dropShadow', args: { dx: 4, dy: 10, blur: 0, color: 'grey' } } },
+                 text: { text: 'Raw Material', fill: 'white' } }
     });
 
-    var rect2 = rect.clone();
-    rect2.translate(500);
+    /*var rect2 = rect.clone();
+    rect2.translate(500);*/
 
     var elli = new joint.shapes.basic.Ellipse({
-        position: { x: 500, y: 100 },
+        position: { x: 250, y: 300 },
         size: { width: 100, height: 50 },
-        attrs: { ellipse: { fill: '#2B60DE' }, text: { text: 'Process', fill: 'white' } }
+        attrs: { ellipse: { fill: '#2B60DE' }, text: { text: 'Manufacturing', fill: 'white' } }
     });
 
-    var elli2 = elli.clone();
-    elli2.translate(500,200);
+    var elli2 = new joint.shapes.basic.Ellipse({
+        position: { x: 500, y: 300 },
+        size: { width: 100, height: 50 },
+        attrs: { ellipse: { fill: '#2B60DE' }, text: { text: 'Testing', fill: 'white' } }
+    });
+
+
+    var r1 = new joint.shapes.basic.Rect({
+        position: { x: 400, y: 100 },
+        size: { width: 300, height: 120 },
+        attrs: { rect: { fill: '#41A317' }, text: { text: 'Product', fill: 'white' } }
+    });
 
     var link1 = new joint.dia.Link({
         source: { id: rect.id },
@@ -49,60 +60,55 @@
 
     var link2 = new joint.dia.Link({
         source: { id: elli.id },
-        target: { id: rect2.id },
+        target: { id: r1.id },
         attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
     });
 
-    var r1 = new joint.shapes.basic.Rect({
-        position: { x: 500, y: 200 },
-        size: { width: 200, height: 200 },
-        attrs: { rect: { fill: '#41A317' }, text: { text: 'TV-screen', fill: 'white' } }
-    });
     var r2 = new joint.shapes.basic.Rect({
-        position: { x: 520, y: 220 },
-        size: { width: 50, height: 40 },
+        position: { x: 410, y: 170 },
+        size: { width: 80, height: 40 },
         attrs: { rect: { fill: '#41A317' }, text: { text: 'pre-tested', fill: 'white' } }
     });
 
     var r3 = new joint.shapes.basic.Rect({
-        position: { x: 620, y: 220 },
-        size: { width: 50, height: 40 },
+        position: { x: 610, y: 170 },
+        size: { width: 80, height: 40 },
         attrs: { rect: { fill: '#41A317' }, text: { text: 'tested', fill: 'white' } }
+    });
+
+    var r4 = new joint.shapes.basic.Rect({
+        position: { x: 510, y: 170 },
+        size: { width: 80, height: 40 },
+        attrs: { rect: { fill: '#41A317' }, text: { text: 'being tested', fill: 'white' } }
     });
 
     var link3 = new joint.dia.Link({
         source: {id: r2.id},
-        target: {id: elli.id},
+        target: {id: elli2.id},
         attrs: {'.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'}}
     });
 
     var link4 = new joint.dia.Link({
-        source: {id: elli.id},
-        target: {id: r3.id},
-        attrs: {'.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'}}
-    });
-
-    var link4 = new joint.dia.Link({
-        source: {id: elli.id},
+        source: {id: elli2.id},
         target: {id: r3.id},
         attrs: {'.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'}}
     });
 
 
-
-    var objectShadow = rect.clone();
+    /*var objectShadow = rect.clone();
     objectShadow.translate(0, 100);
-    objectShadow.attr('text/text', 'Object');
+    objectShadow.attr('text/text', 'Raw Material');
     objectShadow.attr('rect/filter', { name: 'dropShadow', args: { dx: 4, dy: 10, blur: 0, color: 'grey' } });
-    graph.addCell(objectShadow);
+    graph.addCell(objectShadow);*/
 
     r1.embed(r2); // what does it do??
     r1.embed(r3); // what does it do??
+    r1.embed(r4);
 
     //link1.set('smooth',true);
     //link2.set('smooth',true);
 
-    graph.addCells([r1,r2,r3,rect, rect2, elli, elli2, link1, link2, link3, link4]);
+    graph.addCells([r1,r2,r3, r4, rect, elli, elli2, link1, link2, link3, link4]);
     // AVIV IS THE DOG
     //Oleg -Test
     //Or's test
