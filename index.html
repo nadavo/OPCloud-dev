@@ -7,6 +7,7 @@
     <script src="backbone-min.js"></script>
     <script src="joint.js"></script>
     <script src="joint.shapes.erd.js"></script>
+    <script src="joint.shapes.opm.js"></script>
     <title>OPCloud Example With JointJS</title>
     <h1>OPCloud Example With JointJS</h1>
 </head>
@@ -38,13 +39,13 @@
 
     var proc = new joint.shapes.basic.Ellipse({
         position: { x: 250, y: 300 },
-        size: { width: 100, height: 50 },
+        size: { width: 120, height: 60 },
         attrs: { ellipse: { fill: '#DCDCDC', stroke:'#00008B', 'stroke-width': 2},
             text: { text: 'Manufacturing', fill: 'black', 'font-weight': 'bold'} }
     });
     var proc2 = new joint.shapes.basic.Ellipse({
         position: { x: 500, y: 300 },
-        size: { width: 100, height: 50 },
+        size: { width: 120, height: 60 },
         attrs: { ellipse: { fill: '#DCDCDC', stroke:'#00008B', 'stroke-width': 2},
             text: { text: 'Testing', fill: 'black', 'font-weight': 'bold'} }
     });
@@ -57,26 +58,26 @@
     var link1 = new joint.dia.Link({
         source: { id: object.id },
         target: { id: proc.id },
-        attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
+        attrs: { '.marker-target': {fill: '#f2f2f2', d: 'M 10 0 L 0 5 L 10 10 z','stroke-width': 1} ,'.connection':{'stroke-width': 2} }
     });
     var link2 = new joint.dia.Link({
         source: { id: proc.id },
         target: { id: StateFullObject.id },
-        attrs: { '.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'} }
+        attrs: { '.marker-target': {fill: '#f2f2f2', d: 'M 10 0 L 0 5 L 10 10 z','stroke-width': 1} ,'.connection':{'stroke-width': 2} }
     });
     var state1 = new joint.shapes.basic.Rect({
         position: { x: 410, y: 170 },
         size: { width: 80, height: 40 },
-        attrs: { rect: { fill: '#DCDCDC', stroke:'#006400' ,rx: 20, ry: 20, 'stroke-width': 3, stroke: '#808000' },
+        attrs: { rect: { fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 3, stroke: '#808000' },
             text: { text: 'pre-tested', fill: 'black' } }
     });
     var state2 = new joint.shapes.basic.Rect({
         position: { x: 510, y: 170 },
         size: { width: 80, height: 40 },
-        attrs: { rect: { fill: '#DCDCDC', stroke:'#006400',rx: 20, ry: 20, 'stroke-width': 1, stroke: '#808000' },
+        attrs: { rect: { fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 1, stroke: '#808000' },
             text: { text: 'being\ntested', fill: 'black' } }
     });
-    var state3 = new joint.shapes.erd.WeakEntity({
+   /* var state3 = new joint.shapes.erd.WeakEntity({
         position: { x: 610, y: 170 },
         size: { width: 80, height: 40 },
         attrs: {
@@ -91,27 +92,34 @@
             '.outer': {
                 fill: '#DCDCDC',
                 stroke: '#808000', 'stroke-width': 1,
-                points: '160,0 160,60 0,60 0,0',
+                points: '160,0 160,60 0,60 0,0'
             }
-        }});
+        }});*/
+
+    var state3 = new joint.shapes.opm.StateFinal({
+        position: { x: 610, y: 170 },
+        size: {width: 80, height: 40},
+        attrs: { text: { text: 'tested', fill: 'black' } }
+    });
+
     var link3 = new joint.dia.Link({
         source: {id: state1.id},
         target: {id: proc2.id},
-        attrs: {'.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'}}
+        attrs: {'.marker-target': {fill: '#f2f2f2', d: 'M 10 0 L 0 5 L 10 10 z','stroke-width': 1},'.connection':{'stroke-width': 2}}
     });
     var link4 = new joint.dia.Link({
         source: {id: proc2.id},
         target: {id: state3.id},
-        attrs: {'.marker-target': {fill: 'white', d: 'M 10 0 L 0 5 L 10 10 z'}}
+        attrs: {'.marker-target': {fill: '#f2f2f2', d: 'M 10 0 L 0 5 L 10 10 z','stroke-width': 1},'.connection':{'stroke-width': 2}}
     });
     //Lollipop Connector
     var link5 = new joint.dia.Link({
         source: { id: object2.id },
         target: { id: proc2.id },
-        attrs : {'.marker-target': { fill: 'None' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0'}}
+        attrs : {'.marker-target': { fill: '#f2f2f2' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2},'.connection':{'stroke-width': 2}}
     });
 
-    //Embeds object in other object
+    //Embeds state objects in parent object
     StateFullObject.embed(state1);
     StateFullObject.embed(state2);
     StateFullObject.embed(state3);
