@@ -23,7 +23,7 @@ joint.shapes.opm.Link = joint.dia.Link.extend({
     }
 });
 
-joint.shapes.opm.Lollipop = new joint.dia.Link.extend({
+joint.shapes.opm.Lollipop = joint.dia.Link.extend({
     defaults: {
         type: 'opm.Link',
         attrs : {'.marker-target': { fill: '#f2f2f2' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2},'.connection':{'stroke-width': 2} }
