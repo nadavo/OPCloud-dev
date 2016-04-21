@@ -27,7 +27,7 @@ joint.shapes.opm.StateFinal = joint.shapes.basic.Generic.extend({
 joint.shapes.opm.Link = joint.dia.Link.extend({
     defaults: {
         type: 'opm.Link',
-        attrs: { fill: '#f2f2f2', '.marker-target': { d: 'M 10,35 L -15,25 L 10,15 L0,25 L 10,35 M 0,25 L 90,25', fill: 'none', 'stroke-width': 2 }, '.connection':{'stroke-width': 2} }
+        attrs: { fill: '#f2f2f2', '.marker-target': { d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', fill: 'none', 'stroke-width': 2 }, '.connection':{'stroke-width': 2} }
     }
 });
 
