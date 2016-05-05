@@ -1,0 +1,91 @@
+/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-03-03 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+html, body { padding: 0; margin: 0; position: relative; }
+
+.page {
+    width: 800px;
+    margin: 10px auto;
+    position: relative;
+}
+
+.page h3 {
+    color: gray;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#paper {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid lightgray;
+    box-shadow: 4px 4px 0px lightgray;
+}
+
+.toolbar {
+    margin: 20px auto;
+    width: 660px;
+    padding: 10px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    box-shadow: 4px 4px 0px lightgray;
+    outline: none;
+}
+
+.toolbar > div {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.toolbar .color-palette .select-box-placeholder {
+    line-height: 25px;
+    width: 34px;
+}
+
+.text-editor .caret {
+   background-color: white;
+   width: 2px;
+}
+
+
+.free-transform {
+    border: 1px solid #31d0c6;
+}
+.free-transform > .resize,
+.free-transform > .rotate {
+    background-color: #31d0c6;
+    border: 1px solid white;
+}
+.free-transform > .resize:hover,
+.free-transform > .rotate:hover {
+    background-color: #7c68fc;
+}
+.free-transform > .resize {
+    border-radius: 0;
+}
+
+/* Un-comment for debugging */
+/*
+.text-editor .textarea-container {
+    height: 200em;
+    width: 200px;
+    top: 10px !important;
+    right: 10px !important;
+    left: auto !important;
+}
+.text-editor textarea {
+    height: 20em;
+}
+*/
+
