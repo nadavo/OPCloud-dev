@@ -18,10 +18,12 @@ joint.shapes.opm.StateFinal = joint.shapes.basic.Generic.extend({
 });
 
 joint.shapes.opm.Link = joint.dia.Link.extend({
-    defaults: {
+    defaults: joint.util.deepSupplement({
         type: 'opm.Link',
+        source: g.point(50,100),
+        target: g.point(100,150),
         attrs: { fill: '#f2f2f2', '.marker-target': { fill: '#f2f2f2', d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', 'stroke-width': 2 }, '.connection':{'stroke-width': 2} }
-    }
+    }, joint.dia.Link.prototype.defaults)
 });
 
 joint.shapes.opm.Lollipop = joint.dia.Link.extend({
@@ -30,26 +32,24 @@ joint.shapes.opm.Lollipop = joint.dia.Link.extend({
         attrs : {'.marker-target': { fill: '#f2f2f2' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2},'.connection':{'stroke-width': 2} }
     }
 });
-//WIP  - Stopped here
 //regular opm physical systematic object
-/*joint.shapes.opm.PSObj =  joint.shapes.basic.Rect({
-    
-        type: 'opm.Rect',
+joint.shapes.opm.PSObj = joint.shapes.basic.Rect.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'opm.Object',
         position: {x: 250, y: 200},
-        size: {width: 200, height: 50},
+        size: { width: 100, height: 50 },
         attrs: {
             rect: {
-                fill: '#DCDCDC', stroke: '#006400', 'stroke-width': 2,
+                fill: '#DCDCDC',
+                stroke: '#006400', 'stroke-width': 2,
                 filter: {name: 'dropShadow', args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}
             },
-            text: {text: 'Raw Material', fill: 'black', 'font-weight': 'bold'}
+            text: {text: 'Object', fill: 'black', 'font-weight': 'bold'}
         }
-    
+    },joint.shapes.basic.Rect.prototype.defaults)
 });
-*/
-joint.shapes.opm.PSObj =  function () {
-    window.alert(6+6);
-};
+
+
 
 
 //informatical systemic object
@@ -66,14 +66,14 @@ joint.shapes.opm.ISObj = joint.shapes.basic.Rect.extend({
 
 //informatical systemic process
 joint.shapes.opm.ISProc = joint.shapes.basic.Ellipse.extend({
-    defaults: {
+    defaults: joint.util.deepSupplement({
         position: {x: 250, y: 300},
         size: {width: 120, height: 60},
         attrs: {
             ellipse: {fill: '#DCDCDC', stroke: '#00008B', 'stroke-width': 2},
-            text: {text: 'Manufacturing', fill: 'black', 'font-weight': 'bold'}
+            text: {text: 'Process', fill: 'black', 'font-weight': 'bold'}
         }
-    }
+    }, joint.shapes.basic.Ellipse.prototype.defaults)
 });
 
 //INITIAL STATE

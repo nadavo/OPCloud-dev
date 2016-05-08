@@ -1,13 +1,29 @@
-class newObject {
-    constructor() {
-        this.name = "Name";
+class ShapeCreator {
+    constructor(graph,graphElements) {
+        this.graph = graph;
+        this.graphElements=graphElements;
+    }
+    PSObjCreator(){
+        var PSObj = new joint.shapes.opm.PSObj;
+        this.graphElements.push(PSObj);
+        this.graph.addCells(this.graphElements);
+    }
+    ISProcCreator(){
+        var Proc = new joint.shapes.opm.ISProc;
+        this.graphElements.push(Proc);
+        this.graph.addCells(this.graphElements);
+    }
+    LinkCreator(){
+        var Link = new joint.shapes.opm.Link;
+        this.graphElements.push(Link);
+        this.graph.addCells(this.graphElements);
     }
 };
 
 //Creating the components, association to the HTML buttons
-var createObject=document.querySelector('#obj');
-var createObject2=document.querySelector('#proc');
-var createObject3=document.querySelector('#test');
+var ObjectButton=document.querySelector('#obj');
+var ProcButton=document.querySelector('#proc');
+var LinkButton=document.querySelector('#link');
 
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
@@ -17,50 +33,13 @@ var paper = new joint.dia.Paper({
     model: graph,
     gridSize: 1
 });
-var oleg=[];
+var graphElements=[];
 
-newObject.prototype.make=function () {
-    var obj = new joint.shapes.basic.Rect({
-        position: { x: 250, y: 300 },
-        size: { width: 100, height: 50 },
-        attrs: { rect: { fill: '#DCDCDC', stroke:'#006400', 'stroke-width': 2,
-            filter: { name: 'dropShadow', args: { dx: 6, dy: 6, blur: 0, color: 'grey' } } },
-            text: { text: 'New Object', fill: 'black', 'font-weight': 'bold'} }
-    });
-    oleg.push(obj);
-    graph.addCells(oleg);
-}
-newObject.prototype.create2=function () {
-    var proc234 = new joint.shapes.basic.Ellipse({
-        position: {x: 250, y: 300},
-        size: {width: 120, height: 60},
-        attrs: {
-            ellipse: {fill: '#DCDCDC', stroke: '#00008B', 'stroke-width': 2},
-            text: {text: 'Manufacturing', fill: 'black', 'font-weight': 'bold'}
-        }
-    });
-    oleg.push(proc234);
-    graph.addCells(oleg);
-}
-newObject.prototype.create3=function(){
-    var test345 = new joint.shapes.opm.PSObj();
-    oleg.push(test345);
-    graph.addCells(oleg);
-}
-/*var state3 = new joint.shapes.opm.StateFinal({       //you can add possition, attr, and more
-    attrs: { text: { text: 'tested', fill: 'black' }}
-    });
+var shapes = new ShapeCreator(graph,graphElements);
 
-
-var test = new joint.shapes.opm.ISObj;
-*/
-var c1 = new newObject();
-var c2 = new newObject();
-var c3 = new newObject();
-
-createObject.addEventListener('click', c1.make);
-createObject2.addEventListener('click', c2.create2);
-createObject3.addEventListener('click', c3.create3);
+ObjectButton.addEventListener('click', shapes.PSObjCreator.bind(shapes));
+ProcButton.addEventListener('click', shapes.ISProcCreator.bind(shapes));
+LinkButton.addEventListener('click', shapes.LinkCreator.bind(shapes));
 
 
 graph.on('change:position', function(cell) {
