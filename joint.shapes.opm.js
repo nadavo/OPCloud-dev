@@ -17,8 +17,6 @@ joint.shapes.opm.StateFinal = joint.shapes.basic.Generic.extend({
     }, joint.shapes.basic.Generic.prototype.defaults)
 });
 
-
-
 joint.shapes.opm.Link = joint.dia.Link.extend({
     defaults: {
         type: 'opm.Link',
@@ -33,9 +31,9 @@ joint.shapes.opm.Lollipop = joint.dia.Link.extend({
     }
 });
 //WIP  - Stopped here
-//regular opm phisacal systematic object
-joint.shapes.opm.PSObj =  joint.shapes.basic.Rect.extend({
-    defaults: {
+//regular opm physical systematic object
+/*joint.shapes.opm.PSObj =  joint.shapes.basic.Rect({
+    
         type: 'opm.Rect',
         position: {x: 250, y: 200},
         size: {width: 200, height: 50},
@@ -46,8 +44,13 @@ joint.shapes.opm.PSObj =  joint.shapes.basic.Rect.extend({
             },
             text: {text: 'Raw Material', fill: 'black', 'font-weight': 'bold'}
         }
-    }
+    
 });
+*/
+joint.shapes.opm.PSObj =  function () {
+    window.alert(6+6);
+};
+
 
 //informatical systemic object
 joint.shapes.opm.ISObj = joint.shapes.basic.Rect.extend({

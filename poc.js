@@ -59,24 +59,6 @@ var state2 = new joint.shapes.basic.Rect({
     attrs: { rect: { fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 1, stroke: '#808000' },
         text: { text: 'being\ntested', fill: 'black' } }
 });
-/* var state3 = new joint.shapes.erd.WeakEntity({
- position: { x: 610, y: 170 },
- size: { width: 80, height: 40 },
- attrs: {
- text: {
- fill: 'black',
- text: 'tested'},
- '.inner': {
- fill: '#DCDCDC',
- stroke: '#808000', 'stroke-width': 1,
- points: '150,10 150,50 10,50 10,10'
- },
- '.outer': {
- fill: '#DCDCDC',
- stroke: '#808000', 'stroke-width': 1,
- points: '160,0 160,60 0,60 0,0'
- }
- }});*/
 
 var state3 = new joint.shapes.opm.StateFinal({
     position: { x: 610, y: 170 },

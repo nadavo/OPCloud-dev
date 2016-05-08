@@ -3,8 +3,11 @@ class newObject {
         this.name = "Name";
     }
 };
+
+//Creating the components, association to the HTML buttons
 var createObject=document.querySelector('#obj');
 var createObject2=document.querySelector('#proc');
+var createObject3=document.querySelector('#test');
 
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
@@ -15,7 +18,8 @@ var paper = new joint.dia.Paper({
     gridSize: 1
 });
 var oleg=[];
-newObject.prototype.create=function () {
+
+newObject.prototype.make=function () {
     var obj = new joint.shapes.basic.Rect({
         position: { x: 250, y: 300 },
         size: { width: 100, height: 50 },
@@ -38,20 +42,25 @@ newObject.prototype.create2=function () {
     oleg.push(proc234);
     graph.addCells(oleg);
 }
-var state3 = new joint.shapes.opm.StateFinal({       //you can add possition, attr, and more
+newObject.prototype.create3=function(){
+    var test345 = new joint.shapes.opm.PSObj();
+    oleg.push(test345);
+    graph.addCells(oleg);
+}
+/*var state3 = new joint.shapes.opm.StateFinal({       //you can add possition, attr, and more
     attrs: { text: { text: 'tested', fill: 'black' }}
     });
 
-var test = new joint.shapes.opm.PSObj;
 
+var test = new joint.shapes.opm.ISObj;
+*/
 var c1 = new newObject();
 var c2 = new newObject();
+var c3 = new newObject();
 
-
-graph.addCells([test]);
-
-createObject.addEventListener('click', c1.create);
+createObject.addEventListener('click', c1.make);
 createObject2.addEventListener('click', c2.create2);
+createObject3.addEventListener('click', c3.create3);
 
 
 graph.on('change:position', function(cell) {
