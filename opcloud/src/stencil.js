@@ -54,6 +54,7 @@ Stencil.shapes = {
                     }
                 }
             }
-        })
+        }),
+        new joint.shapes.erd.ISA({ attrs: { text: { text: 'ISA' } } })
     ]
 };
