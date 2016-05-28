@@ -86,11 +86,12 @@ var InspectorDefs = {
                 },
                 '.marker-source': {
                     transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-source', label: 'source arrowhead size', index: 1 },
-                    fill: { type: 'color', group: 'marker-source', label: 'soure arrowhead color', index: 2 }
+                    fill: { type: 'color', group: 'marker-source', label: 'source arrowhead color', index: 2 }
                 },
                 '.marker-target': {
                     transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 1 },
-                    fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 }
+                    fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 },
+                    'd': { type: 'select', options: [{content: 'standard', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'lollipop', value: 'M 10,10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0'}], group: 'marker-target', label: 'target arrowhead type', index: 3 }
                 }
             },
             smooth: { type: 'toggle', group: 'connection', index: 4 },
