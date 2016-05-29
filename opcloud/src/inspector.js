@@ -36,7 +36,7 @@ var CommonInspectorTextInputs = {
     'text': { type: 'textarea', group: 'text', index: 1 },
     'font-size': { type: 'range', min: 5, max: 80, unit: 'px', group: 'text', index: 2 },
     'font-family': { type: 'select', options: ['Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Garamond', 'Tahoma', 'Lucida Console', 'Comic Sans MS'], group: 'text', index: 3 },
-    'font-weight': { type: 'range', min: 100, max: 900, step: 100, defaultValue: 400, group: 'text', index: 4 },
+    'font-weight': { type: 'range', min: 100, max: 900, step: 100, defaultValue: 600, group: 'text', index: 4 },
     'fill': { type: 'color', group: 'text', index: 5 },
     'stroke': { type: 'color', group: 'text', index: 6, defaultValue: '#000000' },
     'stroke-width': { type: 'range', min: 0, max: 5, step: .5, defaultValue: 0, unit: 'px', group: 'text', index: 7 },
@@ -91,7 +91,7 @@ var InspectorDefs = {
                 '.marker-target': {
                     transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 1 },
                     fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 },
-                    'd': { type: 'select', options: [{content: 'standard', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'lollipop', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}], group: 'marker-target', label: 'target arrowhead type', index: 3 }
+                    'd': { type: 'select', options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}], group: 'marker-target', label: 'target arrowhead type', index: 3 }
                 }
             },
             smooth: { type: 'toggle', group: 'connection', index: 4 },
@@ -172,29 +172,34 @@ var InspectorDefs = {
         }
     },
     
-    'opm.Process': {
+    // 'opm.Process': {
 
-        inputs: _.extend({
-            attrs: {
-                text: inp({
-                    text: { group: 'text', index: 1 },
-                    'font-size': { group: 'text', index: 2 },
-                    'font-family': { group: 'text', index: 3 },
-                    'font-weight': { group: 'text', index: 4 },
-                    fill: { group: 'text', index: 5 },
-                    stroke: { group: 'text', index: 6 },
-                    'stroke-width': { group: 'text', index: 7 },
-                    'ref-x': { group: 'text', index: 8 },
-                    'ref-y': { group: 'text', index: 9 }
-                }),
-                circle: inp({
-                    fill: { group: 'presentation', index: 1 },
-                    'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-                    'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
-                })
-            }
-        }, CommonInspectorInputs),
-        groups: CommonInspectorGroups
+    //     inputs: _.extend({
+    //         attrs: {
+    //             text: inp({
+    //                 text: { group: 'text', index: 1 },
+    //                 'font-size': { group: 'text', index: 2 },
+    //                 'font-family': { group: 'text', index: 3 },
+    //                 'font-weight': { group: 'text', index: 4 },
+    //                 fill: { group: 'text', index: 5 },
+    //                 stroke: { group: 'text', index: 6 },
+    //                 'stroke-width': { group: 'text', index: 7 },
+    //                 'ref-x': { group: 'text', index: 8 },
+    //                 'ref-y': { group: 'text', index: 9 }
+    //             }),
+    //             circle: inp({
+    //                 fill: { group: 'presentation', index: 1 },
+    //                 'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
+    //                 'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
+    //             })
+    //         }
+    //     }, CommonInspectorInputs),
+    //     groups: CommonInspectorGroups
+    // },
+
+    'opm.Process': {
+    	inputs: {},
+    	groups: {}
     },
 
     'erd.ISA': {

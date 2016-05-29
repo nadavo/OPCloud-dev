@@ -21,8 +21,8 @@ Stencil.shapes = {
 
     main: [
         new joint.shapes.opm.ISProc,
-        new joint.shapes.erd.ISA({ attrs: { text: { text: 'ISA' } } }),
-        new joint.shapes.opm.StateFinal,
+        //new joint.shapes.erd.ISA({ attrs: { text: { text: 'ISA' } } }),
+        //new joint.shapes.opm.StateFinal,
         new joint.shapes.opm.PSObj
     ]
 };
