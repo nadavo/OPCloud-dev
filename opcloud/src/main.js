@@ -126,7 +126,7 @@ var Rappid = Backbone.Router.extend({
             paper: this.paperScroller,
             width: 240,
             groups: Stencil.groups,
-            dropAnimation: true,
+            dropAnimation: false,
             search: {
                 '*': ['type','attrs/text/text','attrs/.label/text'],
                 'org.Member': ['attrs/.rank/text','attrs/.name/text']

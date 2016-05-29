@@ -41,7 +41,8 @@ joint.shapes.opm.PSObj = joint.shapes.basic.Rect.extend({
         attrs: {
             rect: {
                 fill: '#DCDCDC',
-                stroke: '#006400', 'stroke-width': 2,
+                stroke: '#006400',
+                'stroke-width': 2,
                 filter: {name: 'dropShadow', args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}
             },
             text: {text: 'Object', fill: 'black', 'font-weight': 'bold'}
@@ -65,16 +66,16 @@ joint.shapes.opm.ISObj = joint.shapes.basic.Rect.extend({
 });
 
 //informatical systemic process
-joint.shapes.opm.ISProc = joint.shapes.basic.Ellipse.extend({
+joint.shapes.opm.ISProc = joint.shapes.basic.Circle.extend({
     defaults: joint.util.deepSupplement({
-        position: {x: 250, y: 300},
-        size: {width: 120, height: 60},
+        type: 'opm.Process',
+        size: { width: 6, height: 3 },
         attrs: {
-            ellipse: {fill: '#DCDCDC', stroke: '#00008B', 'stroke-width': 2},
+            circle: { width: 50, height: 30, stroke: '#00008B', fill: '#DCDCDC', 'stroke-width': 2 },
             text: {text: 'Process', fill: 'black', 'font-weight': 'bold'}
         }
-    }, joint.shapes.basic.Ellipse.prototype.defaults)
-});
+    },joint.shapes.basic.Circle.prototype.defaults)
+}),
 
 //INITIAL STATE
 joint.shapes.opm.StateInit = joint.shapes.basic.Rect.extend({

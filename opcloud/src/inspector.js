@@ -127,34 +127,52 @@ var InspectorDefs = {
     // OPM
     // -----
 
-    'basic.Rect': {
+    // 'opm.Object': {
+    //
+    //     inputs: _.extend({
+    //         attrs: {
+    //             text: inp({
+    //                 text: { group: 'text', index: 1 },
+    //                 'font-size': { group: 'text', index: 2 },
+    //                 'font-family': { group: 'text', index: 3 },
+    //                 'font-weight': { group: 'text', index: 4 },
+    //                 fill: { group: 'text', index: 5 },
+    //                 stroke: { group: 'text', index: 6 },
+    //                 'stroke-width': { group: 'text', index: 7 },
+    //                 'ref-x': { group: 'text', index: 8 },
+    //                 'ref-y': { group: 'text', index: 9 }
+    //             }),
+    //             rect: inp({
+    //                 fill: { group: 'presentation', index: 1 },
+    //                 'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
+    //                 'stroke-dasharray': { group: 'presentation', index: 3 },
+    //                 rx: { group: 'presentation', index: 4 },
+    //                 ry: { group: 'presentation', index: 5 },
+    //                 'dropShadow': {
+    //                     color: {type: 'toggle', group: 'presentation', index: 6, label: 'physical', defaultValue: 'grey', valueRegExp: 'yellow'}
+    //                 }
+    //             })
+    //         }
+    //     }, CommonInspectorInputs),
+    //     groups: CommonInspectorGroups
+    // },
 
-        inputs: _.extend({
+    'opm.Object': {
+        inputs: {
             attrs: {
-                text: inp({
-                    text: { group: 'text', index: 1 },
-                    'font-size': { group: 'text', index: 2 },
-                    'font-family': { group: 'text', index: 3 },
-                    'font-weight': { group: 'text', index: 4 },
-                    fill: { group: 'text', index: 5 },
-                    stroke: { group: 'text', index: 6 },
-                    'stroke-width': { group: 'text', index: 7 },
-                    'ref-x': { group: 'text', index: 8 },
-                    'ref-y': { group: 'text', index: 9 }
-                }),
-                rect: inp({
-                    fill: { group: 'presentation', index: 1 },
-                    'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-                    'stroke-dasharray': { group: 'presentation', index: 3 },
-                    rx: { group: 'presentation', index: 4 },
-                    ry: { group: 'presentation', index: 5 }
-                })
+                rect: {
+                    'dropShadow': {
+                        color: {type: 'toggle', group: 'Type', label: 'physical', defaultValue: 'grey', valueRegExp: 'red', index: 1}
+                    }
+                }
             }
-        }, CommonInspectorInputs),
-        groups: CommonInspectorGroups
+        },
+        groups: {
+            type: { label: 'Type', index: 1 }
+        }
     },
     
-    'basic.Circle': {
+    'opm.Process': {
 
         inputs: _.extend({
             attrs: {
@@ -203,11 +221,5 @@ var InspectorDefs = {
             }
         }, CommonInspectorInputs),
         groups: CommonInspectorGroups
-    },
-
-
-
-
-
-
+    }
 };

@@ -14,47 +14,15 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 var Stencil = {};
 
 Stencil.groups = {
-    opm: { index: 1, label: 'OPM' },
+    main: { index: 1, label: 'OPM' },
 };
 
 Stencil.shapes = {
 
-    opm: [
-        new joint.shapes.basic.Circle({
-            type: 'OPM process',
-            size: { width: 6, height: 3 },
-            attrs: {
-                circle: { width: 50, height: 30, stroke: '#00008B', fill: '#DCDCDC', 'stroke-width': 2 },
-                text: {text: 'Process', fill: 'black', 'font-weight': 'bold'}
-            }
-        }),
-
-        new joint.shapes.basic.Rect({
-            type: 'OPM object',
-            position: {x: 250, y: 200},
-            size: { width: 100, height: 50 },
-            attrs: {
-                rect: {
-                    fill: '#DCDCDC',
-                    stroke: '#006400', 'stroke-width': 2,
-                    filter: {name: 'dropShadow', args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}
-                },
-                text: {text: 'Object', fill: 'black', 'font-weight': 'bold'}
-            },
-
-            informatical: function () {
-                if (this.attrs.rect != undefined) {
-                    this.attrs.rect = undefined
-                }
-                else {
-                    this.attrs.rect = {
-                        fill: '#DCDCDC',
-                        stroke: '#006400', 'stroke-width': 2,
-                        filter: {name: 'dropShadow', args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}
-                    }
-                }
-            }
-        }),
-        new joint.shapes.erd.ISA({ attrs: { text: { text: 'ISA' } } })
+    main: [
+        new joint.shapes.opm.ISProc,
+        new joint.shapes.erd.ISA({ attrs: { text: { text: 'ISA' } } }),
+        new joint.shapes.opm.StateFinal,
+        new joint.shapes.opm.PSObj
     ]
 };
