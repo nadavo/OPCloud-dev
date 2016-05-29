@@ -21,7 +21,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 // Run With REPL: node channelHub --repl
 // Type help in the REPL to bring up a help instructions.
 
-var joint = require('../../index');
+var joint = require('../index');
 var Channel = joint.com.Channel;
 var ChannelHub = joint.com.ChannelHub;
 
