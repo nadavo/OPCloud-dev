@@ -48,7 +48,7 @@ joint.shapes.opm.PSObj = joint.shapes.basic.Rect.extend({
                 'stroke-width': 2,
                 filter: {name: 'dropShadow', args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}
             },
-            text: {text: 'Object', fill: 'black', 'font-weight': 'bold'}
+            text: {text: 'Object', fill: 'black', 'font-weight': 600}
         }
     },joint.shapes.basic.Rect.prototype.defaults)
 });
@@ -63,7 +63,7 @@ joint.shapes.opm.ISObj = joint.shapes.basic.Rect.extend({
         size: {width: 100, height: 50},
         attrs: {
             rect: {fill: '#DCDCDC', stroke: '#006400', 'stroke-width': 2},
-            text: {text: 'Object', fill: 'black', 'font-weight': 'bold'}
+            text: {text: 'Object', fill: 'black', 'font-weight': 600}
         }
     }
 });
@@ -75,7 +75,7 @@ joint.shapes.opm.ISProc = joint.shapes.basic.Circle.extend({
         size: { width: 6, height: 3 },
         attrs: {
             circle: { width: 50, height: 30, stroke: '#00008B', fill: '#DCDCDC', 'stroke-width': 2 },
-            text: {text: 'Process', fill: 'black', 'font-weight': 'bold'}
+            text: {text: 'Process', fill: 'black', 'font-weight': 600}
         }
     },joint.shapes.basic.Circle.prototype.defaults)
 }),

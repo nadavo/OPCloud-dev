@@ -48,7 +48,7 @@ var InputDefs = {
     text: { type: 'textarea', label: 'Text' },
     'font-size': { type: 'range', min: 5, max: 80, unit: 'px', label: 'Font size' },
     'font-family': { type: 'select', options: ['Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Garamond', 'Tahoma', 'Lucida Console', 'Comic Sans MS'], label: 'Font family' },
-    'font-weight': { type: 'range', min: 100, max: 900, step: 100, defaultValue: 400, label: 'Font weight' },
+    'font-weight': { type: 'range', min: 100, max: 900, step: 100, defaultValue: 600, label: 'Font weight' },
     'fill': { type: 'color', label: 'Fill color' },
     'stroke': { type: 'color', defaultValue: '#000000', label: 'Stroke' },
     'stroke-width': { type: 'range', min: 0, max: 5, step: .5, defaultValue: 0, unit: 'px', label: 'Stroke width' },
@@ -127,37 +127,37 @@ var InspectorDefs = {
     // OPM
     // -----
 
-    // 'opm.Object': {
-    //
-    //     inputs: _.extend({
-    //         attrs: {
-    //             text: inp({
-    //                 text: { group: 'text', index: 1 },
-    //                 'font-size': { group: 'text', index: 2 },
-    //                 'font-family': { group: 'text', index: 3 },
-    //                 'font-weight': { group: 'text', index: 4 },
-    //                 fill: { group: 'text', index: 5 },
-    //                 stroke: { group: 'text', index: 6 },
-    //                 'stroke-width': { group: 'text', index: 7 },
-    //                 'ref-x': { group: 'text', index: 8 },
-    //                 'ref-y': { group: 'text', index: 9 }
-    //             }),
-    //             rect: inp({
-    //                 fill: { group: 'presentation', index: 1 },
-    //                 'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-    //                 'stroke-dasharray': { group: 'presentation', index: 3 },
-    //                 rx: { group: 'presentation', index: 4 },
-    //                 ry: { group: 'presentation', index: 5 },
-    //                 'dropShadow': {
-    //                     color: {type: 'toggle', group: 'presentation', index: 6, label: 'physical', defaultValue: 'grey', valueRegExp: 'yellow'}
-    //                 }
-    //             })
-    //         }
-    //     }, CommonInspectorInputs),
-    //     groups: CommonInspectorGroups
-    // },
-
     'opm.Object': {
+    
+        inputs: _.extend({
+            attrs: {
+                text: inp({
+                    text: { group: 'text', index: 1 },
+                    'font-size': { group: 'text', index: 2 },
+                    'font-family': { group: 'text', index: 3 },
+                    'font-weight': { group: 'text', index: 4 },
+                    fill: { group: 'text', index: 5 },
+                    stroke: { group: 'text', index: 6 },
+                    'stroke-width': { group: 'text', index: 7 },
+                    'ref-x': { group: 'text', index: 8 },
+                    'ref-y': { group: 'text', index: 9 }
+                }),
+                rect: inp({
+                    fill: { group: 'presentation', index: 1 },
+                    'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
+                    'stroke-dasharray': { group: 'presentation', index: 3 },
+                    rx: { group: 'presentation', index: 4 },
+                    ry: { group: 'presentation', index: 5 },
+                    'dropShadow': {
+                        color: {type: 'toggle', group: 'presentation', index: 6, label: 'physical', defaultValue: 'grey', valueRegExp: 'yellow'}
+                    }
+                })
+            }
+        }, CommonInspectorInputs),
+        groups: CommonInspectorGroups
+    },
+
+ /*   'opm.Object': {
         inputs: {
             attrs: {
                 rect: {
@@ -170,39 +170,39 @@ var InspectorDefs = {
         groups: {
             type: { label: 'Type', index: 1 }
         }
-    },
+    },*/
     
-    // 'opm.Process': {
-
-    //     inputs: _.extend({
-    //         attrs: {
-    //             text: inp({
-    //                 text: { group: 'text', index: 1 },
-    //                 'font-size': { group: 'text', index: 2 },
-    //                 'font-family': { group: 'text', index: 3 },
-    //                 'font-weight': { group: 'text', index: 4 },
-    //                 fill: { group: 'text', index: 5 },
-    //                 stroke: { group: 'text', index: 6 },
-    //                 'stroke-width': { group: 'text', index: 7 },
-    //                 'ref-x': { group: 'text', index: 8 },
-    //                 'ref-y': { group: 'text', index: 9 }
-    //             }),
-    //             circle: inp({
-    //                 fill: { group: 'presentation', index: 1 },
-    //                 'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-    //                 'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
-    //             })
-    //         }
-    //     }, CommonInspectorInputs),
-    //     groups: CommonInspectorGroups
-    // },
-
     'opm.Process': {
+
+        inputs: _.extend({
+            attrs: {
+                text: inp({
+                    text: { group: 'text', index: 1 },
+                    'font-size': { group: 'text', index: 2 },
+                    'font-family': { group: 'text', index: 3 },
+                    'font-weight': { group: 'text', index: 4 },
+                    fill: { group: 'text', index: 5 },
+                    stroke: { group: 'text', index: 6 },
+                    'stroke-width': { group: 'text', index: 7 },
+                    'ref-x': { group: 'text', index: 8 },
+                    'ref-y': { group: 'text', index: 9 }
+                }),
+                circle: inp({
+                    fill: { group: 'presentation', index: 1 },
+                    'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
+                    'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
+                })
+            }
+        }, CommonInspectorInputs),
+        groups: CommonInspectorGroups
+    }
+
+   /* 'opm.Process': {
     	inputs: {},
     	groups: {}
     },
-
-    'erd.ISA': {
+*/
+   /* 'erd.ISA': {
 
         inputs: _.extend({
             attrs: {
@@ -226,5 +226,5 @@ var InspectorDefs = {
             }
         }, CommonInspectorInputs),
         groups: CommonInspectorGroups
-    }
+    }*/
 };
