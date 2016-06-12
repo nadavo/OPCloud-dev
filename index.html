@@ -1,124 +1,98 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <link rel="stylesheet" href="joint.css"/>
-    <script src="jquery.min.js"></script>
-    <script src="lodash.min.js"></script>
-    <script src="backbone-min.js"></script>
-    <script src="joint.js"></script>
-    <script src="joint.shapes.opm.js"></script>
-    <title>OPCloud Example With JointJS</title>
-</head>
-<body>
-<h1>OPCloud POC With <a href="http://www.jointjs.com" target="_blank">JointJS</a></h1>
-<div id="myholder" align="center"></div>
-<script type="text/javascript">
-    var graph = new joint.dia.Graph;
-    var paper = new joint.dia.Paper({
-        el: $('#myholder'),
-        width: 1000,
-        height: 1000,
-        model: graph,
-        gridSize: 1
-    });
-    var object = new joint.shapes.basic.Rect({
-        position: { x: 150, y: 100 },
-        size: { width: 100, height: 50 },
-        attrs: { rect: { fill: '#DCDCDC', stroke:'#006400', 'stroke-width': 2,
-            filter: { name: 'dropShadow', args: { dx: 6, dy: 6, blur: 0, color: 'grey' } } },
-            text: { text: 'Raw Material', fill: 'black', 'font-weight': 'bold'} }
-    });
+    <head>
+        <meta charset="utf8"/>
+<!--        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/> -->
 
-    var object2 = new joint.shapes.basic.Rect({
-        position: { x: 750, y: 300 },
-        size: { width: 100, height: 50 },
-        attrs: { rect: { fill: '#DCDCDC', stroke:'#006400', 'stroke-width': 2} ,
-            text: { text: 'Object', fill: 'black', 'font-weight': 'bold'} }
-    });
+        <title>OPcloud Example with Rappid</title>
 
-    var proc = new joint.shapes.basic.Ellipse({
-        position: { x: 250, y: 300 },
-        size: { width: 120, height: 60 },
-        attrs: { ellipse: { fill: '#DCDCDC', stroke:'#00008B', 'stroke-width': 2},
-            text: { text: 'Manufacturing', fill: 'black', 'font-weight': 'bold'} }
-    });
-    var proc2 = new joint.shapes.basic.Ellipse({
-        position: { x: 500, y: 300 },
-        size: { width: 120, height: 60 },
-        attrs: { ellipse: { fill: '#DCDCDC', stroke:'#00008B', 'stroke-width': 2},
-            text: { text: 'Testing', fill: 'black', 'font-weight': 'bold'} }
-    });
-    var StateFullObject = new joint.shapes.basic.Rect({
-        position: { x: 400, y: 100 },
-        size: { width: 300, height: 120 },
-        attrs: { rect: { fill: '#DCDCDC', stroke:'#006400', 'stroke-width': 2},
-            text: { text: 'Product', fill: 'black', 'font-weight': 'bold', 'ref-y': '.2'} }
-    });
-    var link1 = new joint.shapes.opm.Link({
-        source: { id: object.id },
-        target: { id: proc.id }
-    });
-    var link2 = new joint.shapes.opm.Link({
-        source: { id: proc.id },
-        target: { id: StateFullObject.id }
-    });
-    var state1 = new joint.shapes.basic.Rect({
-        position: { x: 410, y: 170 },
-        size: { width: 80, height: 40 },
-        attrs: { rect: { fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 3, stroke: '#808000' },
-            text: { text: 'pre-tested', fill: 'black' } }
-    });
-    var state2 = new joint.shapes.basic.Rect({
-        position: { x: 510, y: 170 },
-        size: { width: 80, height: 40 },
-        attrs: { rect: { fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 1, stroke: '#808000' },
-            text: { text: 'being\ntested', fill: 'black' } }
-    });
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" type="text/css" />
 
-    var state3 = new joint.shapes.opm.StateFinal({
-        position: { x: 610, y: 170 },
-        size: {width: 80, height: 40},
-        attrs: { text: { text: 'tested', fill: 'black' } }
-    });
+        <link rel="stylesheet" type="text/css" href="./build/rappid.min.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/layout.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/paper.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/inspector.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/navigator.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/stencil.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/halo.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/selection.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/toolbar.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/statusbar.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/freetransform.css" />
+        <link rel="stylesheet" type="text/css" href="./opcloud/css/style.css" />
+    </head>
+    <body>
+        <h1>OPCloud made with <a href="http://www.jointjs.com/rappid/tour" target="_blank" style="color:yellow">Rappid</a></h1>
+        <div class="toolbar-container">
+            <button id="btn-undo" class="btn" data-tooltip="Undo"><img src="./opcloud/img/undo.png" alt="Undo"/></button>
+            <button id="btn-redo" class="btn" data-tooltip="Redo"><img src="./opcloud/img/redo.png" alt="Redo"/></button>
+            <button id="btn-clear" class="btn" data-tooltip="Clear Paper"><img src="./opcloud/img/clear.png" alt="Clear"/></button>
+            <button id="btn-svg" class="btn" data-tooltip="Open as SVG in a New Window">open as SVG</button>
+            <button id="btn-png" class="btn" data-tooltip="Open as PNG in a New Window">open as PNG</button>
+            <button id="btn-print" class="btn" data-tooltip="Open a Print Dialog"><img src="./opcloud/img/print.png" alt="Print"/></button>
+            <button id="btn-zoom-in" class="btn" data-tooltip="Zoom In"><img src="./opcloud/img/zoomin.png" alt="Zoom in"/></button>
+            <button id="btn-zoom-out" class="btn" data-tooltip="Zoom Out"><img src="./opcloud/img/zoomout.png" alt="Zoom out"/></button>
+            <div class="panel">
+              <span id="zoom-level">100</span>
+              <span>%</span>
+            </div>
+            <button id="btn-zoom-to-fit" class="btn" data-tooltip="Zoom To Fit"><img src="./opcloud/img/zoomtofit.png" alt="Zoom To Fit"/></button>
+            <button id="btn-fullscreen" class="btn" data-tooltip="Toggle Fullscreen Mode"><img src="./opcloud/img/fullscreen.png" alt="Fullscreen"/></button>
+            <button id="btn-to-front" class="btn" data-tooltip="Bring Object to Front">to front</button>
+            <button id="btn-to-back" class="btn" data-tooltip="Send Object to Back">to back</button>
+            <button id="btn-layout" class="btn" data-tooltip="Auto-layout Graph">layout</button>
+            <label data-tooltip="Change Grid Size">Grid size:</label>
+            <input type="range" value="10" min="1" max="50" step="1" id="input-gridsize" />
+            <output id="output-gridsize">10</output>
+            <label data-tooltip="Enable/Disable Snaplines">Snaplines:</label>
+            <input type="checkbox" id="snapline-switch" checked/>
+        </div>
+        <div class="stencil-container">
+            <label>Stencil</label>
+            <button class="btn-expand" title="Expand all">+</button>
+            <button class="btn-collapse" title="Collapse all">-</button>
+        </div>
+        <div class="paper-container"></div>
+        <div class="inspector-container"></div>
+        <div class="navigator-container"></div>
+        <div class="statusbar-container"><span class="rt-colab"></span></div>
 
-    var link3 = new joint.shapes.opm.Link({
-        source: {id: state1.id},
-        target: {id: proc2.id}
-    });
-    var link4 = new joint.shapes.opm.Link({
-        source: {id: proc2.id},
-        target: {id: state3.id}
-    });
-    //Lollipop Connector
-    var link5 = new joint.shapes.opm.Lollipop({
-        source: { id: object2.id },
-        target: { id: proc2.id }
-    });
+        <!-- Dependencies: -->
+        <script src="./node_modules/jquery/dist/jquery.js"></script>
+        <script src="./node_modules/lodash/index.js"></script>
+        <script src="./node_modules/backbone/backbone.js"></script>
+        <script src="./node_modules/graphlib/dist/graphlib.core.js"></script>
+        <script src="./node_modules/dagre/dist/dagre.core.js"></script>
 
-    //Embeds state objects in parent object
-    StateFullObject.embed(state1);
-    StateFullObject.embed(state2);
-    StateFullObject.embed(state3);
+        <script src="./opcloud/lib/KeyboardJS/keyboard.js"></script>
 
-    graph.addCells([StateFullObject,state1,state2, state3, object, object2, proc, proc2, link1, link2, link3, link4, link5]);
+        <script src="./build/rappid.min.js"></script>
+        <script src="./joint.shapes.opm.js"></script>
 
-    graph.on('change:position', function(cell) {
-        var parentId = cell.get('parent');
-        if (!parentId) return;
-        var parent = graph.getCell(parentId);
-        var parentBbox = parent.getBBox();
-        var cellBbox = cell.getBBox();
-        if (parentBbox.containsPoint(cellBbox.origin()) &&
-                parentBbox.containsPoint(cellBbox.topRight()) &&
-                parentBbox.containsPoint(cellBbox.corner()) &&
-                parentBbox.containsPoint(cellBbox.bottomLeft())) {
-            // All the four corners of the child are inside
-            // the parent area.
-            return;
-        }
-        // Revert the child position.
-        cell.set('position', cell.previous('position'));
-    });
-</script>
-</body>
+
+
+        <script src="./opcloud/src/inspector.js"></script>
+        <script src="./opcloud/src/stencil.js"></script>
+        <script src="./opcloud/src/main.js"></script>
+	<!--[if IE 9]>
+	    <script src="./lib/base64/base64.js"></script>
+	    <script type="text/javascript">
+	      // SVG Export requires window.btoa/atoa extension to convert binary data (the `b`)
+	      // to base64 (ascii, the `a`). Unfortunately it is not available in IE9.
+	      // To get it working under IE9 you may include compatible solution like `stringencoders`
+	      // (`https://code.google.com/p/stringencoders/source/browse/trunk/javascript/base64.js`)
+	      // and create a global alias `btoa`.
+	      window.btoa = base64.encode
+	      // `-ms-user-select: none` doesn't work in IE9
+	      document.onselectstart = function() { return false; };
+	    </script>
+	<![endif]-->
+        <script>
+            // Uncomment the following line and comment the line after if you
+            // want to use channels.
+            //var app = new Rappid({ channelUrl: 'ws://localhost:4141' });
+            var app = new Rappid;
+            Backbone.history.start();
+        </script>
+    </body>
 </html>

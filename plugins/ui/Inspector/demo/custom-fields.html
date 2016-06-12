@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8"/>
+
+        <title>Inspector</title>
+
+        <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/css/select2.min.css" />
+
+        <style>
+            #paper {
+                border: 1px solid gray;
+                float: left;
+                position: relative;
+                width: 500px;
+                height: 300px;
+                overflow: hidden;
+            }
+            .inspector-container {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 240px;
+                background-color: #333;
+                color: #bcbcbc;
+            }
+            p {
+                max-width: 70%;
+            }
+        </style>
+    </head>
+    <body>
+
+        <p>Try to click an element or link option tool to bring up an Inspector.</p>
+        <p>This demo shows how to integrate your own special fields into the ui.Inspector.
+        We show how to integrate the select2 extension to the classical HTML &lt;select&gt; input
+          and some custom buttons.</p>
+        <p>Try to call <code>r.attr('text/style/text-decoration', 'underline')</code> in the
+          browswer console. You should see the change reflected in the Inspector.
+          This demonstrates the two-way data binding that Inspector creates.</p>
+
+        <div id="paper"></div>
+        <div class="inspector-container"></div>
+
+        <!-- Dependencies: -->
+        <script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+        <script src="../../../../node_modules/lodash/index.js"></script>
+        <script src="../../../../node_modules/backbone/backbone.js"></script>
+
+        <script src="../../../../build/rappid.js"></script>
+
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/js/select2.min.js"></script>
+
+        <script src="./custom-fields.js"></script>
+
+    </body>
+</html>

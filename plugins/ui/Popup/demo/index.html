@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8"/>
+
+    <title>ui.Popup</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
+    
+    <style>
+      html, body { margin: 0; padding: 0 }
+      .open-examples { margin: 100px }
+    </style>
+  </head>
+  <body>
+
+    <div class="open-examples">
+      <a id="btn-open" href="#">Open Popup</a> <br/>
+      <a id="btn-open-image" href="#">Open Popup with image</a> <br/>
+      <a id="btn-open-diagram" href="#">Open Popup with diagram</a> <br/>
+    </div>
+
+    <svg width="300" height="300">
+      <circle cx="200" cy="100" r="50" fill="#FEB663" stroke="#6A6C8A" stroke-width="5"/>
+    </svg>
+
+    <!-- Dependencies: -->
+    <script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../../../node_modules/lodash/index.js"></script>
+    <script src="../../../../node_modules/backbone/backbone.js"></script>
+
+    <script src="../../../../build/rappid.js"></script>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
