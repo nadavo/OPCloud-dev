@@ -58,7 +58,7 @@ var InputDefs = {
     'ref-dy': { type: 'range', min: 0, max: 50, step: 1, defaultValue: 0, label: 'Vertical offset' },
     'dx': { type: 'range', min: 0, max: 50, step: 1, defaultValue: 0, label: 'Horizontal distance' },
     'dy': { type: 'range', min: 0, max: 50, step: 1, defaultValue: 0, label: 'Vertical distance' },
-    'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '3,5', '5,1', '15,10,5,10,15'], label: 'Stroke dasharray' },
+    'stroke-dasharray': { type: 'select', options:[{content: 'Systemic', value: '0'}, {content: 'Environmental', value: '10,5'}], defaultValue: '0', label: 'Systemic/Environmental' },
     rx: { type: 'range', min: 0, max: 30, defaultValue: 1, unit: 'px', label: 'X-axis radius' },
     ry: { type: 'range', min: 0, max: 30, defaultValue: 1, unit: 'px', label: 'Y-axis radius' },
     'xlink:href': { type: 'text', label: 'Image URL' }
@@ -91,7 +91,7 @@ var InspectorDefs = {
                 '.marker-target': {
                     transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 1 },
                     fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 },
-                    'd': { type: 'select', options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}], group: 'marker-target', label: 'target arrowhead type', index: 3 }
+                    'd': { type: 'select', options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}]}
                 }
             },
             smooth: { type: 'toggle', group: 'connection', index: 4 },
@@ -127,7 +127,7 @@ var InspectorDefs = {
     // OPM
     // -----
 
-    'opm.Object': {
+    'OPM.Object': {
     
         inputs: _.extend({
             attrs: {
@@ -143,14 +143,17 @@ var InspectorDefs = {
                     'ref-y': { group: 'text', index: 9 }
                 }),
                 rect: inp({
-                    fill: { group: 'presentation', index: 1 },
-                    'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-                    'stroke-dasharray': { group: 'presentation', index: 3 },
+                    'stroke-dasharray': { group: 'presentation', index: 1 },
+                    //fill: { group: 'presentation', index: 1 },
+                    /*filter: {
+                        color: {type: 'toggle', group: 'presentation', index: 2, label: 'Physical/Informatical', defaultValue: 'grey', valueRegExp: 'yellow'}
+                    },*/
+                    'dropShadow':{ 
+                        group: 'presentation', index: 2, label: 'Physical/Informatical', type: 'select', options:[{content: 'Physical', value: {args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}}, {content: 'Informatical', value: {args: {dx: 0, dy: 0, blur: 0, color: 'grey'}}}]
+                    },
+                    'stroke-width': { group: 'presentation', index: 3, min: 0, max: 30, defaultValue: 1 },
                     rx: { group: 'presentation', index: 4 },
                     ry: { group: 'presentation', index: 5 },
-                    'dropShadow': {
-                        color: {type: 'toggle', group: 'presentation', index: 6, label: 'physical', defaultValue: 'grey', valueRegExp: 'yellow'}
-                    }
                 })
             }
         }, CommonInspectorInputs),
@@ -172,7 +175,7 @@ var InspectorDefs = {
         }
     },*/
     
-    'opm.Process': {
+    'OPM.Process': {
 
         inputs: _.extend({
             attrs: {
@@ -188,9 +191,10 @@ var InspectorDefs = {
                     'ref-y': { group: 'text', index: 9 }
                 }),
                 circle: inp({
-                    fill: { group: 'presentation', index: 1 },
+                    'stroke-dasharray': { group: 'presentation', index: 1 },
                     'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-                    'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
+                    fill: { group: 'presentation', index: 3 }
+                    //'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
                 })
             }
         }, CommonInspectorInputs),
