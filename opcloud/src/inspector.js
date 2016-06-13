@@ -89,9 +89,9 @@ var InspectorDefs = {
                     fill: { type: 'color', group: 'marker-source', label: 'source arrowhead color', index: 2 }
                 },
                 '.marker-target': {
-                    transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 1 },
+                    'd': { type: 'select', group: 'marker-target', label: 'Link Type', index: 1, options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}]},
                     fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 },
-                    'd': { type: 'select', options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}]}
+                    transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 3 }
                 }
             },
             smooth: { type: 'toggle', group: 'connection', index: 4 },
