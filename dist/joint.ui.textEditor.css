@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,7 +11,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-.text-editor {
+.joint-text-editor {
     margin: 0;
     padding: 0;
 }
@@ -33,10 +33,9 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
     100%  { opacity: 0 }
 }
 
-.text-editor .caret {
+.joint-text-editor .caret {
     position: absolute;
     height: 15px;
-    background-color: black;
     margin-left: -1px;
     margin-top: 2px;
     width: 1px;
@@ -47,48 +46,44 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
     pointer-events: none;
     white-space: nowrap;
 }
-.text-editor .caret.placeholder {
+.joint-text-editor .caret.placeholder {
     background-color: transparent;
     -webkit-animation: none;
     animation: none;
     width: auto;
 }
 
-.text-editor .caret.placeholder:before {
+.joint-text-editor .caret.placeholder:before {
     content: '';
     display: inline-block;
     height: 100%;
     width: 1px;
-    background-color: black;
     -webkit-animation: text-editor-caret-blink 1s linear 0s infinite;
     -moz-animation: text-editor-caret-blink 1s linear 0s infinite;
     -ms-animation: text-editor-caret-blink 1s linear 0s infinite;
     animation: text-editor-caret-blink 1s linear 0s infinite;
     float: left;
 }
-.text-editor .caret.placeholder:after {
+.joint-text-editor .caret.placeholder:after {
     content: 'Enter text...';
-    font-style: italic;
     vertical-align: middle;
-    color: lightgray;
     display: inline-block;
 }
 
-.text-editor .caret[text-anchor="middle"].placeholder:after {
+.joint-text-editor .caret[text-anchor="middle"].placeholder:after {
     -ms-transform: translateX(-50%);
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
 }
 
-.text-editor .caret[text-anchor="end"].placeholder:after {
+.joint-text-editor .caret[text-anchor="end"].placeholder:after {
     -ms-transform: translateX(-100%);
     -webkit-transform: translateX(-100%);
     transform: translateX(-100%);
 }
 
-.text-editor .char-selection-box {
+.joint-text-editor .char-selection-box {
     position: absolute;
-    background-color: #afd5ff;
     opacity: .8;
     padding: 0;
     margin: 0;
@@ -96,19 +91,51 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
     pointer-events: none;
 }
 
-.text-editor .char-selection-box:hover {
+.joint-text-editor .char-selection-box:hover {
     cursor: text;
 }
 
-.text-editor .textarea-container {
+.joint-text-editor .textarea-container {
     position: absolute;
     height: 0;
     overflow: hidden;
 }
 
-.text-editor textarea {
+.joint-text-editor textarea {
     position: absolute;/* to get document.execCommand('copy') to work in Chrome */
     width: 1000px;
     height: 1em;
     outline: none;
+}
+
+.joint-text-editor.joint-theme-default .caret {
+    background-color: black;
+}
+
+.joint-text-editor.joint-theme-default .caret.placeholder:before {
+    background-color: black;
+}
+.joint-text-editor.joint-theme-default .caret.placeholder:after {
+    font-style: italic;
+    color: lightgray;
+}
+
+.joint-text-editor.joint-theme-default .char-selection-box {
+    background-color: lightgray;
+}
+
+.joint-text-editor.joint-theme-modern .caret {
+    background-color: black;
+}
+
+.joint-text-editor.joint-theme-modern .caret.placeholder:before {
+    background-color: black;
+}
+.joint-text-editor.joint-theme-modern .caret.placeholder:after {
+    font-style: italic;
+    color: lightgray;
+}
+
+.joint-text-editor.joint-theme-modern .char-selection-box {
+    background-color: #afd5ff;
 }

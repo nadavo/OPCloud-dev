@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -29,553 +29,961 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 // $('#stencil-holder').append(stencil.render().el);
 
 
-joint.ui.Stencil = joint.mvc.View.extend({
+(function(joint, _) {
 
-    className: 'stencil',
+    var layoutDefaults = {
 
-    events: {
-        'click .group-label': 'onGroupLabelClick',
-        'touchstart .group-label': 'onGroupLabelClick',
-        'input .search': 'onSearch'
-    },
+        options: function() {
+            return {
+                columnWidth: this.options.width / 2 - 10,
+                columns: 2,
+                rowHeight: 80,
+                resizeToFit: true,
+                dy: 10,
+                dx: 10
+            };
+        },
 
-    options: {
-        width: 200,
-        height: 800
-    },
+        /**
+         * @param {joint.dia.Graph} graph
+         * @param {Object} group Group
+         */
+        layoutGroup: function(graph, group) {
 
-    init: function() {
+            var opts = this.options.layout;
+            group = group || {};
 
-        this.setPaper(this.options.paperScroller || this.options.paper);
+            if (!joint.layout.GridLayout) {
+                throw new Error('joint.ui.Stencil: joint.layout.GridLayout is not available.');
+            }
 
-        this.graphs = {};
-        this.papers = {};
-        this.$groups = {};
-
-        _.bindAll(this, 'onDrag', 'onDragEnd', 'onDropEnd');
-
-        $(document.body).on({
-            'mousemove.stencil touchmove.stencil': this.onDrag,
-            'mouseup.stencil touchend.stencil': this.onDragEnd
-        });
-
-        this.onSearch = _.debounce(this.onSearch, 200);
-    },
-
-    setPaper: function(paper) {
-
-        var options = this.options;
-
-        if (paper instanceof joint.dia.Paper) {
-
-            // Allow Stencil to be initialized with a paper only.
-            options.paperScroller = null;
-            options.paper = paper;
-            options.graph = paper.model;
-
-        } else if (typeof joint.ui.PaperScroller === 'function' && paper instanceof joint.ui.PaperScroller) {
-
-            // Paper is a PaperScroller
-            options.paperScroller = paper;
-            options.paper = paper.options.paper;
-            options.graph = paper.options.paper.model;
-
-        } else {
-
-            throw new Error('Stencil: paper required');
+            joint.layout.GridLayout.layout(graph, _.extend({}, opts, group.layout));
         }
-    },
+    };
 
-    renderContent: function() {
+    joint.ui.Stencil = joint.mvc.View.extend({
+        className: 'stencil',
+        events: {
+            'click .btn-expand': 'openGroups',
+            'click .btn-collapse': 'closeGroups',
+            'click .groups-toggle .group-label': 'openGroups',
+            'click .group-label': 'onGroupLabelClick',
+            'touchstart .group-label': 'onGroupLabelClick',
+            'input .search': 'onSearch',
+            'focusin .search' : 'pointerFocusIn',
+            'focusout .search' : 'pointerFocusOut'
+        },
+        options: {
+            width: 200,
+            height: 800,
+            label: 'Stencil',
+            groups: null,
+            groupsToggleButtons: false,
+            dropAnimation: false,
+            search: null,
+            layout: null,
+            // An instance of Snapline plugin which should display
+            // snaplines while dragging an element from the stencil
+            snaplines: null,
+            // When set to `true` clone views are automatically
+            // scaled based on the current paper transformations.
+            // Note: this option is ignored when `snaplines` provided.
+            scaleClones: false,
+            /**
+             * @param {joint.dia.Cell} cell
+             * @returns {joint.dia.Cell}
+             */
+            dragStartClone: function(cell) {
 
-        return $('<div/>').addClass('content');
-    },
+                return cell.clone();
+            },
 
-    renderPaperDrag: function() {
+            /**
+             * @param {joint.dia.Cell} cell
+             * @returns {joint.dia.Cell}
+             */
+            dragEndClone: function(cell) {
 
-        return $('<div/>').addClass('stencil-paper-drag');
-    },
+                return cell.clone();
+            },
+            /** @type {function|null} */
+            layoutGroup: null
+        },
 
-    renderSearch: function() {
+        init: function() {
 
-        return $('<input/>', { type: 'search', placeholder: 'search' }).addClass('search');
-    },
+            this.setPaper(this.options.paperScroller || this.options.paper);
 
-    renderElementsContainer: function() {
+            /** @type {Object.<string, joint.dia.Graph>} */
+            this.graphs = {};
+            /** @type {Object.<string, joint.dia.Paper>} */
+            this.papers = {};
+            /** @type {Object.<string, jQuery>} */
+            this.$groups = {};
 
-        return $('<div/>').addClass('elements');
-    },
+            _.bindAll(this, 'onDrag', 'onDragEnd', 'onDropEnd');
 
-    renderGroup: function(opt) {
+            $(document.body).on('mousemove.stencil touchmove.stencil', this.onDrag);
+            $(window).on('mouseup.stencil touchend.stencil', this.onDragEnd);
 
-        opt = opt || {};
+            this.onSearch = _.debounce(this.onSearch, 200);
 
-        var $group = $('<div/>')
-            .addClass('group')
-            .attr('data-name', opt.name)
-            .toggleClass('closed', !!opt.closed);
+            this.initializeLayout();
+        },
 
-        var $label = $('<h3/>')
-            .addClass('group-label')
-            .text(opt.label || opt.name);
+        /**
+         * @private
+         */
+        initializeLayout: function() {
 
-        var $elements = this.renderElementsContainer();
+            var layout = this.options.layout;
 
-        return $group.append($label, $elements);
-    },
+            if (layout) {
 
-    render: function() {
+                if (_.isFunction(layout)) {
+                    this.layoutGroup = layout;
+                } else {
+                    this.layoutGroup = _.bind(layoutDefaults.layoutGroup, this);
+                    this.options.layout = _.isObject(layout) ? layout : {};
+                    _.defaults(this.options.layout, layoutDefaults.options.call(this));
+                }
+            }
+        },
 
-        this.$content = this.renderContent();
-        this.$paperDrag = this.renderPaperDrag();
+        /**
+         * @public
+         * @param {joint.dia.Paper | joint.ui.PaperScroller} paper
+         */
+        setPaper: function(paper) {
 
-        this.$el.empty().append(this.$paperDrag, this.$content);
+            var options = this.options;
 
-        if (this.options.search) {
-            this.$el.addClass('searchable').prepend(this.renderSearch());
-        }
+            if (paper instanceof joint.dia.Paper) {
 
-        var paperOptions = {
-            width: this.options.width,
-            height: this.options.height,
-            interactive: false
-        };
+                // Allow Stencil to be initialized with a paper only.
+                options.paperScroller = null;
+                options.paper = paper;
+                options.graph = paper.model;
 
-        if (this.options.groups) {
+            } else if (typeof joint.ui.PaperScroller === 'function' && paper instanceof joint.ui.PaperScroller) {
 
-            // Render as many papers as there are groups.
-            var sortedGroups = _.sortBy(_.pairs(this.options.groups), function(pair) { return pair[1].index; });
+                // Paper is a PaperScroller
+                options.paperScroller = paper;
+                options.paper = paper.options.paper;
+                options.graph = paper.options.paper.model;
 
-            _.each(sortedGroups, function(groupArray) {
+            } else {
 
-                var name = groupArray[0];
-                var group = groupArray[1];
+                throw new Error('Stencil: paper required');
+            }
+        },
 
-                var $group = this.$groups[name] = this.renderGroup({
-                    name: name,
-                    label: group.label,
-                    closed: group.closed
-                }).appendTo(this.$content);
+        /**
+         * @private
+         * @returns {jQuery}
+         */
+        renderContent: function() {
+
+            return $('<div/>').addClass('content');
+        },
+
+        /**
+         * @private
+         * @returns {jQuery}
+         */
+        renderPaperDrag: function() {
+
+            return $('<div/>').addClass('stencil-paper-drag');
+        },
+
+        /**
+         * @private
+         * @returns {jQuery}
+         */
+        renderSearch: function() {
+
+            return $('<div/>').addClass('search-wrap').append($('<input/>', { type: 'search', placeholder: 'search' }).addClass('search'));
+        },
+
+        /**
+         * @private
+         * @returns {Array.<jQuery>}
+         */
+        renderToggleAll: function() {
+
+            return [
+                $('<div/>').addClass('groups-toggle')
+                    .append($('<label/>').addClass('group-label').html(this.options.label))
+                    .append($('<button/>', { text: '+' }).addClass('btn btn-expand'))
+                    .append($('<button/>', { text: '-' }).addClass('btn btn-collapse'))
+            ];
+        },
+
+        /**
+         * @private
+         * @returns {jQuery}
+         */
+        renderElementsContainer: function() {
+
+            return $('<div/>').addClass('elements');
+        },
+
+        /**
+         * @private
+         * @param {Object} opt
+         * @returns {jQuery}
+         */
+        renderGroup: function(opt) {
+
+            opt = opt || {};
+
+            var $group = $('<div/>')
+                .addClass('group')
+                .attr('data-name', opt.name)
+                .toggleClass('closed', !!opt.closed);
+
+            var $label = $('<h3/>')
+                .addClass('group-label')
+                .html(opt.label || opt.name);
+
+            var $elements = this.renderElementsContainer();
+
+            return $group.append($label, $elements);
+        },
+
+        /**
+         * @public
+         * @returns {joint.ui.Stencil}
+         */
+        render: function() {
+
+            this.$content = this.renderContent();
+            this.$paperDrag = this.renderPaperDrag();
+
+            this.$el.empty().append(this.$paperDrag, this.$content);
+
+            if (this.options.search) {
+                this.$el.addClass('searchable').prepend(this.renderSearch());
+            }
+
+            if (this.options.groupsToggleButtons) {
+                this.$el.addClass('collapsible').prepend(this.renderToggleAll());
+            }
+
+            var paperOptions = {
+                width: this.options.width,
+                height: this.options.height,
+                interactive: false
+            };
+
+            if (this.options.groups) {
+
+                // Render as many papers as there are groups.
+                var sortedGroups = _.sortBy(_.pairs(this.options.groups), function(pair) {
+                    return pair[1].index;
+                });
+
+                _.each(sortedGroups, function(groupArray) {
+
+                    var name = groupArray[0];
+                    var group = groupArray[1];
+
+                    var $group = this.$groups[name] = this.renderGroup({
+                        name: name,
+                        label: group.label,
+                        closed: group.closed
+                    }).appendTo(this.$content);
+
+                    var graph = new joint.dia.Graph;
+                    var paper = new joint.dia.Paper(_.extend({}, paperOptions, {
+                        el: $group.find('.elements'),
+                        model: graph,
+                        width: group.width || paperOptions.width,
+                        height: group.height || paperOptions.height
+                    }));
+
+                    this.graphs[name] = graph;
+                    this.papers[name] = paper;
+
+                }, this);
+
+            } else {
+
+                // Groups are not used. Render just one paper for the whole stencil.
+                var $elements = this.renderElementsContainer().appendTo(this.$content);
 
                 var graph = new joint.dia.Graph;
-                var paper = new joint.dia.Paper(_.extend({}, paperOptions, {
-                    el: $group.find('.elements'),
-                    model: graph,
-                    width: group.width || paperOptions.width,
-                    height: group.height || paperOptions.height
+                var paper = new joint.dia.Paper(_.extend(paperOptions, {
+                    el: $elements,
+                    model: graph
                 }));
 
-                this.graphs[name] = graph;
-                this.papers[name] = paper;
+                // `this.graphs` object contains only one graph in this case that we store under the key `'__default__'`.
+                this.graphs['__default__'] = graph;
+                this.papers['__default__'] = paper;
+            }
 
-            }, this);
+            // Create graph and paper objects for the, temporary, dragging phase.
+            // Elements travel the following way when the user drags an element from the stencil and drops
+            // it into the main, associated, paper: `[One of the Stencil graphs] -> [_graphDrag] -> [this.options.graph]`.
+            this._graphDrag = new joint.dia.Graph;
+            this._paperDrag = new joint.dia.Paper({
 
-        } else {
+                el: this.$paperDrag,
+                width: 1,
+                height: 1,
+                model: this._graphDrag
+            });
 
-            // Groups are not used. Render just one paper for the whole stencil.
-            var $elements = this.renderElementsContainer().appendTo(this.$content);
+            this.startListening();
 
-            var graph = new joint.dia.Graph;
-            var paper = new joint.dia.Paper(_.extend(paperOptions, {
-                el: $elements,
-                model: graph
-            }));
+            return this;
+        },
 
-            // `this.graphs` object contains only one graph in this case that we store under the key `'__default__'`.
-            this.graphs['__default__'] = graph;
-            this.papers['__default__'] = paper;
-        }
+        startListening: function() {
 
-        // Create graph and paper objects for the, temporary, dragging phase.
-        // Elements travel the following way when the user drags an element from the stencil and drops
-        // it into the main, associated, paper: `[One of the Stencil graphs] -> [_graphDrag] -> [this.options.graph]`.
-        this._graphDrag = new joint.dia.Graph;
-        this._paperDrag = new joint.dia.Paper({
+            this.stopListening();
 
-            el: this.$paperDrag,
-            width: 1,
-            height: 1,
-            model: this._graphDrag
-        });
+            // `cell:pointerdown` on any of the Stencil papers triggers element dragging.
+            _.each(this.papers, _.bind(this.listenTo, this, _, 'cell:pointerdown', this.onDragStart));
+        },
 
-        // `cell:pointerdown` on any of the Stencil papers triggers element dragging.
-        _.each(this.papers, function(paper) {
-            this.listenTo(paper, 'cell:pointerdown', this.onDragStart);
-        }, this);
+        /**
+         * @public
+         * @param {Array.<joint.dia.Element>|Object.<string, Array.<joint.dia.Element>>} cells Array of cells or hash-map
+         * of cells where key is group name.
+         * @param {string=} group
+         */
+        load: function(cells, group) {
 
-        return this;
-    },
+            if (_.isArray(cells)) {
 
-    // @public Populate stencil with `cells`. If `group` is passed, only the graph in the named group
-    // will be populated.
-    load: function(cells, group) {
+                this.loadGroup(cells, group);
 
-        var graph = this.graphs[group || '__default__'];
-        if (graph) {
+            } else if (_.isObject(cells)) {
+
+                _.each(this.options.groups, function(group, name) {
+                    if (cells[name]) {
+                        this.loadGroup(cells[name], name);
+                    }
+                }, this);
+            }
+        },
+
+        /**
+         * @public
+         * Populate stencil with `cells`. If `group` is passed, only the graph in the named group
+         * will be populated
+         * @param {Array.<joint.dia.Element>} cells
+         * @param {string=} group Mandatory in 'group' mode  - 'options.groups' property is defined
+         */
+        loadGroup: function(cells, group) {
+
+            var graph = this.getGraph(group);
+
             graph.resetCells(cells);
             // If height is not defined in neither the global `options.height` or local
             // `height` for this specific group, fit the paper to the content automatically.
             var paperHeight = this.options.height;
-            if (group && this.options.groups[group]) {
-                paperHeight = this.options.groups[group].height;
+
+            if (group) {
+                paperHeight = this.getGroup(group).height;
             }
+
+            if (this.isLayoutEnabled()) {
+                this.layoutGroup(graph, this.getGroup(group));
+            }
+
             if (!paperHeight) {
-                this.papers[group || '__default__'].fitToContent(1, 1, this.options.paperPadding || 10);
+                this.getPaper(group).fitToContent({
+                    gridWidth: 1,
+                    gridHeight: 1,
+                    padding: this.options.paperPadding || 10
+                });
             }
-        } else {
-            throw new Error('Stencil: group ' + group + ' does not exist.');
-        }
-    },
+        },
 
-    getGraph: function(group) {
+        /**
+         * @private
+         * @returns {boolean}
+         */
+        isLayoutEnabled: function() {
 
-        return this.graphs[group || '__default__'];
-    },
+            return !!(this.options.layout);
+        },
 
-    getPaper: function(group) {
+        /**
+         * @public
+         * @param {string=} group
+         * @returns {joint.dia.Graph}
+         */
+        getGraph: function(group) {
 
-        return this.papers[group || '__default__'];
-    },
+            var graph =  this.graphs[group || '__default__'];
+            if (!graph) {
+                throw new Error('Stencil: group ' + group + ' does not exist.');
+            }
 
-    onDragStart: function(cellView, evt) {
+            return graph;
+        },
 
-        evt.preventDefault();
-        // Start the dragging batch
-        // Batch might contain `add`, `change:parent`, `change:embeds` events.
-        this.options.graph.trigger('batch:start', { batchName: 'stencil-drag' });
+        /**
+         * @public
+         * @param {string} group
+         * @returns {joint.dia.Paper}
+         */
+        getPaper: function(group) {
 
-        this.$el.addClass('dragging');
-        this._paperDrag.$el.addClass('dragging');
-        // Move the .stencil-paper-drag element to the document body so that even though
-        // the stencil is set to overflow: hidden or auto, the .stencil-paper-drag will
-        // be visible.
-        $(document.body).append(this._paperDrag.$el);
+            return this.papers[group || '__default__'];
+        },
 
-        this._clone = cellView.model.clone();
-        this._cloneBbox = cellView.getBBox();
+        preparePaperForDragging: function(cellView, clientX, clientY) {
 
-        // Leave some padding so that e.g. the cell shadow or thick border is visible.
-        // This workaround can be removed once browsers start supporting getStrokeBBox() (http://www.w3.org/TR/SVG2/types.html#__svg__SVGGraphicsElement__getStrokeBBox).
-        var padding = 5;
+            var paperDrag = this._paperDrag;
+            var graphDrag = this._graphDrag;
 
-        // Compute the difference between the real (view) bounding box and the model bounding box position.
-        // This makes sure that elements that are outside the model bounding box get accounted for too.
-        var shift = g.point(this._cloneBbox.x - this._clone.get('position').x, this._cloneBbox.y - this._clone.get('position').y);
+            // Move the .stencil-paper-drag element to the document body so that even though
+            // the stencil is set to overflow: hidden or auto, the .stencil-paper-drag will
+            // be visible.
+            paperDrag.$el.addClass('dragging').appendTo(document.body);
 
-        this._clone.set('position', { x: -shift.x + padding, y: -shift.y + padding }).addTo(this._graphDrag);
-        this._cloneView = this._clone.findView(this._paperDrag);
-        this._clonePosition = _.clone(this._clone.position());
+            var clone = this.options.dragStartClone(cellView.model).position(0,0);
+            var cloneBBox = clone.getBBox();
 
-        this._paperDrag.setDimensions(this._cloneBbox.width + 2 * padding, this._cloneBbox.height + 2 * padding);
+            // Leave some padding so that e.g. the cell shadow or thick border is visible.
+            // This workaround can be removed once browsers start supporting getStrokeBBox() (http://www.w3.org/TR/SVG2/types.html#__svg__SVGGraphicsElement__getStrokeBBox).
+            var padding = 5;
 
-        // Safari uses `document.body.scrollTop` only while Firefox uses `document.documentElement.scrollTop` only.
-        // Google Chrome is the winner here as it uses both.
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var snaplines = this.options.snaplines;
+            if (snaplines) {
+                padding += snaplines.options.distance;
+            }
 
-        // Offset the paper so that the mouse cursor points to the center of the stencil element.
-        // Also, store the original coordinates so that we know where to return if `dropAnimation` is enabled.
-        this._paperDragOriginalOffset = {
-            left: evt.clientX - this._cloneBbox.width / 2,
-            top: evt.clientY + scrollTop - this._cloneBbox.height / 2
-        };
+            if (snaplines || this.options.scaleClones) {
+                // Scaling the paper drag, so the clone view match the
+                // size of the resulting size as would be placed in the paper.
+                var paperScale = V(this.options.paper.viewport).scale();
+                paperDrag.scale(paperScale.sx, paperScale.sy);
+                padding *= Math.max(paperScale.sx, paperScale.sy);
+            } else {
+                // restore scale
+                paperDrag.scale(1, 1);
+            }
 
-        this._paperDrag.$el.offset(this._paperDragOriginalOffset);
-    },
+            clone.position(0, 0).addTo(graphDrag);
 
-    onDrag: function(evt) {
+            var cloneView = clone.findView(paperDrag);
 
-        if (this._clone) {
+            // Do not automatically update the cell view while dragging.
+            cloneView.stopListening();
 
-            evt.preventDefault();
-            evt = joint.util.normalizeEvent(evt);
+            paperDrag.fitToContent({ padding: padding, allowNewOrigin: 'any' });
 
+            // Distance from the original cellView center and its origin
+            var cellViewBBox = cellView.getBBox();
+            var cellBBox = cellView.model.getBBox();
+            this._cellViewDeltaOrigin = {
+                x: cellBBox.x - cellViewBBox.x - cellViewBBox.width / 2,
+                y: cellBBox.y - cellViewBBox.y - cellViewBBox.height / 2
+            };
+
+            this._clone = clone;
+            this._cloneBBox = cloneBBox;
+            this._cloneView = cloneView;
+            this._cloneViewBBox = cloneView.getBBox();
+            this._paperDragInitialOffset = this.setPaperDragOffset(clientX, clientY);
+            this._paperDragPadding = padding;
+        },
+
+        setPaperDragOffset: function(clientX, clientY) {
+
+            // Safari uses `document.body.scrollTop` only while Firefox uses `document.documentElement.scrollTop` only.
+            // Google Chrome is the winner here as it uses both.
             var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-            var x = evt.clientX - this._cloneBbox.width / 2;
-            var y = evt.clientY + scrollTop - this._cloneBbox.height / 2;
 
             // Offset the paper so that the mouse cursor points to the center of the stencil element.
-            this._paperDrag.$el.offset({ left: x, top: y });
+            // Also, store the original coordinates so that we know where to return if `dropAnimation` is enabled.
+            var cloneViewBBox = this._cloneViewBBox;
+            var paperDragPadding = this._paperDragPadding;
+            var paperDragOffset = {
+                left: clientX - cloneViewBBox.width / 2 - paperDragPadding,
+                top: clientY - cloneViewBBox.height / 2 + scrollTop - paperDragPadding
+            };
 
-            if (this.options.paper.options.embeddingMode && this._cloneView) {
+            this._paperDrag.$el.offset(paperDragOffset);
 
-                // Find the position of the clone as it would be in the paper's graph.
-                var localPoint = this.options.paper.clientToLocalPoint({ x: x, y: y });
-                localPoint.x += this._clonePosition.x;
-                localPoint.y += this._clonePosition.y;
+            return paperDragOffset;
+        },
 
-                // We don't want the clone view react on change:position change.
-                // But we want processEmbedding to take the clone new position into account,
-                // when it looks for models for which the clone can be embedded in.
-                this._clone.set('position', localPoint, { silent: true });
-                this._cloneView.processEmbedding({ model: this._clone, paper: this.options.paper });
+        setCloneLocalPosition: function(clientX, clientY) {
+
+            var localPosition = this.options.paper.clientToLocalPoint({ x: clientX, y: clientY });
+
+            localPosition.x -= this._cloneBBox.width / 2;
+            localPosition.y -= this._cloneBBox.height / 2;
+
+            // We don't want the clone view react on change:position change.
+            // But we want processEmbedding to take the clone new position into account,
+            // when it looks for models for which the clone can be embedded in.
+            this._clone.set('position', localPosition);
+
+            return localPosition;
+        },
+
+        onDragStart: function(cellView, evt) {
+
+            evt.preventDefault();
+            // Start the dragging batch
+            // Batch might contain `add`, `change:parent`, `change:embeds` events.
+            this.options.graph.startBatch('stencil-drag');
+
+            this.$el.addClass('dragging');
+            this.preparePaperForDragging(cellView, evt.clientX, evt.clientY);
+
+            var localPoint = this.setCloneLocalPosition(evt.clientX, evt.clientY);
+            var cloneView = this._cloneView;
+
+            // snaplines
+            var snaplines = this.options.snaplines;
+            if (snaplines) {
+
+                snaplines.captureCursorOffset(this._cloneView, evt, localPoint.x, localPoint.y);
+
+                cloneView.listenTo(this._clone, 'change:position', _.bind(this.onCloneSnapped, this));
             }
-        }
-    },
+        },
 
-    onDragEnd: function(evt) {
+        onCloneSnapped: function(clone, position, opt) {
 
-        if (this._clone && this._cloneBbox) {
+            // Snapline plugin adds `snapped` flag when changing element's position
+            if (opt.snapped) {
+                var cloneBBox = this._cloneBBox;
+                // Set the position of the element to it's original drag paper position
+                // and add the snapped offset. This is required by the view `translate` method,
+                // which updates the element view position based on the model values.
+                clone.position(cloneBBox.x + opt.tx, cloneBBox.y + opt.ty, { silent: true });
+                this._cloneView.translate();
+                // Restore the element's local position
+                clone.set('position', position, { silent: true });
 
-            evt = joint.util.normalizeEvent(evt);
-
-            // restore the original clone position if this was changed during the
-            // embedding
-            this._clone.set('position', this._clonePosition, { silent: true });
-
-            var cellClone = this._clone.clone();
-            var dropped = this.drop(evt, cellClone, this._cloneBbox);
-
-            if (!dropped) {
-
-                // Tell the outside world that the drop was not successful.
-                this.trigger('drop:invalid', evt, cellClone);
-            }
-
-            if (!dropped && this.options.dropAnimation) {
-
-                var duration = _.isObject(this.options.dropAnimation) ? this.options.dropAnimation.duration : 150;
-                var easing = _.isObject(this.options.dropAnimation) ? this.options.dropAnimation.easing : 'swing';
-                this._paperDrag.$el.animate(this._paperDragOriginalOffset, duration, easing, this.onDropEnd);
+                this._cloneSnapOffset = { x: opt.tx, y: opt.ty };
 
             } else {
 
-                this.onDropEnd();
+                this._cloneSnapOffset = null;
             }
+        },
 
-            if (this.options.paper.options.embeddingMode && this._cloneView) {
-                this._cloneView.finalizeEmbedding({ model: cellClone, paper: this.options.paper });
-            }
+        onDrag: function(evt) {
 
-            // End the dragging batch
-            this.options.graph.trigger('batch:stop', { batchName: 'stencil-drag' });
-        }
-    },
+            var cloneView = this._cloneView;
+            if (cloneView) {
 
-    onDropEnd: function() {
+                evt.preventDefault();
+                evt = joint.util.normalizeEvent(evt);
 
-        // Move the .stencil-paper-drag from the document body back to the stencil element.
-        this.$el.append(this._paperDrag.$el);
+                var clientX = evt.clientX;
+                var clientY = evt.clientY;
 
-        this.$el.removeClass('dragging');
-        this._paperDrag.$el.removeClass('dragging');
+                this.setPaperDragOffset(clientX, clientY);
 
-        this._clone.remove();
-        this._clone = undefined;
-    },
+                var localPoint = this.setCloneLocalPosition(clientX, clientY);
 
-    // Return `true` if the point `p` falls into the valid area for dropping.
-    insideValidArea: function(p) {
+                var embedding = this.options.paper.options.embeddingMode;
+                var snaplines = this.options.snaplines;
+                var insideValidArea = (embedding || snaplines) && this.insideValidArea({ x: clientX, y: clientY });
 
-        var paper = this.options.paper;
-        var paperScroller = this.options.paperScroller;
-
-        var stencilArea = this.getDropArea(this.$el);
-        var validArea;
-
-        if (!paperScroller) {
-
-            // No paper scroller used. Use entire paper area.
-            validArea = this.getDropArea(paper.$el);
-
-        } else if (paperScroller.options.autoResizePaper) {
-
-            // Paper scroller used with auto-resize enabled.
-            // We can use the entire paperScroller area for drop.
-            validArea = this.getDropArea(paperScroller.$el);
-
-        } else {
-
-            // Paper scroller used with auto-resize disabled.
-            // The element can be dropped only into the visible part of the paper.
-            var scrollerArea = this.getDropArea(paperScroller.$el);
-            var paperArea = this.getDropArea(paper.$el);
-
-            validArea = paperArea.intersect(scrollerArea);
-        }
-
-        // Check if the cell is dropped inside the paper but not inside the stencil.
-        // Check for the stencil is here because the paper can go "below" the stencil
-        // if the paper is larger than the ui.PaperScroller area.
-        if (validArea && validArea.containsPoint(p) && !stencilArea.containsPoint(p)) return true;
-
-        return false;
-    },
-
-    getDropArea: function($el) {
-
-        var position = $el.offset();
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-
-        return g.rect({
-            x: position.left + parseInt($el.css('border-left-width'), 10) - scrollLeft,
-            y: position.top + parseInt($el.css('border-top-width'), 10) - scrollTop,
-            width: $el.innerWidth(),
-            height: $el.innerHeight()
-        });
-    },
-
-    drop: function(evt, cell, cellViewBBox) {
-
-        var paper = this.options.paper;
-        var graph = this.options.graph;
-
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-
-        var p = { x: evt.clientX, y: evt.clientY };
-
-        // Check if the cell is dropped inside the paper.
-        if (this.insideValidArea(p)) {
-
-            var pointTransformed = paper.clientToLocalPoint(p);
-
-            var cellBBox = cell.getBBox();
-            pointTransformed.x += cellBBox.x - cellViewBBox.width / 2;
-            pointTransformed.y += cellBBox.y - cellViewBBox.height / 2;
-
-            cell.set('position', {
-                x: g.snapToGrid(pointTransformed.x, paper.options.gridSize),
-                y: g.snapToGrid(pointTransformed.y, paper.options.gridSize)
-            });
-
-            // `z` level will be set automatically in the `this.graph.addCell()` method.
-            // We don't want the cell to have the same `z` level as it had in the temporary paper.
-            cell.unset('z');
-
-            graph.addCell(cell, { stencil: this.cid });
-            return true;
-        }
-
-        return false;
-    },
-
-    filter: function(keyword, cellAttributesMap) {
-
-        // a searching mode when the keyword consists of lowercase only
-        // e.g 'keyword' matches 'Keyword' but not other way round
-        var lowerCaseOnly = keyword.toLowerCase() == keyword;
-
-        // We go through each paper.model, filter its cells and watch whether we found a match
-        // yet or not.
-        var match = _.reduce(this.papers, function(wasMatch, paper, group) {
-
-            // an array of cells that matches a search criteria
-            var matchedCells = paper.model.get('cells').filter(function(cell) {
-
-                var cellView = paper.findViewByModel(cell);
-
-                // check whether the currect cell matches a search criteria
-                var cellMatch = !keyword || _.some(cellAttributesMap, function(paths, type) {
-
-                    if (type != '*' && cell.get('type') != type) {
-                        // type is not universal and doesn't match the current cell
-                        return false;
+                if (embedding) {
+                    if (insideValidArea) {
+                        cloneView.processEmbedding({ paper: this.options.paper });
+                    } else {
+                        cloneView.clearEmbedding();
                     }
+                }
 
-                    // find out if any of specific cell attributes matches a search criteria
-                    var attributeMatch = _.some(paths, function(path) {
+                if (snaplines) {
+                    if (insideValidArea) {
+                        snaplines.snapWhileMoving(cloneView, evt, localPoint.x, localPoint.y);
+                    } else {
+                        snaplines.hide();
+                    }
+                }
+            }
+        },
 
-                        var value = joint.util.getByPath(cell.attributes, path, '/');
+        onDragEnd: function(evt) {
 
-                        if (_.isUndefined(value) || _.isNull(value)) {
-                            // if value undefined than current attribute doesn't match
+            var clone = this._clone;
+            if (clone) {
+
+                evt = joint.util.normalizeEvent(evt);
+
+                var cloneView = this._cloneView;
+                var cloneBBox = this._cloneBBox;
+                var snapOffset = this._cloneSnapOffset;
+
+                var x = cloneBBox.x;
+                var y = cloneBBox.y;
+                // add the element offset caused by the snaplines
+                if (snapOffset) {
+                    x += snapOffset.x;
+                    y += snapOffset.y;
+                }
+
+                // Restore the original clone position if this was changed during the embedding.
+                clone.position(x, y, { silent: true });
+
+                var cellClone = this.options.dragEndClone(clone);
+                var dropped = this.drop(evt, cellClone);
+
+                if (!dropped) {
+
+                    this.onDropInvalid(evt, cellClone);
+
+                } else {
+
+                    this.onDropEnd();
+                }
+
+                // embedding
+                if (this.options.paper.options.embeddingMode && cloneView) {
+                    cloneView.finalizeEmbedding({ model: cellClone, paper: this.options.paper });
+                }
+
+                // snaplines
+                // it's hide on document mouseup by the plugin itself
+
+                // End the dragging batch.
+                this.options.graph.stopBatch('stencil-drag');
+            }
+        },
+
+        onDropEnd: function() {
+
+            // Move the .stencil-paper-drag from the document body back to the stencil element.
+            this.$el.append(this._paperDrag.$el);
+
+            this.$el.removeClass('dragging');
+            this._paperDrag.$el.removeClass('dragging');
+
+            this._clone.remove();
+            this._clone = null;
+            this._cloneView = null;
+            this._cloneSnapOffset = null;
+        },
+
+        onDropInvalid: function(evt, cellClone) {
+
+            if (this._clone) {
+
+                evt = joint.util.normalizeEvent(evt);
+
+                cellClone = cellClone || this.options.dragEndClone(this._clone);
+
+                // Tell the outside world that the drop was not successful.
+                this.trigger('drop:invalid', evt, cellClone);
+
+                var dropAnimation = this.options.dropAnimation;
+                if (dropAnimation) {
+
+                    var duration = _.isObject(dropAnimation) ? dropAnimation.duration : 150;
+                    var easing = _.isObject(dropAnimation) ? dropAnimation.easing : 'swing';
+                    this._paperDrag.$el.animate(this._paperDragInitialOffset, duration, easing, this.onDropEnd);
+
+                } else {
+
+                    this.onDropEnd();
+                }
+            }
+        },
+
+        // Return `true` if the point `p` falls into the valid area for dropping.
+        insideValidArea: function(p) {
+
+            var paper = this.options.paper;
+            var paperScroller = this.options.paperScroller;
+
+            var stencilArea = this.getDropArea(this.$el);
+            var validArea;
+
+            if (!paperScroller) {
+
+                // No paper scroller used. Use entire paper area.
+                validArea = this.getDropArea(paper.$el);
+
+            } else if (paperScroller.options.autoResizePaper) {
+
+                // Paper scroller used with auto-resize enabled.
+                // We can use the entire paperScroller area for drop.
+                validArea = this.getDropArea(paperScroller.$el);
+
+            } else {
+
+                // Paper scroller used with auto-resize disabled.
+                // The element can be dropped only into the visible part of the paper.
+                var scrollerArea = this.getDropArea(paperScroller.$el);
+                var paperArea = this.getDropArea(paper.$el);
+
+                validArea = paperArea.intersect(scrollerArea);
+            }
+
+            // Check if the cell is dropped inside the paper but not inside the stencil.
+            // Check for the stencil is here because the paper can go "below" the stencil
+            // if the paper is larger than the ui.PaperScroller area.
+            if (validArea && validArea.containsPoint(p) && !stencilArea.containsPoint(p)) return true;
+
+            return false;
+        },
+
+        getDropArea: function($el) {
+
+            var position = $el.offset();
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+
+            return g.rect({
+                x: position.left + parseInt($el.css('border-left-width'), 10) - scrollLeft,
+                y: position.top + parseInt($el.css('border-top-width'), 10) - scrollTop,
+                width: $el.innerWidth(),
+                height: $el.innerHeight()
+            });
+        },
+
+        drop: function(evt, cell) {
+
+            var paper = this.options.paper;
+            var graph = this.options.graph;
+            var p = { x: evt.clientX, y: evt.clientY };
+
+            // Check if the cell is dropped inside the paper.
+            if (this.insideValidArea(p)) {
+
+                var pointTransformed = paper.clientToLocalPoint(p);
+                var cellBBox = cell.getBBox();
+
+                pointTransformed.x += cellBBox.x + this._cellViewDeltaOrigin.x;
+                pointTransformed.y += cellBBox.y + this._cellViewDeltaOrigin.y;
+
+                // Do not snap to grid if the element was previously snapped to certain position.
+                var gridSize = (this._cloneSnapOffset) ? 1 : paper.options.gridSize;
+
+                cell.set('position', {
+                    x: g.snapToGrid(pointTransformed.x, gridSize),
+                    y: g.snapToGrid(pointTransformed.y, gridSize)
+                });
+
+                // `z` level will be set automatically in the `this.graph.addCell()` method.
+                // We don't want the cell to have the same `z` level as it had in the temporary paper.
+                cell.unset('z');
+
+                graph.addCell(cell, { stencil: this.cid });
+                return true;
+            }
+
+            return false;
+        },
+
+        filter: function(keyword, cellAttributesMap) {
+
+            // a searching mode when the keyword consists of lowercase only
+            // e.g 'keyword' matches 'Keyword' but not other way round
+            var lowerCaseOnly = keyword.toLowerCase() == keyword;
+
+            // We go through each paper.model, filter its cells and watch whether we found a match
+            // yet or not.
+            var match = _.reduce(this.papers, function(wasMatch, paper, group) {
+
+                // an array of cells that matches a search criteria
+                var matchedCells = paper.model.get('cells').filter(function(cell) {
+
+                    var cellView = paper.findViewByModel(cell);
+
+                    // check whether the currect cell matches a search criteria
+                    var cellMatch = !keyword || _.some(cellAttributesMap, function(paths, type) {
+
+                        if (type != '*' && cell.get('type') != type) {
+                            // type is not universal and doesn't match the current cell
                             return false;
                         }
 
-                        // convert values to string first (e.g value could be a number)
-                        value = value.toString();
+                        // find out if any of specific cell attributes matches a search criteria
+                        var attributeMatch = _.some(paths, function(path) {
 
-                        if (lowerCaseOnly) {
-                            value = value.toLowerCase();
-                        }
+                            var value = joint.util.getByPath(cell.attributes, path, '/');
 
-                        return value.indexOf(keyword) >= 0;
+                            if (_.isUndefined(value) || _.isNull(value)) {
+                                // if value undefined than current attribute doesn't match
+                                return false;
+                            }
+
+                            // convert values to string first (e.g value could be a number)
+                            value = value.toString();
+
+                            if (lowerCaseOnly) {
+                                value = value.toLowerCase();
+                            }
+
+                            return value.indexOf(keyword) >= 0;
+                        });
+
+                        return attributeMatch;
                     });
 
-                    return attributeMatch;
+                    // each element that does not match a search has 'unmatched' css class
+                    V(cellView.el).toggleClass('unmatched', !cellMatch);
+
+                    return cellMatch;
+
+                }, this);
+
+                var isMatch = !_.isEmpty(matchedCells);
+
+                // create a graph contains only filtered elements.
+                var filteredGraph = (new joint.dia.Graph).resetCells(matchedCells);
+
+                // let the outside world know that the group was filtered
+                this.trigger('filter', filteredGraph, group, keyword);
+
+                if (this.isLayoutEnabled()) {
+                    this.layoutGroup(filteredGraph, this.getGroup(group));
+                }
+
+                if (this.$groups[group]) {
+                    // add 'unmatched' class when filter matches no elements in the group
+                    this.$groups[group].toggleClass('unmatched', !isMatch);
+                }
+
+                paper.fitToContent({
+                    gridWidth: 1,
+                    gridHeight: 1,
+                    padding: this.options.paperPadding || 10
                 });
 
-                // each element that does not match a search has 'unmatched' css class
-                V(cellView.el).toggleClass('unmatched', !cellMatch);
+                return wasMatch || isMatch;
 
-                return cellMatch;
+            }, false, this);
 
-            }, this);
+            // When no match found we add 'not-found' class on the stencil element
+            this.$el.toggleClass('not-found', !match);
+        },
 
-            var isMatch = !_.isEmpty(matchedCells);
+        /**
+         * @private
+         * @param {string} name
+         * @returns {Object}
+         */
+        getGroup: function(name) {
 
-            // create a graph contains only filtered elements.
-            var filteredGraph = (new joint.dia.Graph).resetCells(matchedCells);
+            return this.options.groups && this.options.groups[name] || {};
+        },
 
-            // let the outside world know that the group was filtered
-            this.trigger('filter', filteredGraph, group);
+        /**
+         * @private
+         * @param {jQuery.Event} evt
+         */
+        onSearch: function(evt) {
 
-            if (this.$groups[group]) {
-                // add 'unmatched' class when filter matches no elements in the group
-                this.$groups[group].toggleClass('unmatched', !isMatch);
+            this.filter(evt.target.value, this.options.search);
+        },
+
+        /**
+         * @private
+         */
+        pointerFocusIn: function() {
+            this.$el.addClass('is-focused');
+        },
+
+        /**
+         * @private
+         */
+        pointerFocusOut: function() {
+            this.$el.removeClass('is-focused');
+        },
+
+        /**
+         * @private
+         * @param {jQuery.Event} evt
+         */
+        onGroupLabelClick: function(evt) {
+
+            // Prevent default action for iPad not to handle this event twice.
+            evt.preventDefault();
+
+            var $group = $(evt.target).closest('.group');
+            this.toggleGroup($group.data('name'));
+        },
+
+        /**
+         * @public
+         * @param {string} name
+         */
+        toggleGroup: function(name) {
+
+            this.$('.group[data-name="' + name + '"]').toggleClass('closed');
+        },
+
+        /**
+         * @public
+         * @param {string} name
+         */
+        closeGroup: function(name) {
+
+            this.$('.group[data-name="' + name + '"]').addClass('closed');
+        },
+
+        /**
+         * @public
+         * @param {string} name
+         */
+        openGroup: function(name) {
+
+            this.$('.group[data-name="' + name + '"]').removeClass('closed');
+        },
+
+        /**
+         * @public
+         * @param {string} name
+         */
+        isGroupOpen: function(name) {
+
+            return !this.$('.group[data-name="' + name + '"]').hasClass('closed');
+        },
+
+        /**
+         * @public
+         */
+        closeGroups: function() {
+
+            this.$('.group').addClass('closed');
+        },
+
+        /**
+         * @public
+         */
+        openGroups: function() {
+
+            this.$('.group').removeClass('closed');
+        },
+
+        /**
+         * @private
+         */
+        onRemove: function() {
+
+            _.invoke(this.papers, 'remove');
+            this.papers = {};
+
+            if (this._paperDrag) {
+                this._paperDrag.remove();
+                this._paperDrag = null;
             }
 
-            paper.fitToContent(1, 1, this.options.paperPadding || 10);
-
-            return wasMatch || isMatch;
-
-        }, false, this);
-
-        // When no match found we add 'not-found' class on the stencil element
-        this.$el.toggleClass('not-found', !match);
-    },
-
-    onSearch: function(evt) {
-
-        this.filter(evt.target.value, this.options.search);
-    },
-
-    onGroupLabelClick: function(evt) {
-
-        // Prevent default action for iPad not to handle this event twice.
-        evt.preventDefault();
-
-        var $group = $(evt.target).closest('.group');
-        this.toggleGroup($group.data('name'));
-    },
-
-    toggleGroup: function(name) {
-
-        this.$('.group[data-name="' + name + '"]').toggleClass('closed');
-    },
-
-    closeGroup: function(name) {
-
-        this.$('.group[data-name="' + name + '"]').addClass('closed');
-    },
-
-    openGroup: function(name) {
-
-        this.$('.group[data-name="' + name + '"]').removeClass('closed');
-    },
-
-    closeGroups: function() {
-
-        this.$('.group').addClass('closed');
-    },
-
-    openGroups: function() {
-
-        this.$('.group').removeClass('closed');
-    },
-
-    onRemove: function() {
-
-        _.invoke(this.papers, 'remove');
-        this.papers = {};
-
-        if (this._paperDrag) {
-            this._paperDrag.remove();
-            this._paperDrag = null;
+            $(document.body)
+                .off('.stencil', this.onDrag)
+                .off('.stencil', this.onDragEnd);
+            $(window)
+                .off('.stencil', this.onDragEnd);
         }
+    });
 
-        $(document.body).off('.stencil', this.onDrag).off('.stencil', this.onDragEnd);
-    }
-});
-
+}(joint, _));

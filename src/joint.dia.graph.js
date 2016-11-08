@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -19,10 +19,6 @@ joint.dia.GraphCells = Backbone.Collection.extend({
     cellNamespace: joint.shapes,
 
     initialize: function(models, opt) {
-
-        // Backbone automatically doesn't trigger re-sort if models attributes are changed later when
-        // they're already in the collection. Therefore, we're triggering sort manually here.
-        this.on('change:z', this.sort, this);
 
         // Set the optional namespace where all model classes are defined.
         if (opt.cellNamespace) {
@@ -60,6 +56,8 @@ joint.dia.GraphCells = Backbone.Collection.extend({
 
 joint.dia.Graph = Backbone.Model.extend({
 
+    _batches: {},
+
     initialize: function(attrs, opt) {
 
         opt = opt || {};
@@ -77,6 +75,11 @@ joint.dia.Graph = Backbone.Model.extend({
         // Make all the events fired in the `cells` collection available.
         // to the outside world.
         cells.on('all', this.trigger, this);
+
+        // Backbone automatically doesn't trigger re-sort if models attributes are changed later when
+        // they're already in the collection. Therefore, we're triggering sort manually here.
+        this.on('change:z', this._sortOnChangeZ, this);
+        this.on('batch:stop', this._onBatchStop, this);
 
         // `joint.dia.Graph` keeps an internal data structure (an adjacency list)
         // for fast graph queries. All changes that affect the structure of the graph
@@ -105,8 +108,22 @@ joint.dia.Graph = Backbone.Model.extend({
         cells.on('reset', this._restructureOnReset, this);
         cells.on('change:source', this._restructureOnChangeSource, this);
         cells.on('change:target', this._restructureOnChangeTarget, this);
-
         cells.on('remove', this._removeCell, this);
+    },
+
+    _sortOnChangeZ: function() {
+
+        if (!this.hasActiveBatch('to-front') && !this.hasActiveBatch('to-back')) {
+            this.get('cells').sort();
+        }
+    },
+
+    _onBatchStop: function(data) {
+
+        var batchName = data && data.batchName;
+        if ((batchName === 'to-front' || batchName === 'to-back') && !this.hasActiveBatch(batchName)) {
+            this.get('cells').sort();
+        }
     },
 
     _restructureOnAdd: function(cell) {
@@ -125,6 +142,7 @@ joint.dia.Graph = Backbone.Model.extend({
             this._nodes[cell.id] = true;
         }
     },
+
     _restructureOnRemove: function(cell) {
 
         if (cell.isLink()) {
@@ -141,6 +159,7 @@ joint.dia.Graph = Backbone.Model.extend({
             delete this._nodes[cell.id];
         }
     },
+
     _restructureOnReset: function(cells) {
 
         // Normalize into an array of cells. The original `cells` is GraphCells Backbone collection.
@@ -153,6 +172,7 @@ joint.dia.Graph = Backbone.Model.extend({
 
         _.each(cells, this._restructureOnAdd, this);
     },
+
     _restructureOnChangeSource: function(link) {
 
         var prevSource = link.previous('source');
@@ -164,6 +184,7 @@ joint.dia.Graph = Backbone.Model.extend({
             (this._out[source.id] || (this._out[source.id] = {}))[link.id] = true;
         }
     },
+
     _restructureOnChangeTarget: function(link) {
 
         var prevTarget = link.previous('target');
@@ -239,7 +260,7 @@ joint.dia.Graph = Backbone.Model.extend({
 
         if (collection.length === 0) return this;
 
-        this.trigger('batch:start', { batchName: 'clear' });
+        this.startBatch('clear', opt);
 
         // The elements come after the links.
         var cells = collection.sortBy(function(cell) {
@@ -256,7 +277,7 @@ joint.dia.Graph = Backbone.Model.extend({
 
         } while (cells.length > 0);
 
-        this.trigger('batch:stop', { batchName: 'clear' });
+        this.stopBatch('clear');
 
         return this;
     },
@@ -272,10 +293,6 @@ joint.dia.Graph = Backbone.Model.extend({
             // to the `graph` right after the actual model is created. This happens in the `model()` function
             // of `joint.dia.GraphCells`.
             attrs = cell;
-        }
-
-        if (_.isUndefined(attrs.z)) {
-            attrs.z = this.maxZIndex() + 1;
         }
 
         if (!_.isString(attrs.type)) {
@@ -298,20 +315,36 @@ joint.dia.Graph = Backbone.Model.extend({
             return this.addCells(cell, options);
         }
 
+        if (cell instanceof Backbone.Model) {
+
+            if (!cell.has('z')) {
+                cell.set('z', this.maxZIndex() + 1);
+            }
+
+        } else if (_.isUndefined(cell.z)) {
+
+            cell.z = this.maxZIndex() + 1;
+        }
+
         this.get('cells').add(this._prepareCell(cell), options || {});
 
         return this;
     },
 
-    addCells: function(cells, options) {
+    addCells: function(cells, opt) {
 
-        options = options || {};
-        options.position = cells.length;
+        if (cells.length) {
 
-        _.each(cells, function(cell) {
-            options.position--;
-            this.addCell(cell, options);
-        }, this);
+            cells = _.flattenDeep(cells);
+            opt.position = cells.length;
+
+            this.startBatch('add');
+            _.each(cells, function(cell) {
+                opt.position--;
+                this.addCell(cell, opt);
+            }, this);
+            this.stopBatch('add');
+        }
 
         return this;
     },
@@ -322,6 +355,18 @@ joint.dia.Graph = Backbone.Model.extend({
     resetCells: function(cells, opt) {
 
         this.get('cells').reset(_.map(cells, this._prepareCell, this), opt);
+
+        return this;
+    },
+
+    removeCells: function(cells, opt) {
+
+        if (cells.length) {
+
+            this.startBatch('remove');
+            _.invoke(cells, 'remove', opt);
+            this.stopBatch('remove');
+        }
 
         return this;
     },
@@ -553,23 +598,14 @@ joint.dia.Graph = Backbone.Model.extend({
     // the source and target of the link `L2` is changed to point to `A2` and `B2`.
     cloneCells: function(cells) {
 
+        cells = _.unique(cells);
+
         // A map of the form [original cell ID] -> [clone] helping
         // us to reconstruct references for source/target and parent/embeds.
         // This is also the returned value.
-        var cloneMap = {};
-        // A map [original cell ID] -> [Array of original embeds].
-        // This mapping caches the `embeds` array of original cells.
-        // This is needed because when using a shallow clone (without `deep` set to `true`),
-        // `embeds` are reset (see joint.dia.Cell >> clone()).
-        var embedsCache = {};
-
-        _.each(cells, function(cell) {
-            if (!cloneMap[cell.id]) {
-                var clone = cell.clone();
-                cloneMap[cell.id] = clone;
-                embedsCache[clone.id] = cell.get('embeds');
-            }
-        });
+        var cloneMap = _.transform(cells, function(map, cell) {
+            map[cell.id] = cell.clone();
+        }, {});
 
         _.each(cells, function(cell) {
 
@@ -591,21 +627,24 @@ joint.dia.Graph = Backbone.Model.extend({
                 }
             }
 
-            var parent = clone.get('parent');
+            // Find the parent of the original cell
+            var parent = cell.get('parent');
             if (parent && cloneMap[parent]) {
                 clone.set('parent', cloneMap[parent].id);
             }
 
-            if (embedsCache[clone.id]) {
-                var newEmbeds = [];
-                _.each(embedsCache[clone.id], function(embed) {
-                    if (cloneMap[embed]) {
-                        newEmbeds.push(cloneMap[embed].id);
-                    } else {
-                        newEmbeds.push(embed);
-                    }
-                });
-                clone.set('embeds', newEmbeds);
+            // Find the embeds of the original cell
+            var embeds = _.reduce(cell.get('embeds'), function(newEmbeds, embed) {
+                // Embedded cells that are not being cloned can not be carried
+                // over with other embedded cells.
+                if (cloneMap[embed]) {
+                    newEmbeds.push(cloneMap[embed].id);
+                }
+                return newEmbeds;
+            }, []);
+
+            if (!_.isEmpty(embeds)) {
+                clone.set('embeds', embeds);
             }
         });
 
@@ -865,7 +904,6 @@ joint.dia.Graph = Backbone.Model.extend({
 
             var source = link.get('source');
             var target = link.get('target');
-            var loop = link.hasLoop(opt);
 
             // Discard if it is a point.
             if (inbound && _.has(source, 'id') && source.id === elementB.id) {
@@ -909,6 +947,7 @@ joint.dia.Graph = Backbone.Model.extend({
     // Find all elements in given area
     findModelsInArea: function(rect, opt) {
 
+        rect = g.rect(rect);
         opt = _.defaults(opt || {}, { strict: false });
 
         var method = opt.strict ? 'containsRect' : 'intersect';
@@ -934,20 +973,25 @@ joint.dia.Graph = Backbone.Model.extend({
         });
     },
 
-    // Return the bounding box of all cells in array provided. If no array
-    // provided returns bounding box of all cells. Links are being ignored.
-    getBBox: function(cells) {
 
-        cells = cells || this.collection.models;
+    // Return bounding box of all elements.
+    getBBox: function(cells, opt) {
+
+        return this.getCellsBBox(cells || this.getElements(), opt);
+    },
+
+    // Return the bounding box of all cells in array provided.
+    // Links are being ignored.
+    getCellsBBox: function(cells, opt) {
 
         return _.reduce(cells, function(memo, cell) {
             if (cell.isLink()) return memo;
             if (memo) {
-                return memo.union(cell.getBBox());
+                return memo.union(cell.getBBox(opt));
             } else {
-                return cell.getBBox();
+                return cell.getBBox(opt);
             }
-        }, undefined);
+        }, null);
     },
 
     translate: function(dx, dy, opt) {
@@ -958,5 +1002,50 @@ joint.dia.Graph = Backbone.Model.extend({
         });
 
         _.invoke(cells, 'translate', dx, dy, opt);
+    },
+
+    resize: function(width, height, opt) {
+
+        return this.resizeCells(width, height, this.getCells(), opt);
+    },
+
+    resizeCells: function(width, height, cells, opt) {
+
+        // `getBBox` method returns `null` if no elements provided.
+        // i.e. cells can be an array of links
+        var bbox = this.getCellsBBox(cells);
+        if (bbox) {
+            var sx = Math.max(width / bbox.width, 0);
+            var sy = Math.max(height / bbox.height, 0);
+            _.invoke(cells, 'scale', sx, sy, bbox.origin(), opt);
+        }
+
+        return this;
+    },
+
+    startBatch: function(name, data) {
+
+        data = data || {};
+        this._batches[name] = (this._batches[name] || 0) + 1;
+
+        return this.trigger('batch:start', _.extend({}, data, { batchName: name }));
+    },
+
+    stopBatch: function(name, data) {
+
+        data = data || {};
+        this._batches[name] = (this._batches[name] || 0) - 1;
+
+        return this.trigger('batch:stop', _.extend({}, data, { batchName: name }));
+    },
+
+    hasActiveBatch: function(name) {
+        if (name) {
+            return this._batches[name];
+        } else {
+            return _.any(this._batches, function(batches) { return batches > 0; });
+        }
     }
 });
+
+joint.util.wrapWith(joint.dia.Graph.prototype, ['resetCells', 'addCells', 'removeCells'], 'cells');

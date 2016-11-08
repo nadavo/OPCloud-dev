@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -14,7 +14,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 // Tree Graph Layout.
 // ==================
 
-;(function(joint, Backbone, _, g) {
+(function(joint, Backbone, _, g) {
 
     // Layout Siblings
     // ===============
@@ -29,8 +29,10 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         this.layoutAreas = this.sortLayoutAreas(layoutAreas);
         this.parentArea = parentArea;
         this.siblingGap = opt.siblingGap;
-        this.computeSize(opt);
-    };
+        if (this.exists()) {
+            this.computeSize(opt);
+        }
+    }
 
     _.extend(LayoutSiblings.prototype, {
 
@@ -78,11 +80,15 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             return closestArea.siblingRank - 1;
         },
 
+        getFirstChildConnectionPoints: function() {
+
+            return [];
+        },
+
         getConnectionPoints: function(point, opt) {
 
-            // this is wrong, method should always return points.
             if (!this.exists()) {
-                return [];
+                return this.getFirstChildConnectionPoints(point);
             }
 
             var deltaCoordinates = {
@@ -119,6 +125,11 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
     var VerticalLayoutSiblings = LayoutSiblings.extend({
 
+        // Y coordinate of the most top sibling
+        getTopDY: function() {
+            return -this.height / 2;
+        },
+
         findAreaByPoint: function(point) {
 
             return _.find(this.layoutAreas, function(area) {
@@ -128,22 +139,41 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         computeSize: function(opt) {
 
-            this.height = _.sum(this.layoutAreas, 'height') + this.sumGaps(opt.siblingGap);
+            // compute height of all the siblings
+            this.height = this.sumGaps(opt.siblingGap);
+            this.height += _.sum(this.layoutAreas, function(area) {
+                return area.height + area.prevSiblingGap + area.nextSiblingGap;
+            });
 
             _.reduce(this.layoutAreas, function(y, area) {
+                // check if the current siblings width changed
                 this.width = Math.max(this.width, area.getExtendedWidth());
-                area.dy += y + area.height / 2;
-                return y += area.height + opt.siblingGap;
-            },  -this.height / 2, this);
+                // set the shift of the area
+                area.dy += y + area.getCY();
+                // return the y-coordinate of the next sibling
+                return y + area.prevSiblingGap + area.height + area.nextSiblingGap + opt.siblingGap;
+            },  this.getTopDY(), this);
+        },
+
+        getYTowardsParent: function() {
+
+            return this.parentArea.rootCY;
+        },
+
+        getXTowardsParent: function() {
+
+            var parentArea = this.parentArea;
+            return parentArea.rootCX + this.LRSign * (parentArea.rootSize.width / 2 + parentArea.gap);
         },
 
         getNeighborPointFromRank: function(rank) {
 
             var y;
+            var siblingGap = this.siblingGap;
 
             if (!this.exists()) {
 
-                y = this.parentArea.rootCY;
+                y = this.getYTowardsParent();
 
             } else {
 
@@ -151,9 +181,9 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
                 var nextArea = this.layoutAreas[rank + 1];
 
                 if (!prevArea) {
-                    y = nextArea.y - this.siblingGap / 2;
+                    y = nextArea.y - siblingGap / 2;
                 } else if (!nextArea) {
-                    y = prevArea.y + prevArea.height + this.siblingGap / 2;
+                    y = prevArea.y + prevArea.height + siblingGap / 2;
                 } else {
                     y = (prevArea.y + prevArea.height + nextArea.y) / 2;
                 }
@@ -170,26 +200,108 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
     var LeftLayoutSiblings = VerticalLayoutSiblings.extend({
 
         direction: 'L',
-
-        getXTowardsParent: function() {
-
-            var parentArea = this.parentArea;
-            return parentArea.rootCX - parentArea.rootSize.width - parentArea.gap;
-        }
+        LRSign: -1
     });
 
     var RightLayoutSiblings = VerticalLayoutSiblings.extend({
 
         direction: 'R',
+        LRSign: 1
+    });
+
+    // Vertical Tree Layout Siblings
+
+    var treeLayoutSiblings = {
 
         getXTowardsParent: function() {
 
             var parentArea = this.parentArea;
-            return parentArea.rootCX + parentArea.rootSize.width + parentArea.gap;
+            return parentArea.rootCX + this.LRSign *  parentArea.gap;
+        },
+
+        getYTowardsParent: function() {
+
+            var parentArea = this.parentArea;
+            var dy = parentArea.getLRHeight(parentArea.siblings) / 2;
+            dy += Math.min(parentArea.firstChildGap, this.siblingGap / 2);
+
+            return parentArea.rootCY + this.TBSign * dy;
+        },
+
+        getFirstChildConnectionPoints: function(point) {
+
+            return [g.point(this.parentArea.rootCX, point.y)];
+        },
+
+        getChildConnectionPoint: function(point, rootSize) {
+
+            return g.point(point).offset(-this.LRSign * rootSize.width / 2, 0);
+        },
+
+        getParentConnectionPoint: function() {
+
+            var parentArea = this.parentArea;
+            var connectionPoint = g.point(parentArea.rootCX, parentArea.rootCY);
+            return connectionPoint.offset(0, this.TBSign * parentArea.rootSize.height / 2);
         }
+    };
+
+    var bottomTreeLayoutSiblings = {
+
+        getTopDY: function() {
+            var topArea = this.layoutAreas[0];
+            return topArea ? topArea.prevSiblingGap : 0;
+        }
+    };
+
+    var topTreeLayoutSiblings = {
+
+        getTopDY: function() {
+            return -this.height;
+        }
+    };
+
+    var BottomRightLayoutSiblings = VerticalLayoutSiblings.extend({
+
+        direction: 'BR',
+        LRSign: 1,
+        TBSign: 1
     });
+    _.extend(BottomRightLayoutSiblings.prototype, treeLayoutSiblings, bottomTreeLayoutSiblings);
+
+    var BottomLeftLayoutSiblings = VerticalLayoutSiblings.extend({
+
+        direction: 'BL',
+        LRSign: -1,
+        TBSign: 1
+    });
+    _.extend(BottomLeftLayoutSiblings.prototype, treeLayoutSiblings, bottomTreeLayoutSiblings);
+
+    var TopRightLayoutSiblings = VerticalLayoutSiblings.extend({
+
+        direction: 'TR',
+        LRSign: 1,
+        TBSign: -1
+    });
+    _.extend(TopRightLayoutSiblings.prototype, treeLayoutSiblings, topTreeLayoutSiblings);
+
+    var TopLeftLayoutSiblings = VerticalLayoutSiblings.extend({
+
+        direction: 'TL',
+        LRSign: -1,
+        TBSign: -1
+    });
+    _.extend(TopLeftLayoutSiblings.prototype, treeLayoutSiblings, topTreeLayoutSiblings);
+
+
+    // Horizontal Layout Siblings
 
     var HorizontalLayoutSiblings = LayoutSiblings.extend({
+
+        // X coordinate of the most left sibling
+        getLeftDX: function() {
+            return -this.width / 2;
+        },
 
         findAreaByPoint: function(point) {
 
@@ -200,13 +312,19 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         computeSize: function(opt) {
 
-            this.width = _.sum(this.layoutAreas, 'width') + this.sumGaps(opt.siblingGap);
+            this.width = this.sumGaps(opt.siblingGap);
+            this.width += _.sum(this.layoutAreas, function(area) {
+                return area.width + area.prevSiblingGap + area.nextSiblingGap;
+            });
 
             _.reduce(this.layoutAreas, function(x, area) {
+                // check if the current siblings height changed
                 this.height = Math.max(this.height, area.getExtendedHeight());
-                area.dx += x + area.width / 2;
-                return x + area.width + opt.siblingGap;
-            },  -this.width / 2, this);
+                // set the shift of the area
+                area.dx += x + area.getCX();
+                // return the x-coordinate of the next sibling
+                return x + area.prevSiblingGap + area.width + area.nextSiblingGap + opt.siblingGap;
+            },  this.getLeftDX(), this);
         },
 
         getNeighborPointFromRank: function(rank) {
@@ -260,9 +378,6 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         }
     });
 
-
-
-
     // Layout Area
     // ===========
 
@@ -270,16 +385,23 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         var options = _.extend({}, opt, this.getRootAttributes(root, opt.attributeNames));
 
+        var globalGap = opt.gap || 0;
         _.defaults(options, {
-            siblingGap: 0,
-            gap: 0
+            parentGap: globalGap,
+            siblingGap: globalGap,
+            firstChildGap: globalGap
         });
 
         this.root = root;
         this.childAreas = childAreas;
         this.siblingRank = options.siblingRank;
         this.rootOffset = options.rootOffset;
-        this.gap = options.gap;
+        this.nextSiblingGap = options.nextSiblingGap;
+        this.prevSiblingGap = options.prevSiblingGap;
+        this.gap = this.parentGap = options.parentGap;
+        this.firstChildGap = options.firstChildGap;
+
+        // metrics
         this.dx = 0;
         this.dy = 0;
         this.width = 0;
@@ -288,7 +410,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         _.invoke(childAreas, 'addParentReference', this);
 
         this.computeRelativePosition(root, childAreas, options);
-    };
+    }
 
     _.extend(LayoutArea, {
 
@@ -315,9 +437,21 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
                 case 'B':
                     constructor = BottomLayoutArea;
                     break;
+                case 'BR':
+                    constructor = BottomRightLayoutArea;
+                    break;
+                case 'BL':
+                    constructor = BottomLeftLayoutArea;
+                    break;
+                case 'TR':
+                    constructor = TopRightLayoutArea;
+                    break;
+                case 'TL':
+                    constructor = TopLeftLayoutArea;
+                    break;
                 default:
                     constructor = LayoutArea;
-            };
+            }
 
             return constructor;
         }
@@ -328,9 +462,136 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         direction: null,
 
+        // Returs height of the layout area
+        getHeight: function(siblings, rootSize) {
+
+            return this.getTHeight(siblings) + this.getBHeight(siblings) + this.getLRHeight();
+        },
+
+        // Returs width of the layout area
+        getWidth: function(siblings, rootSize) {
+
+            var tbWidth = Math.max(siblings.T.width, siblings.B.width) / 2;
+
+            var lWidth = Math.max(
+                this.getLWidth(siblings, rootSize) + rootSize.width / 2,
+                tbWidth
+            );
+
+            var rWidth = Math.max(
+                this.getRWidth(siblings, rootSize) + rootSize.width / 2,
+                tbWidth
+            );
+
+            return lWidth + rWidth;
+        },
+
+        // Returns height of layout area taken only L,R siblings into account
         getLRHeight: function() {
 
             return Math.max(this.rootSize.height, this.siblings.L.height, this.siblings.R.height);
+        },
+
+        // Returns height of the all top siblings (T,TR,TL)
+        getTHeight: function(siblings) {
+
+            return siblings.T.height + this.getTXHeight(siblings);
+        },
+
+        // Returns height of the all bottom siblings (B,BR,BL)
+        getBHeight: function(siblings) {
+
+            return siblings.B.height + this.getBXHeight(siblings);
+        },
+
+        // Returns width of layout area without T,B siblings
+        getXLRWidth: function(siblings, rootSize) {
+
+            return this.getLWidth(siblings, rootSize) + rootSize.width + this.getRWidth(siblings, rootSize);
+        },
+
+        // Returns width of both right tree siblings (TR,BR)
+        getXRWidth: function(siblings, rootSize) {
+
+            var xrWidth = Math.max(siblings.BR.width, siblings.TR.width);
+            if (xrWidth > 0) {
+                xrWidth -= rootSize.width / 2;
+            }
+
+            return xrWidth;
+        },
+
+        // Returns height of both top tree siblings (TR,TL)
+        getTXHeight: function(siblings) {
+
+            var txHeight = Math.max(siblings.TR.height, siblings.TL.height);
+            if (txHeight > 0) {
+                txHeight += this.firstChildGap;
+            }
+
+            return txHeight;
+        },
+
+        // Returns height of both bottom tree siblings (BR,BL)
+        getBXHeight: function(siblings) {
+
+            var bxHeight = Math.max(siblings.BR.height, siblings.BL.height);
+            if (bxHeight > 0) {
+                bxHeight += this.firstChildGap;
+            }
+
+            return bxHeight;
+        },
+
+        // Returns width of both right tree siblings (BL,TL)
+        getXLWidth: function(siblings, rootSize) {
+
+            var xlWidth = Math.max(siblings.BL.width, siblings.TL.width);
+            if (xlWidth > 0) {
+                xlWidth -= rootSize.width / 2;
+            }
+
+            return xlWidth;
+        },
+
+        // Returs width of all the right siblings (R, TR, BR)
+        getRWidth: function(siblings, rootSize) {
+
+            return Math.max(siblings.R.width, this.getXRWidth(siblings, rootSize));
+        },
+
+        // Returs width of all the left siblings (L, TL, BL)
+        getLWidth: function(siblings, rootSize) {
+
+            return Math.max(siblings.L.width, this.getXLWidth(siblings, rootSize));
+        },
+
+        // Returns T,B siblings width that overlaps root element.
+        getTBOverlap: function(siblings, rootSize) {
+
+            var tbOverlap = Math.max(siblings.T.width, siblings.B.width);
+            if (tbOverlap > 0) {
+                tbOverlap -= rootSize.width;
+                tbOverlap /= 2;
+            }
+
+            return tbOverlap;
+        },
+
+        getRootDX: function(siblings, rootSize) {
+
+            var tbOverlap = this.getTBOverlap(siblings, rootSize);
+
+            var dx = Math.max(this.getLWidth(siblings, rootSize), tbOverlap);
+            dx -= Math.max(this.getRWidth(siblings, rootSize), tbOverlap);
+
+            return dx / 2;
+        },
+
+        // Returns the minimum amnogst various gaps.
+        getMinimalGap: function(siblings) {
+
+            return Math.min(siblings.siblingGap, this.firstChildGap, this.parentGap);
         },
 
         getBBox: function(opt) {
@@ -390,8 +651,8 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         getType: function() {
 
             return _.reduce(this.siblings, function(memo, siblingGroup, direction) {
-                return siblingGroup.exists() ? memo + direction : memo;
-            }, '');
+                return siblingGroup.exists() ? memo.concat(direction) : memo;
+            }, []).sort().join('-');
         },
 
         addParentReference: function(parentArea) {
@@ -406,7 +667,9 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             return {
                 siblingRank: _.isNumber(siblingRank) ? siblingRank : null,
                 rootOffset: root.get(attributeNames.offset || 'offset') || 0,
-                rootMargin: root.get(attributeNames.margin || 'margin') || 0
+                rootMargin: root.get(attributeNames.margin || 'margin') || 0,
+                prevSiblingGap: root.get(attributeNames.prevSiblingGap || 'prevSiblingGap') || 0,
+                nextSiblingGap: root.get(attributeNames.nextSiblingGap || 'nextSiblingGap') || 0
             };
         },
 
@@ -427,25 +690,36 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
                 L: new LeftLayoutSiblings(groupedAreas.L, this, opt),
                 T: new TopLayoutSiblings(groupedAreas.T, this, opt),
                 R: new RightLayoutSiblings(groupedAreas.R, this, opt),
-                B: new BottomLayoutSiblings(groupedAreas.B, this, opt)
+                B: new BottomLayoutSiblings(groupedAreas.B, this, opt),
+                BR: new BottomRightLayoutSiblings(groupedAreas.BR, this, opt),
+                BL: new BottomLeftLayoutSiblings(groupedAreas.BL, this, opt),
+                TR: new TopRightLayoutSiblings(groupedAreas.TR, this, opt),
+                TL: new TopLeftLayoutSiblings(groupedAreas.TL, this, opt)
             };
         },
 
         computeSize: function(siblings, rootSize) {
 
-            var lrWidth = siblings.L.width + rootSize.width + siblings.R.width;
-            var lrHeight = Math.max(siblings.L.height, rootSize.height, siblings.R.height);
-
             return {
-                width: Math.max(siblings.T.width, siblings.B.width, lrWidth),
-                height: siblings.T.height + siblings.B.height + lrHeight
+                width: this.getWidth(siblings, rootSize),
+                height: this.getHeight(siblings, rootSize)
             };
         },
 
         computeOrigin: function() {
+
+            var siblings = this.siblings;
+            var rootSize = this.rootSize;
+            var maxWidth = Math.max(
+                this.getLWidth(siblings, rootSize) + rootSize.width / 2,
+                this.getXLWidth(siblings, rootSize) + rootSize.width / 2,
+                siblings.T.width / 2,
+                siblings.B.width / 2
+            );
+
             return {
-                x: this.rootCX - Math.max(this.siblings.L.width + this.rootSize.width / 2, this.siblings.T.width / 2, this.siblings.B.width / 2),
-                y: this.rootCY - this.siblings.T.height - this.getLRHeight() / 2
+                x: this.rootCX - maxWidth,
+                y: this.rootCY - this.getTHeight(siblings) - this.getLRHeight() / 2
             };
         },
 
@@ -454,17 +728,21 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             if (this.hasHorizontalSiblings(siblings)) {
 
                 var dx = rootSize.width / 2;
-
                 siblings.L.move(-dx , 0);
                 siblings.R.move(dx, 0);
             }
 
             if (this.hasVerticalSiblings(siblings)) {
 
-                var dy = Math.max(siblings.L.height, rootSize.height, siblings.R.height) / 2;
-
+                var dy = this.getLRHeight() / 2;
                 siblings.T.move(0, -dy);
                 siblings.B.move(0, dy);
+                siblings.BR.move(0, dy);
+                siblings.BL.move(0, dy);
+                siblings.B.move(0, this.getBXHeight(siblings));
+                siblings.TR.move(0, -dy);
+                siblings.TL.move(0, -dy);
+                siblings.T.move(0, -this.getTXHeight(siblings));
             }
         },
 
@@ -486,7 +764,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             this.moveSiblings(siblings, rootSize);
             this.moveRootToConnectionPoint(rootSize);
             this.moveRootBehindSiblings(siblings, rootSize);
-            this.moveRootFromParent(opt.gap + opt.rootOffset);
+            this.moveRootFromParent();
         },
 
         computeAbsolutePosition: function() {
@@ -507,7 +785,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         hasVerticalSiblings: function(siblings) {
 
-            return siblings.T.exists() || siblings.B.exists();
+            return siblings.T.exists() || siblings.B.exists() || siblings.BR.exists() || siblings.BL.exists() || siblings.TR.exists() || siblings.TL.exists();
         },
 
         hasHorizontalSiblings: function(siblings) {
@@ -563,14 +841,6 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             return _.invoke(relativeVertices, 'offset', this.parentArea.rootCX, this.parentArea.rootCY);
         },
 
-        getOuterSize: function() {
-
-            return {
-                width: this.width,
-                height: this.height
-            };
-        },
-
         getInnerSize: function() {
 
             return {
@@ -605,28 +875,26 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         hasSiblingsBetweenParent: function() {
 
             return !this.isSourceArea() && this.siblings[this.oppositeDirection].exists();
+        },
+
+        getCY: function() {
+            return this.height / 2 + this.prevSiblingGap;
+        },
+
+        getCX: function() {
+            return this.width / 2 + this.prevSiblingGap;
         }
 
     });
 
     LayoutArea.extend = Backbone.Model.extend;
 
-    var VerticalLayoutArea = LayoutArea.extend({
-
-        deltaCoordinate: 'dy',
-        marginDimension: 'width'
-    });
-
-    var HorizontalLayoutArea = LayoutArea.extend({
-
-        deltaCoordinate: 'dx',
-        marginDimension: 'height'
-    });
-
-    var RightLayoutArea = HorizontalLayoutArea.extend({
+    var RightLayoutArea = LayoutArea.extend({
 
         direction: 'R',
         oppositeDirection: 'L',
+        deltaCoordinate: 'dx',
+        marginDimension: 'height',
 
         getConnectionPoint: function(rootSize) {
 
@@ -636,39 +904,41 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         moveRootBehindSiblings: function(siblings, rootSize) {
 
             this.dx += Math.max(
-                siblings.L.width,
-                (siblings.T.width - rootSize.width) / 2,
-                (siblings.B.width - rootSize.width) / 2
+                this.getLWidth(siblings, rootSize),
+                this.getTBOverlap(siblings, rootSize)
             );
 
-            this.dy += (siblings.T.height - siblings.B.height) / 2;
+            this.dy += (this.getTHeight(siblings) - this.getBHeight(siblings)) / 2;
         },
 
-        moveRootFromParent: function(distance) {
+        moveRootFromParent: function() {
 
-            this.dx += distance;
+            this.dx += this.parentGap + this.rootOffset;
         },
 
         getRelativeVertices: function(parentRootSize, deltaCoordinates) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
+            var dx = this.parentGap / 2;
             return [
-                connectionPoint.clone().offset(this.gap / 2, 0),
-                connectionPoint.clone().offset(this.gap / 2, deltaCoordinates.dy)
+                connectionPoint.clone().offset(dx, 0),
+                connectionPoint.clone().offset(dx, deltaCoordinates.dy)
             ];
         },
 
-        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, lSiblings) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
-            var siblingGap = siblings.siblingGap;
+            var gap = lSiblings.siblingGap / 2;
 
-            var signY = deltaCoordinates.dy > 0 ? -1 : 1;
-            var fx = siblings.layoutAreas.length > 1 ? 1.5 : 1;
-            var y1 = deltaCoordinates.dy + signY * (siblings.height + siblingGap) / 2;
+            var signY = this.dx > 0 ? -1 : 1;
+            var y1 = deltaCoordinates.dy + signY * (lSiblings.height + gap) / 2;
             var y2 = deltaCoordinates.dy + signY * this.rootSize.height / 4;
             var x1 = this.gap / 2;
-            var x2 = fx * x1 + siblings.width;
+            var x2 = 1.5 * x1 + Math.max(
+                this.getLWidth(this.siblings, this.rootSize),
+                this.getTBOverlap(this.siblings, this.rootSize)
+            );
 
             return [
                 connectionPoint.clone().offset(x1, 0),
@@ -679,10 +949,12 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         }
     });
 
-    var LeftLayoutArea = HorizontalLayoutArea.extend({
+    var LeftLayoutArea = LayoutArea.extend({
 
         direction: 'L',
         oppositeDirection: 'R',
+        deltaCoordinate: 'dx',
+        marginDimension: 'height',
 
         getConnectionPoint: function(rootSize) {
 
@@ -692,38 +964,40 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         moveRootBehindSiblings: function(siblings, rootSize) {
 
             this.dx -= Math.max(
-                siblings.R.width,
-                (siblings.T.width - rootSize.width) / 2,
-                (siblings.B.width - rootSize.width) / 2
+                this.getRWidth(siblings, rootSize),
+                this.getTBOverlap(siblings, rootSize)
             );
-            this.dy += (siblings.T.height - siblings.B.height) / 2;
+
+            this.dy += (this.getTHeight(siblings) - this.getBHeight(siblings)) / 2;
         },
 
-        moveRootFromParent: function(distance) {
+        moveRootFromParent: function() {
 
-            this.dx -= distance;
+            this.dx -= this.parentGap + this.rootOffset;
         },
 
         getRelativeVertices: function(parentRootSize, deltaCoordinates) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
+            var dx = -this.parentGap / 2;
             return [
-                connectionPoint.clone().offset(-this.gap / 2, 0),
-                connectionPoint.clone().offset(-this.gap / 2, deltaCoordinates.dy)
+                connectionPoint.clone().offset(dx, 0),
+                connectionPoint.clone().offset(dx, deltaCoordinates.dy)
             ];
         },
 
-        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, rSiblings) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
-            var siblingGap = siblings.siblingGap;
 
-            var signY = deltaCoordinates.dy > 0 ? -1 : 1;
-            var fx = siblings.layoutAreas.length > 1 ? 1.5 : 1;
-            var y1 = deltaCoordinates.dy + signY * (siblings.height + siblingGap) / 2;
+            var signY = this.dx > 0 ? -1 : 1;
+            var y1 = deltaCoordinates.dy + signY * (rSiblings.height + rSiblings.siblingGap / 2) / 2;
             var y2 = deltaCoordinates.dy + signY * this.rootSize.height / 4;
             var x1 = this.gap / 2;
-            var x2 = fx * x1 + siblings.width;
+            var x2 = 1.5 * x1 + Math.max(
+                this.getRWidth(this.siblings, this.rootSize),
+                this.getTBOverlap(this.siblings, this.rootSize)
+            );
 
             return [
                 connectionPoint.clone().offset(-x1, 0),
@@ -734,10 +1008,12 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         }
     });
 
-    var TopLayoutArea = VerticalLayoutArea.extend({
+    var TopLayoutArea = LayoutArea.extend({
 
         direction: 'T',
         oppositeDirection: 'B',
+        deltaCoordinate: 'dy',
+        marginDimension: 'width',
 
         getConnectionPoint: function(rootSize) {
 
@@ -746,38 +1022,47 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         moveRootBehindSiblings: function(siblings, rootSize) {
 
-            this.dx += (siblings.L.width - siblings.R.width) / 2;
-            this.dy -= siblings.B.height;
+            this.dx += this.getRootDX(siblings, rootSize);
 
             if (this.hasHorizontalSiblings(siblings)) {
                 this.dy -= (this.getLRHeight() - rootSize.height) / 2;
             }
+            this.dy -= this.getBHeight(siblings);
         },
 
-        moveRootFromParent: function(distance) {
+        moveRootFromParent: function() {
 
-            this.dy -= distance;
+            this.dy -= this.parentGap + this.rootOffset;
         },
 
         getRelativeVertices: function(parentRootSize, deltaCoordinates) {
-
             var connectionPoint = this.getConnectionPoint(parentRootSize);
+            var dy = -this.getTXHeight(this.parentArea.siblings) - this.parentGap / 2;
             return [
-                connectionPoint.clone().offset(0, -this.gap / 2),
-                connectionPoint.clone().offset(deltaCoordinates.dx, -this.gap / 2)
+                connectionPoint.clone().offset(0, dy),
+                connectionPoint.clone().offset(deltaCoordinates.dx, dy)
             ];
         },
 
-        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
-            var siblingGap = siblings.siblingGap;
 
-            var signX = deltaCoordinates.dx > 0 ? -1 : 1;
-            var fy = siblings.layoutAreas.length > 1 ? 1.5 : 1;
-            var y1 = this.gap / 2;
-            var y2 = fy * y1 + siblings.height;
-            var x1 = deltaCoordinates.dx + signX * (siblings.width + siblingGap) / 2;
+            var siblings = this.siblings;
+            var bSiblings = siblings.B;
+
+            // Jump the Top-Right and Top-Left siblings of the parent element
+            var y1 = this.getTXHeight(this.parentArea.siblings) + this.parentGap / 2;
+            var y2 = y1 + bSiblings.height;
+            // Jump the Bottom-Right and Bottom-Left siblings of the child element
+            y2 += this.getBXHeight(this.siblings) + this.parentGap / 4;
+
+            // x1 lies far from the element center
+            var signX = this.dy < 0 ? -1 : 1;
+            var bxWidth = siblings[signX > 0 ? 'BR' : 'BL'].width;
+            var x1 = deltaCoordinates.dx;
+            x1 += signX * (Math.max(bxWidth, bSiblings.width / 2) + bSiblings.siblingGap / 4);
+            // x2 lies closer to the element center
             var x2 = deltaCoordinates.dx + signX * this.rootSize.width / 4;
 
             return [
@@ -789,10 +1074,12 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         }
     });
 
-    var BottomLayoutArea = VerticalLayoutArea.extend({
+    var BottomLayoutArea = LayoutArea.extend({
 
         direction: 'B',
         oppositeDirection: 'T',
+        deltaCoordinate: 'dy',
+        marginDimension: 'width',
 
         getConnectionPoint: function(rootSize) {
 
@@ -801,39 +1088,47 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         moveRootBehindSiblings: function(siblings, rootSize) {
 
-            this.dx += (siblings.L.width - siblings.R.width) / 2;
-            this.dy += siblings.T.height;
+            this.dx += this.getRootDX(siblings, rootSize);
 
+            this.dy += this.getTHeight(siblings);
             if (this.hasHorizontalSiblings(siblings)) {
                 this.dy += (this.getLRHeight() - rootSize.height) / 2;
             }
         },
 
-        moveRootFromParent: function(distance) {
+        moveRootFromParent: function() {
 
-            this.dy += distance;
+            this.dy += this.parentGap + this.rootOffset;
         },
 
         getRelativeVertices: function(parentRootSize, deltaCoordinates) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
-
+            var dy = this.getBXHeight(this.parentArea.siblings) + this.parentGap / 2;
             return [
-                connectionPoint.clone().offset(0, this.gap / 2),
-                connectionPoint.clone().offset(deltaCoordinates.dx, this.gap / 2)
+                connectionPoint.clone().offset(0, dy),
+                connectionPoint.clone().offset(deltaCoordinates.dx, dy)
             ];
         },
 
-        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates) {
 
             var connectionPoint = this.getConnectionPoint(parentRootSize);
-            var siblingGap = siblings.siblingGap;
+            var siblings = this.siblings;
+            var tSiblings = siblings.T;
 
-            var signX = deltaCoordinates.dx > 0 ? -1 : 1;
-            var fy = siblings.layoutAreas.length > 1 ? 1.5 : 1;
-            var y1 = this.gap / 2;
-            var y2 = fy * y1 + siblings.height;
-            var x1 = deltaCoordinates.dx + signX * (siblings.width + siblingGap) / 2;
+            // Jump the Bottom-Right and Bottom-Left siblings of the parent element
+            var y1 = this.getBXHeight(this.parentArea.siblings) + this.parentGap / 2;
+            var y2 = y1 + tSiblings.height;
+            // Jump the Top-Right and Top-Left siblings of the child element
+            y2 += this.getTXHeight(siblings) + this.parentGap / 4;
+
+            // x1 lies far from the element center
+            var signX = this.dy < 0 ? -1 : 1;
+            var txWidth = siblings[signX > 0 ? 'TR' : 'TL'].width;
+            var x1 = deltaCoordinates.dx;
+            x1 += signX * (Math.max(txWidth, tSiblings.width / 2) + tSiblings.siblingGap / 4);
+            // x2 lies close to the element center
             var x2 = deltaCoordinates.dx + signX * this.rootSize.width / 4;
 
             return [
@@ -845,10 +1140,250 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
         }
     });
 
+    var BottomRightLayoutArea = LayoutArea.extend({
+
+        direction: 'BR',
+        oppositeDirection: 'L',
+        deltaCoordinate: 'dy',
+        marginDimension: 'height',
+
+        getConnectionPoint: function(rootSize) {
+
+            return g.point(0, rootSize.height / 2);
+        },
+
+        getCY: function() {
+
+            return this.prevSiblingGap;
+        },
+
+        moveRootBehindSiblings: function(siblings, rootSize) {
+
+            var btWidth = Math.max(siblings.T.width, siblings.B.width);
+            this.dx += Math.max(this.getLWidth(siblings, rootSize), (btWidth - rootSize.width) / 2);
+
+            this.dy += this.getTHeight(siblings);
+            if (this.hasHorizontalSiblings(siblings)) {
+                this.dy += (this.getLRHeight() - rootSize.height) / 2;
+            }
+        },
+
+        moveRootFromParent: function() {
+
+            this.dy += this.firstChildGap;
+            this.dx += this.rootSize.width / 2 + this.rootOffset + this.parentGap;
+        },
+
+        getRelativeVertices: function(parentRootSize, deltaCoordinates) {
+
+            var connectionPoint = this.getConnectionPoint(parentRootSize);
+
+            return [
+                connectionPoint
+                    .clone()
+                    .offset(0, deltaCoordinates.dy - parentRootSize.height / 2)
+            ];
+        },
+
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+
+            var x = deltaCoordinates.dx - this.rootSize.width / 4;
+            var y = deltaCoordinates.dy;
+            y += Math.max(siblings.height, this.rootSize.height) / 2;
+            y += this.getMinimalGap(siblings) / 2;
+
+            return [
+                g.point(0, y),
+                g.point(x, y)
+            ];
+        }
+    });
+
+    var BottomLeftLayoutArea = LayoutArea.extend({
+
+        direction: 'BL',
+        oppositeDirection: 'R',
+        deltaCoordinate: 'dy',
+        marginDimension: 'height',
+
+        getConnectionPoint: function(rootSize) {
+
+            return g.point(0, rootSize.height / 2);
+        },
+
+        getCY: function() {
+
+            return this.prevSiblingGap;
+        },
+
+        moveRootBehindSiblings: function(siblings, rootSize) {
+
+            var btWidth = Math.max(siblings.T.width, siblings.B.width);
+            this.dx -= Math.max(this.getRWidth(siblings, rootSize), (btWidth  - rootSize.width) / 2);
+
+            this.dy += this.getTHeight(siblings);
+            if (this.hasHorizontalSiblings(siblings)) {
+                this.dy += (this.getLRHeight() - rootSize.height) / 2;
+            }
+        },
+
+        moveRootFromParent: function() {
+
+            this.dy += this.firstChildGap;
+            this.dx -= this.rootSize.width / 2 + this.rootOffset + this.parentGap;
+        },
+
+        getRelativeVertices: function(parentRootSize, deltaCoordinates) {
+
+            var connectionPoint = this.getConnectionPoint(parentRootSize);
+
+            return [
+                connectionPoint
+                    .clone()
+                    .offset(0, deltaCoordinates.dy - parentRootSize.height / 2)
+            ];
+        },
+
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+
+            var x = deltaCoordinates.dx + this.rootSize.width / 4;
+            var y = deltaCoordinates.dy;
+            y += Math.max(siblings.height, this.rootSize.height) / 2;
+            y += this.getMinimalGap(siblings) / 2;
+
+            return [
+                g.point(0, y),
+                g.point(x, y)
+            ];
+        }
+    });
+
+    var TopRightLayoutArea = LayoutArea.extend({
+
+        direction: 'TR',
+        oppositeDirection: 'L',
+        deltaCoordinate: 'dy',
+        marginDimension: 'height',
+
+        getConnectionPoint: function(rootSize) {
+
+            return g.point(0, rootSize.height / 2);
+        },
+
+        getCY: function() {
+
+            return (this.height - this.rootSize.height) + this.prevSiblingGap;
+        },
+
+        moveRootBehindSiblings: function(siblings, rootSize) {
+
+            this.dx += Math.max(
+                this.getLWidth(siblings, rootSize),
+                this.getTBOverlap(siblings, rootSize)
+            );
+
+            this.dy -= this.getBHeight(siblings);
+            if (this.hasHorizontalSiblings(siblings)) {
+                this.dy -= (this.getLRHeight() - rootSize.height) / 2;
+            }
+        },
+
+        moveRootFromParent: function() {
+
+            this.dy -= this.firstChildGap;
+            this.dx += this.rootSize.width / 2 + this.rootOffset + this.parentGap;
+        },
+
+        getRelativeVertices: function(parentRootSize, deltaCoordinates) {
+
+            var connectionPoint = this.getConnectionPoint(parentRootSize);
+
+            return [
+                connectionPoint
+                    .clone()
+                    .offset(0, deltaCoordinates.dy - parentRootSize.height / 2)
+            ];
+        },
+
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+
+            var x = deltaCoordinates.dx - this.rootSize.width / 4;
+            var y = deltaCoordinates.dy;
+            y -= Math.max(siblings.height, this.rootSize.height) / 2;
+            y -= this.getMinimalGap(siblings) / 2;
+
+            return [
+                g.point(0, y),
+                g.point(x, y)
+            ];
+        }
+    });
+
+    var TopLeftLayoutArea = LayoutArea.extend({
+
+        direction: 'TL',
+        oppositeDirection: 'R',
+        deltaCoordinate: 'dy',
+        marginDimension: 'height',
+
+        getConnectionPoint: function(rootSize) {
+
+            return g.point(0, rootSize.height / 2);
+        },
+
+        getCY: function() {
+
+            return (this.height - this.rootSize.height) + this.prevSiblingGap;
+        },
+
+        moveRootBehindSiblings: function(siblings, rootSize) {
+
+            this.dx -= Math.max(
+                this.getRWidth(siblings, rootSize),
+                this.getTBOverlap(siblings, rootSize)
+            );
+
+            this.dy -= this.getBHeight(siblings);
+            if (this.hasHorizontalSiblings(siblings)) {
+                this.dy -= (this.getLRHeight() - rootSize.height) / 2;
+            }
+        },
+
+        moveRootFromParent: function() {
+
+            this.dy -= this.firstChildGap;
+            this.dx -= this.rootSize.width / 2 + this.rootOffset + this.parentGap;
+        },
+
+        getRelativeVertices: function(parentRootSize, deltaCoordinates) {
+
+            var connectionPoint = this.getConnectionPoint(parentRootSize);
+
+            return [
+                connectionPoint
+                    .clone()
+                    .offset(0, deltaCoordinates.dy - parentRootSize.height / 2)
+            ];
+        },
+
+        getRelativeVerticesAvoidingSiblings: function(parentRootSize, deltaCoordinates, siblings) {
+
+            var x = deltaCoordinates.dx + this.rootSize.width / 4;
+            var y = deltaCoordinates.dy;
+            y -= Math.max(siblings.height, this.rootSize.height) / 2;
+            y -= this.getMinimalGap(siblings) / 2;
+
+            return [
+                g.point(0, y),
+                g.point(x, y)
+            ];
+        }
+    });
+
     var directionRules = {
 
         rotate: function(rule) {
-            var directions = 'LTRB';
+            var directions = 'LRBT';
             var directionChange = directions.indexOf(rule[0]) - directions.indexOf(rule[1]);
             return function(direction) {
                 var directionIndex = directions.indexOf(direction);
@@ -881,11 +1416,18 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             // A graph to perform the layout on.
             graph: undefined,
 
-            // Gap between a child and its parent.
+            // Global gap. Could be overriden via parentGap, siblingGap and childrenGap
             gap: 20,
+
+            // Gap between a child and its parent.
+            parentGap: 20,
 
             // Gap between two siblings.
             siblingGap: 20,
+
+            // Gap between parent and its first children
+            // Applicable for BR,BL,TR,TL
+            firstChildGap: 20,
 
             // Default direction used when elements
             // doesn't explicitelly specify their direction.
@@ -957,7 +1499,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
             // delete the previous layout areas
             this.layoutAreas = {};
 
-            _.each(this.graph.getSources(), _.partial(this.layoutTree, _, opt), this);
+            _.each(this.getGraphSources(opt), _.partial(this.layoutTree, _, opt), this);
 
             // COMPAT: backwards compatibility
             this.trigger('layout:done', opt);
@@ -987,7 +1529,18 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
         getRootLayoutAreas: function() {
 
-            return _.map(this.graph.getSources(), this.getLayoutArea, this);
+            return _.map(this.getGraphSources(), this.getLayoutArea, this);
+        },
+
+        // Returns filtered source elements from the graph
+        getGraphSources: function(opt) {
+
+            var sources = this.graph.getSources();
+            if (this.filter && sources.length > 0) {
+                sources = this.filter(sources, null, opt) || sources;
+            }
+
+            return sources;
         },
 
         // Returns a layout area with minimal size containing the given point.

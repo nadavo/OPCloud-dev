@@ -1,0 +1,62 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+@font-face {
+  font-family: 'selection-icons-dark';
+  src: url('data:application/octet-stream;base64,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') format('woff');
+}
+.joint-selection.lasso.joint-theme-dark {
+    background-color: #3498DB;
+    border: 2px solid #2980B9;
+}
+
+.joint-selection.joint-theme-dark .selection-box {
+    border: 2px dashed #feb663 ;
+}
+
+.joint-selection.joint-theme-dark .selection-wrapper {
+    border: 2px solid #feb663 ;
+}
+
+.joint-selection.joint-theme-dark .box {
+    font-size: 10px;
+    color: #fff;
+    background-color: #A2753F;
+}
+
+.joint-selection.joint-theme-dark .handle.resize:after,
+.joint-selection.joint-theme-dark .handle.rotate:after,
+.joint-selection.joint-theme-dark .handle.remove:after {
+  font-family: "selection-icons-dark";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  margin: auto;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  font-size: 18px;
+  color: #ffb68a;
+}
+
+.joint-selection.joint-theme-dark .handle.remove:after { content: '\e800'; }
+.joint-selection.joint-theme-dark .handle.resize:after { content: '\e802'; }
+.joint-selection.joint-theme-dark .handle.rotate:after { content: '\e801'; }
+
+.joint-selection.joint-theme-dark .handle.remove:hover:after,
+.joint-selection.joint-theme-dark .handle.resize:hover:after,
+.joint-selection.joint-theme-dark .handle.rotate:hover:after {
+  color: #ffd829;
+}

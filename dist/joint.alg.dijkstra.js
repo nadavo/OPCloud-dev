@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -31,7 +31,6 @@ joint.alg.Dijkstra = function(adjacencyList, source, weight) {
     dist[source] = 0;
 
     var previous = {};
-
     var Q = new joint.alg.PriorityQueue;
 
     for (var v in adjacencyList) {
@@ -42,22 +41,17 @@ joint.alg.Dijkstra = function(adjacencyList, source, weight) {
         Q.insert(dist[v], v, v);
     }
 
+    var u, neighbours, i, alt;
     var scanned = {};
-
     while (!Q.isEmpty()) {
-
-        var u = Q.remove();
+        u = Q.remove();
         scanned[u] = true;
-
-        var neighbours = adjacencyList[u] || [];
-        for (var i = 0; i < neighbours.length; i++) {
-            var v = neighbours[i];
-
+        neighbours = adjacencyList[u] || [];
+        for (i = 0; i < neighbours.length; i++) {
+            v = neighbours[i];
             if (!scanned[v]) {
-
-                var alt = dist[u] + weight(u, v);
+                alt = dist[u] + weight(u, v);
                 if (alt < dist[v]) {
-
                     dist[v] = alt;
                     previous[v] = u;
                     Q.updatePriority(v, alt);

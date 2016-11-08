@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -74,31 +74,20 @@ var inspector;
 
 function createInspector(cellView) {
 
-    // No need to re-render inspector if the cellView didn't change.
-    if (!inspector || inspector.options.cellView !== cellView) {
+    var inspectorDefs = InspectorDefs[cellView.model.get('type')];
 
-        if (inspector && inspector.el.parentNode) {
-            // Clean up the old inspector if there was one.
-
-            inspector.updateCell();
-            inspector.remove();
-        }
-
-        var inspectorDefs = InspectorDefs[cellView.model.get('type')];
-
-        inspector = new joint.ui.Inspector({
-            inputs: inspectorDefs ? inspectorDefs.inputs : {},
-            groups: inspectorDefs ? inspectorDefs.groups : {},
-            cellView: cellView,
-            operators: {
-                longerThan: function(cell, value, prop) { return value.length > cell.prop(prop); }
+    inspector = joint.ui.Inspector.create('.inspector-container', {
+        cellView: cellView,
+        inputs: inspectorDefs ? inspectorDefs.inputs : {},
+        groups: inspectorDefs ? inspectorDefs.groups : {},
+        operators: {
+            longerThan: function(cell, value, prop) {
+                return value.length > cell.prop(prop);
             }
-        });
-        inspector.render();
-        // Fill undefined cell's attributes with default values.
-        inspector.updateCell();
-        $('.inspector-container').html(inspector.el);
-    }
+        }
+    });
+
+    inspector.updateCell();
 }
 
 paper.on('cell:pointerup', function(cellView, evt) {

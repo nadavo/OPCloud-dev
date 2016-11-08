@@ -1,0 +1,474 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-halo {
+   position: absolute;
+   pointer-events: none;
+}
+
+.joint-halo .handle {
+   position: absolute;
+   pointer-events: auto;
+   width: 20px;
+   height: 20px;
+   background-size: 20px 20px;
+   background-repeat: no-repeat;
+   -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+.joint-halo .handle {
+   cursor: pointer;
+}
+
+.joint-halo .handle.hidden {
+    display: none;
+}
+
+/* Built-in handles. */
+/* remove and unlink handles should have a pointer cursor */
+
+.joint-halo .resize {
+   cursor: se-resize;
+}
+
+.joint-halo .clone {
+   cursor: move;
+}
+
+.joint-halo .link {
+   cursor: move;
+   cursor: -moz-grabbing;
+   cursor: -webkit-grabbing;
+}
+
+.joint-halo .fork {
+   cursor: move;
+}
+
+.joint-halo .rotate {
+   cursor: move;
+}
+
+/* Box */
+
+.joint-halo .box {
+   position: absolute;
+   top: 100%;
+   text-align: center;
+   font-size: 10px;
+   line-height: 14px;
+   border-radius: 6px;
+   padding: 6px;
+}
+
+/* Type surrounding */
+
+.joint-halo.surrounding .box {
+   left: -20px;
+   right: -20px;
+   margin-top: 30px;
+}
+
+
+.joint-halo.surrounding.small .box {
+   margin-top: 25px;
+}
+
+.joint-halo.surrounding.tiny .box {
+   margin-top: 20px;
+}
+
+.joint-halo.surrounding.animate .handle {
+   transition: background-size 80ms, width 80ms, height 80ms, top 150ms, left 150ms, bottom 150ms, right 150ms;
+}
+
+.joint-halo.surrounding.small .handle {
+   width: 15px;
+   height: 15px;
+   background-size: 15px 15px;
+   font-size: 15px;
+}
+
+.joint-halo.surrounding.tiny .handle {
+   width: 10px;
+   height: 10px;
+   background-size: 10px 10px;
+   font-size: 10px;
+}
+
+/* Positions */
+
+.joint-halo.surrounding .handle.se {
+   bottom: -25px;
+   right: -25px;
+}
+.joint-halo.surrounding.small .handle.se {
+   bottom: -19px;
+   right: -19px;
+}
+.joint-halo.surrounding.tiny .handle.se {
+   bottom: -13px;
+   right: -15px;
+}
+
+.joint-halo.surrounding .handle.nw {
+   top: -21px;
+   left: -25px;
+}
+.joint-halo.surrounding.small .handle.nw {
+   top: -19px;
+   left: -19px;
+}
+.joint-halo.surrounding.tiny .handle.nw {
+   top: -13px;
+   left: -15px;
+}
+
+.joint-halo.surrounding .handle.n {
+   top: -22px;
+   left: 50%;
+   margin-left: -10px;
+}
+.joint-halo.surrounding.small .handle.n {
+   top: -19px;
+   margin-left: -7.5px;
+}
+.joint-halo.surrounding.tiny .handle.n {
+   top: -13px;
+   margin-left: -5px;
+}
+
+.joint-halo.surrounding .handle.e {
+   right: -26px;
+   top: -webkit-calc(50% - 10px);
+   top: calc(50% - 9px);
+}
+.joint-halo.surrounding.small .handle.e {
+   right: -19px;
+   top: -webkit-calc(50% - 8px);
+   top: calc(50% - 8px);
+}
+.joint-halo.surrounding.tiny .handle.e {
+   right: -15px;
+   top: -webkit-calc(50% - 5px);
+   top: calc(50% - 5px);
+}
+
+.joint-halo.surrounding .handle.ne {
+   top: -21px;
+   right: -25px;
+}
+.joint-halo.surrounding.small .handle.ne {
+   top: -19px;
+   right: -19px;
+}
+.joint-halo.surrounding.tiny .handle.ne {
+   top: -13px;
+   right: -15px;
+}
+
+.joint-halo.surrounding .handle.w {
+   left: -25px;
+   top: 50%;
+   margin-top: -10px;
+}
+.joint-halo.surrounding.small .handle.w {
+   left: -19px;
+   margin-top: -8px;
+}
+.joint-halo.surrounding.tiny .handle.w {
+   left: -15px;
+   margin-top: -5px;
+}
+
+.joint-halo.surrounding .handle.sw {
+   bottom: -25px;
+   left: -25px;
+}
+.joint-halo.surrounding.small .handle.sw {
+   bottom: -19px;
+   left: -19px;
+}
+.joint-halo.surrounding.tiny .handle.sw {
+   bottom: -13px;
+   left: -15px;
+}
+
+.joint-halo.surrounding .handle.s {
+   bottom: -24px;
+   left: 50%;
+   margin-left: -10px;
+}
+.joint-halo.surrounding.small .handle.s {
+   bottom: -19px;
+   margin-left: -7.5px;
+}
+.joint-halo.surrounding.tiny .handle.s {
+   bottom: -13px;
+   margin-left: -5px;
+}
+
+.joint-halo.surrounding .handle.selected {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 3px;
+}
+
+/* Pie type */
+
+.joint-halo.pie .box {
+    margin-top: 10px;
+    left: 0;
+    right: 0;
+}
+
+@-webkit-keyframes pie-visibility {
+    0% { visibility: hidden; }
+    100% { visibility: visible; }
+}
+
+@-moz-keyframes pie-visibility {
+    0% { visibility: hidden; }
+    100% { visibility: visible; }
+}
+
+@-o-keyframes pie-visibility {
+    0% { visibility: hidden; }
+    100% { visibility: visible; }
+}
+
+@keyframes pie-visibility {
+    0% { visibility: hidden; }
+    100% { visibility: visible; }
+}
+
+@-webkit-keyframes pie-opening {
+    0% { transform: scale(0.4) rotate(-20deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@-moz-keyframes pie-opening {
+    0% { transform: scale(0.4) rotate(-20deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@-o-keyframes pie-opening {
+    0% { transform: scale(0.4) rotate(-20deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes pie-opening {
+    0% { transform: scale(0.4) rotate(-20deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.joint-halo.pie {
+    margin: -2px 0 0 -2px;
+}
+
+.joint-halo.pie .handles {
+    display: none;
+    z-index: 1;
+    pointer-events: visiblePainted;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    right: -50px;
+    top: -webkit-calc(50% - 50px);
+    top: calc(50% - 50px);
+    margin: -2px -2px 0 0;
+    border-radius: 50%;
+    cursor: default;
+}
+
+.joint-halo.pie.open .handles {
+    display: block;
+    -webkit-animation: pie-visibility 0.1s, pie-opening 0.1s;
+    -moz-animation: pie-visibility 0.1s, pie-opening 0.1s;
+    -o-animation: pie-visibility 0.1s, pie-opening 0.1s;
+    animation: pie-visibility 0.1s, pie-opening 0.1s;
+    -webkit-animation-delay: 0s, 0.1s;
+    -moz-animation-delay: 0s, 0.1s;
+    -o-animation-delay: 0s, 0.1s;
+    animation-delay: 0s, 0.1s;
+    -webkit-animation-timing-function: step-end, ease;
+    -moz-animation-timing-function: step-end, ease;
+    -o-animation-timing-function: step-end, ease;
+    animation-timing-function: step-end, ease;
+}
+
+/* It's not possible to override the pointer-events in IE on SVG elements.
+   So we make the parent element of the slice really small and set the
+   overflow: visible. */
+.joint-halo.pie .handle {
+    pointer-events: visiblePainted;
+    height: auto;
+    width: 1px;
+}
+
+.joint-halo.pie .slice-text-icon,
+.joint-halo.pie .slice-img-icon {
+    pointer-events: none;
+    display: none;
+}
+
+.joint-halo.pie .slice-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* toggle pie button  */
+
+.joint-halo.pie .pie-toggle {
+    z-index: 2;
+    pointer-events: visiblePainted;
+    cursor: pointer;
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    position: absolute;
+    right: -15px;
+    top: -webkit-calc(50% - 15px);
+    top: calc(50% - 15px);
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+.joint-halo.pie .pie-toggle.e {
+    top: -webkit-calc(50% - 15px);
+    top: calc(50% - 15px);
+    right: -15px;
+    left: auto;
+    bottom: auto;
+}
+.joint-halo.pie .pie-toggle.w {
+    top: -webkit-calc(50% - 15px);
+    top: calc(50% - 15px);
+    left: -15px;
+    right: auto;
+    bottom: auto;
+}
+.joint-halo.pie .pie-toggle.n {
+    left: -webkit-calc(50% - 15px);
+    left: calc(50% - 15px);
+    top: -15px;
+    right: auto;
+    bottom: auto;
+}
+.joint-halo.pie .pie-toggle.s {
+    left: -webkit-calc(50% - 15px);
+    left: calc(50% - 15px);
+    bottom: -15px;
+    right: auto;
+    top: auto;
+}
+
+.joint-halo.pie[data-pie-toggle-position="e"] .handles {
+    left: auto;
+    right: -50px;
+    top: -webkit-calc(50% - 50px);
+    top: calc(50% - 50px);
+}
+.joint-halo.pie[data-pie-toggle-position="w"] .handles {
+    left: -52px;
+    right: auto;
+    top: -webkit-calc(50% - 50px);
+    top: calc(50% - 50px);
+}
+.joint-halo.pie[data-pie-toggle-position="n"] .handles {
+    bottom: auto;
+    top: -50px;
+    right: auto;
+    left: -webkit-calc(50% - 52px);
+    left: calc(50% - 52px);
+}
+.joint-halo.pie[data-pie-toggle-position="s"] .handles {
+    top: auto;
+    bottom: -52px;
+    right: auto;
+    left: -webkit-calc(50% - 52px);
+    left: calc(50% - 52px);
+}
+
+.joint-halo.pie.open .pie-toggle {
+    -webkit-transition: 0.1s background-image;
+    -moz-transition: 0.1s background-image;
+    -ms-transition: 0.1s background-image;
+    -o-transition: 0.1s background-image;
+    transition: 0.1s background-image;
+}
+
+/* Type toolbar */
+
+.joint-halo.toolbar .handles {
+    display: table-row;
+    position: absolute;
+    top: -50px;
+    padding: 7px 5px;
+}
+
+.joint-halo.toolbar .handles:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 100%;
+    margin-top: 4px;
+    left: 10px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+
+.joint-halo.toolbar .handle {
+    display: table-cell;
+    position: relative;
+    margin: 0 2px;
+    background-size: 16px 16px;
+    background-position: 3px 3px;
+    /* disallow the cell shrinking */
+    min-width: 20px;
+}
+
+.joint-halo.toolbar .handle.hidden {
+    display: none;
+}
+
+/* It's important to add the pseudo element to the dom when we render the table cell (handle)
+   otherwise FF would expand the entire table on hover. */
+.joint-halo.toolbar .handle:after {
+    content: '';
+    position: absolute;
+    /* top: 100%; margin-top: 7px;  does not work in IE. */
+    bottom: -11px;
+    width: 100%;
+}
+
+.joint-halo.toolbar .box {
+   left: -20px;
+   right: -20px;
+   margin-top: 30px;
+}

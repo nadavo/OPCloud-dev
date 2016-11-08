@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,28 +11,23 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-.popup {
+.joint-popup {
     position: absolute;
     z-index: 1000;
-    border: 2px solid #007ae6;
-    box-shadow: inset 2px 2px 0 #cbe5fa, 2px -2px 0 #cbe5fa, -2px -2px 0 #cbe5fa, inset -2px -2px 0 #cbe5fa, -2px 2px 0 #cbe5fa, 2px 2px 0 #cbe5fa, 4px 4px 0 #e0e0e0;
-    background-color: white;
 }
 
 /* Arrow styling. */
 
-.popup:before,
-.popup:after {
+.joint-popup:before,
+.joint-popup:after {
     content: ' ';
     height: 0;
     position: absolute;
     width: 0;
-    border: 10px solid transparent; /* arrow size */
 }
 
 /* top-stacked, smaller arrow */
-.popup:before {
-    border-bottom-color: #fff;  /* arrow color */
+.joint-popup:before {
 
     /* positioning */
     position: absolute;
@@ -43,8 +38,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 }
 
 /* arrow which acts as a background shadow */
-.popup:after {
-    border-bottom-color: #007ae6;  /* arrow color */
+.joint-popup:after {
 
     /* positioning */
     position: absolute;
@@ -52,4 +46,104 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
     left: 50%;
     margin-left: -10px;
     z-index: 1;
+}
+
+.joint-popup.joint-theme-dark {
+    background-color: #8b9094;
+    border: 2px solid #5e6366;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Arrow styling. */
+
+.joint-popup.joint-theme-dark:before,
+.joint-popup.joint-theme-dark:after {
+    border: 10px solid transparent; /* arrow size */
+}
+
+/* top-stacked, smaller arrow */
+.joint-popup.joint-theme-dark:before {
+    border-bottom-color: #8b9094;  /* arrow color */
+}
+
+/* arrow which acts as a background shadow */
+.joint-popup.joint-theme-dark:after {
+    border-bottom-color: #5e6366;  /* arrow color */
+}
+
+.joint-popup.joint-theme-default {
+    border: 1px solid lightgrey;
+    background-color: white;
+    padding: 10px;
+}
+
+/* Arrow styling. */
+
+.joint-popup.joint-theme-default:before {
+    top: -21px;
+}
+
+.joint-popup.joint-theme-default:before,
+.joint-popup.joint-theme-default:after {
+    border: 11px solid transparent; /* arrow size */
+}
+
+/* top-stacked, smaller arrow */
+.joint-popup.joint-theme-default:before {
+    border-bottom-color: white;  /* arrow color */
+}
+
+/* arrow which acts as a background shadow */
+.joint-popup.joint-theme-default:after {
+    border-bottom-color: lightgrey;  /* arrow color */
+}
+
+.joint-popup.joint-theme-material {
+    background-color: #ecf0f8;
+    border: 2px solid #d0d8e8;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: lato-light, Arial, sans-serif;
+}
+
+/* Arrow styling. */
+
+.joint-popup.joint-theme-material:before,
+.joint-popup.joint-theme-material:after {
+    border: 10px solid transparent; /* arrow size */
+}
+
+/* top-stacked, smaller arrow */
+.joint-popup.joint-theme-material:before {
+    border-bottom-color: #ecf0f8;  /* arrow color */
+}
+
+/* arrow which acts as a background shadow */
+.joint-popup.joint-theme-material:after {
+    border-bottom-color: #d0d8e8;  /* arrow color */
+}
+
+.joint-popup.joint-theme-modern {
+    background-color: #fff;
+    border: 2px solid #31d0c6;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Arrow styling. */
+
+.joint-popup.joint-theme-modern:before,
+.joint-popup.joint-theme-modern:after {
+    border: 10px solid transparent; /* arrow size */
+}
+
+/* top-stacked, smaller arrow */
+.joint-popup.joint-theme-modern:before {
+    border-bottom-color: #fff;  /* arrow color */
+}
+
+/* arrow which acts as a background shadow */
+.joint-popup.joint-theme-modern:after {
+    border-bottom-color: #31d0c6;  /* arrow color */
 }

@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -276,7 +276,7 @@ joint.routers.orthogonal = (function() {
         }
 
         return orthogonalVertices;
-    };
+    }
 
     return findOrthogonalRoute;
 

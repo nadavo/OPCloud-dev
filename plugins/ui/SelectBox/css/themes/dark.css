@@ -1,0 +1,77 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-select-box.joint-theme-dark {
+    font-size: 14px;
+    line-height: 1em;
+}
+
+.joint-select-box.joint-theme-dark:not(.joint-color-palette) .select-box-selection {
+    padding-right: 35px;
+    color: #24282b;
+    background: #92979b;
+    background: -webkit-linear-gradient(#8b9094, #92979b);
+    background: -o-linear-gradient(#8b9094, #92979b);
+    background: -moz-linear-gradient(#8b9094, #92979b);
+    background: linear-gradient(#8b9094, #92979b);
+    border: 1px solid #42474a;
+    border-radius: 3px;
+
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.joint-select-box.joint-theme-dark:not(.joint-color-palette) .select-box-placeholder {
+    color: #d6d6d6;
+}
+.joint-select-box-options.joint-theme-dark {
+    font-size: 14px;
+    border: 2px solid #383c3f;
+    border-radius: 2px;
+    background-color: #f6f6f6;
+}
+.joint-select-box.joint-theme-dark .select-box-option.hover {
+    background-color: #8b9094;
+}
+.joint-select-box.joint-theme-dark.disabled:not(.joint-color-palette) .select-box-selection {
+    background: linear-gradient(#8b9094, #92979b);
+}
+.joint-select-box.joint-theme-dark.disabled .select-box-option-content {
+    color: #d6d6d6;
+}
+.joint-select-box.joint-theme-dark .select-box-selection:after {
+    width: 33px;
+    height: count(100%-2px);
+    border:  1px solid #42474a;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    right: 0;
+    background:
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAKCAYAAAA6jzeaAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUMDA4najXgawAAAMZJREFUOMvtkjFOw0AQRd+MLCsugC6cyKegQeJckVLkUjZbZFdA8AHsLMI7Q4FEn0WKKHjdFPP19GfgDyA1Sw+PT35elp9ZVXF3uq7jsN9dnNnUSPR9z/12i1hBVTEBd2GaJg773cV5WiMxjiOllO8qRVAHM2MYhqpzVEnM80xKCRHBzCgIMUaWc76exGbTyTEmmfMHq0POmWNMtG0rV5NY10/MjBACqspzCLi7mFlVE1WP6Q7gvLy+cXN7x+n0TtM0/PNbvgDYoFa9lKBZgwAAAABJRU5ErkJggg==') right center no-repeat;
+    background:
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAKCAYAAAA6jzeaAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUMDA4najXgawAAAMZJREFUOMvtkjFOw0AQRd+MLCsugC6cyKegQeJckVLkUjZbZFdA8AHsLMI7Q4FEn0WKKHjdFPP19GfgDyA1Sw+PT35elp9ZVXF3uq7jsN9dnNnUSPR9z/12i1hBVTEBd2GaJg773cV5WiMxjiOllO8qRVAHM2MYhqpzVEnM80xKCRHBzCgIMUaWc76exGbTyTEmmfMHq0POmWNMtG0rV5NY10/MjBACqspzCLi7mFlVE1WP6Q7gvLy+cXN7x+n0TtM0/PNbvgDYoFa9lKBZgwAAAABJRU5ErkJggg==') right center no-repeat,
+        -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(120,124,128,1)), color-stop(1%, rgba(119,123,127,1)), color-stop(100%, rgba(104,108,112,1))); /*  safari4+,chrome */
+    background:
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAKCAYAAAA6jzeaAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUMDA4najXgawAAAMZJREFUOMvtkjFOw0AQRd+MLCsugC6cyKegQeJckVLkUjZbZFdA8AHsLMI7Q4FEn0WKKHjdFPP19GfgDyA1Sw+PT35elp9ZVXF3uq7jsN9dnNnUSPR9z/12i1hBVTEBd2GaJg773cV5WiMxjiOllO8qRVAHM2MYhqpzVEnM80xKCRHBzCgIMUaWc76exGbTyTEmmfMHq0POmWNMtG0rV5NY10/MjBACqspzCLi7mFlVE1WP6Q7gvLy+cXN7x+n0TtM0/PNbvgDYoFa9lKBZgwAAAABJRU5ErkJggg==') right center no-repeat,
+        -webkit-linear-gradient(270deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%); /* safari5.1+,chrome10+ */
+    background:
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAKCAYAAAA6jzeaAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUMDA4najXgawAAAMZJREFUOMvtkjFOw0AQRd+MLCsugC6cyKegQeJckVLkUjZbZFdA8AHsLMI7Q4FEn0WKKHjdFPP19GfgDyA1Sw+PT35elp9ZVXF3uq7jsN9dnNnUSPR9z/12i1hBVTEBd2GaJg773cV5WiMxjiOllO8qRVAHM2MYhqpzVEnM80xKCRHBzCgIMUaWc76exGbTyTEmmfMHq0POmWNMtG0rV5NY10/MjBACqspzCLi7mFlVE1WP6Q7gvLy+cXN7x+n0TtM0/PNbvgDYoFa9lKBZgwAAAABJRU5ErkJggg==') right center no-repeat,
+        -o-linear-gradient(270deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%);  /* opera 11.10+ */
+    background:
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAKCAYAAAA6jzeaAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUMDA4najXgawAAAMZJREFUOMvtkjFOw0AQRd+MLCsugC6cyKegQeJckVLkUjZbZFdA8AHsLMI7Q4FEn0WKKHjdFPP19GfgDyA1Sw+PT35elp9ZVXF3uq7jsN9dnNnUSPR9z/12i1hBVTEBd2GaJg773cV5WiMxjiOllO8qRVAHM2MYhqpzVEnM80xKCRHBzCgIMUaWc76exGbTyTEmmfMHq0POmWNMtG0rV5NY10/MjBACqspzCLi7mFlVE1WP6Q7gvLy+cXN7x+n0TtM0/PNbvgDYoFa9lKBZgwAAAABJRU5ErkJggg==') right center no-repeat,
+        -ms-linear-gradient(270deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%);  /* ie10+ */
+    background:
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAKCAYAAAA6jzeaAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUMDA4najXgawAAAMZJREFUOMvtkjFOw0AQRd+MLCsugC6cyKegQeJckVLkUjZbZFdA8AHsLMI7Q4FEn0WKKHjdFPP19GfgDyA1Sw+PT35elp9ZVXF3uq7jsN9dnNnUSPR9z/12i1hBVTEBd2GaJg773cV5WiMxjiOllO8qRVAHM2MYhqpzVEnM80xKCRHBzCgIMUaWc76exGbTyTEmmfMHq0POmWNMtG0rV5NY10/MjBACqspzCLi7mFlVE1WP6Q7gvLy+cXN7x+n0TtM0/PNbvgDYoFa9lKBZgwAAAABJRU5ErkJggg==') right center no-repeat,
+        linear-gradient(180deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%); /* w3c */
+}

@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,33 +11,31 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-.tooltip {
+.joint-tooltip {
    position: absolute;
    z-index: 10000;
    border-radius: 5px;
-   background-color: #333;
-   border: 2px solid rgb(36, 36, 36);
-   color: #bcbcbc;
    pointer-events: none;
-   padding: 10px;
-   font-size: 14px;
-   text-shadow: 0 -1px 0 #000;
 }
 
-.tooltip.left, .tooltip.right {
+.joint-tooltip .tooltip-content{
+   padding: 10px;
+}
+
+.joint-tooltip.left, .joint-tooltip.right {
     margin-top: -2px;
 }
 
-.tooltip.top, .tooltip.bottom {
+.joint-tooltip.top, .joint-tooltip.bottom {
     margin-left: -2px;
 }
 
-.tooltip.small {
+.joint-tooltip.small {
    padding: 5px;
    font-size: 10px;
 }
 
-.tooltip .tooltip-arrow, .tooltip .tooltip-arrow-mask {
+.joint-tooltip .tooltip-arrow, .joint-tooltip .tooltip-arrow-mask {
    border: solid transparent;
    content: " ";
    height: 0;
@@ -46,66 +44,250 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
    pointer-events: none;
 }
 
-.tooltip.left .tooltip-arrow-mask, .tooltip.left .tooltip-arrow {
+.joint-tooltip.left .tooltip-arrow-mask, .joint-tooltip.left .tooltip-arrow {
+   margin-right: -1px;
    right: 100%;
 }
 
-.tooltip.right .tooltip-arrow-mask, .tooltip.right .tooltip-arrow {
+.joint-tooltip.right .tooltip-arrow-mask, .joint-tooltip.right .tooltip-arrow {
+   margin-left: -1px;
    left: 100%;
 }
 
-.tooltip.top .tooltip-arrow-mask, .tooltip.top .tooltip-arrow {
+.joint-tooltip.top .tooltip-arrow-mask, .joint-tooltip.top .tooltip-arrow {
    bottom: 100%;
 }
 
-.tooltip.bottom .tooltip-arrow-mask, .tooltip.bottom .tooltip-arrow {
+.joint-tooltip.bottom .tooltip-arrow-mask, .joint-tooltip.bottom .tooltip-arrow {
    top: 100%;
 }
 
-.tooltip .tooltip-arrow-mask {
+.joint-tooltip .tooltip-arrow-mask {
    border-width: 6px;
 }
 
-.tooltip.left .tooltip-arrow-mask {
-   border-right-color: #333;
+.joint-tooltip.left .tooltip-arrow-mask {
    margin-top: -6px;
 }
 
-.tooltip.right .tooltip-arrow-mask {
-   border-left-color: #333;
+.joint-tooltip.right .tooltip-arrow-mask {
    margin-top: -6px;
 }
 
-.tooltip.top .tooltip-arrow-mask {
-   border-bottom-color: #333;
+.joint-tooltip.top .tooltip-arrow-mask {
    margin-left: -6px;
 }
 
-.tooltip.bottom .tooltip-arrow-mask {
-   border-top-color: #333;
+.joint-tooltip.bottom .tooltip-arrow-mask {
    margin-left: -6px;
 }
 
-.tooltip .tooltip-arrow {
+.joint-tooltip .tooltip-arrow {
    border-width: 8px;
 }
 
-.tooltip.left .tooltip-arrow {
-   border-right-color: rgb(36, 36, 36);
+.joint-tooltip.left .tooltip-arrow {
    margin-top: -8px;
 }
 
-.tooltip.right .tooltip-arrow {
-   border-left-color: rgb(36, 36, 36);
+.joint-tooltip.right .tooltip-arrow {
    margin-top: -8px;
 }
 
-.tooltip.top .tooltip-arrow {
-   border-bottom-color: rgb(36, 36, 36);
+.joint-tooltip.top .tooltip-arrow {
    margin-left: -8px;
 }
 
-.tooltip.bottom .tooltip-arrow {
-   border-top-color: rgb(36, 36, 36);
+.joint-tooltip.bottom .tooltip-arrow {
    margin-left: -8px;
+}
+
+.joint-tooltip.joint-theme-dark {
+   color: #fff;
+   font-size: 14px;
+   background: #5e6366;
+   border: none;
+   border-radius: 10px;
+   box-shadow: 0 1px 1px #aaa;
+}
+
+.joint-tooltip.joint-theme-dark.left .tooltip-arrow-mask {
+   border-right-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.right .tooltip-arrow-mask {
+   border-left-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.top .tooltip-arrow-mask {
+   border-bottom-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.bottom .tooltip-arrow-mask {
+   border-top-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.left .tooltip-arrow {
+   border-right-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.right .tooltip-arrow {
+   border-left-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.top .tooltip-arrow {
+   border-bottom-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.bottom .tooltip-arrow {
+   border-top-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-default {
+   background-color: lightgrey;
+   color: black;
+   font-size: 14px;
+}
+
+.joint-tooltip.joint-theme-default.left .tooltip-arrow-mask {
+   border-right-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.right .tooltip-arrow-mask {
+   border-left-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.top .tooltip-arrow-mask {
+   border-bottom-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.bottom .tooltip-arrow-mask {
+   border-top-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.left .tooltip-arrow {
+   border-right-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.right .tooltip-arrow {
+   border-left-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.top .tooltip-arrow {
+   border-bottom-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-default.bottom .tooltip-arrow {
+   border-top-color: lightgrey;
+}
+
+.joint-tooltip.joint-theme-material {
+    color: #deebfb;
+    font-size: 14px;
+    background: #5fa9ee;
+    border: none;
+    border-radius: 3px;
+    font-family: lato-light, Arial, sans-serif;
+    -webkit-animation: pulse 200ms cubic-bezier(0,0,.2,1);
+    animation: pulse 200ms cubic-bezier(0,0,.2,1);
+}
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    opacity: 0; }
+  50% {
+    -webkit-transform: scale(0.99);
+            transform: scale(0.99); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;}
+}
+
+@keyframes pulse {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    opacity: 0; }
+  50% {
+    -webkit-transform: scale(0.99);
+            transform: scale(0.99); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;}
+}
+
+.joint-tooltip.joint-theme-material.left .tooltip-arrow-mask {
+    border-right-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.right .tooltip-arrow-mask {
+    border-left-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.top .tooltip-arrow-mask {
+    border-bottom-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.bottom .tooltip-arrow-mask {
+    border-top-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.left .tooltip-arrow {
+    border-right-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.right .tooltip-arrow {
+    border-left-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.top .tooltip-arrow {
+    border-bottom-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.bottom .tooltip-arrow {
+    border-top-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-modern.joint-theme-modern {
+   color: #fff;
+   font-size: 14px;
+   background: #6a6b8a;
+   border: none;
+   border-radius: 10px;
+   box-shadow: 0 1px 1px #aaa;
+}
+
+.joint-tooltip.joint-theme-modern.left .tooltip-arrow-mask {
+   border-right-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.right .tooltip-arrow-mask {
+   border-left-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.top .tooltip-arrow-mask {
+   border-bottom-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.bottom .tooltip-arrow-mask {
+   border-top-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.left .tooltip-arrow {
+   border-right-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.right .tooltip-arrow {
+   border-left-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.top .tooltip-arrow {
+   border-bottom-color: #6a6b8a;
+}
+
+.joint-tooltip.joint-theme-modern.bottom .tooltip-arrow {
+   border-top-color: #6a6b8a;
 }

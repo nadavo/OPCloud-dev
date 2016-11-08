@@ -1,0 +1,119 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-stencil.joint-theme-default {
+    color: black;
+    background: white;
+    border: 1px solid lightgrey;
+}
+
+.joint-stencil.joint-theme-default.collapsible > .content {
+    top: 20px;
+}
+
+.joint-stencil.joint-theme-default.collapsible.searchable > .content {
+    top: 52px;
+}
+
+.joint-stencil.joint-theme-default .group.closed {
+    height: auto;
+    max-height: 24px;
+}
+
+.joint-stencil.joint-theme-default .groups-toggle {
+    line-height: 20px;
+}
+
+.joint-stencil.joint-theme-default .group > .group-label {
+    text-transform: uppercase;
+    font-size: 10px;
+}
+
+.joint-stencil.joint-theme-default .group:first-child {
+    border-top: 1px solid lightgrey;
+}
+
+.joint-stencil.joint-theme-default .group {
+    border-bottom: 1px solid lightgrey;
+}
+
+.joint-stencil.joint-theme-default .groups-toggle > .group-label {
+    display: block;
+}
+
+/* arrow */
+.joint-stencil.joint-theme-default .group > .group-label:before {
+    position: relative;
+    top: 5px;
+    content: '';
+    width: 0;
+    height: 0;
+    display: inline-block;
+    border: 5px solid transparent;
+    border-top-color: black;
+    margin-left: 2px;
+    margin-right: 5px;
+}
+
+.joint-stencil.joint-theme-default .group.closed > .group-label:before {
+    top: 2px;
+    left: 2px;
+    border: 5px solid transparent;
+    border-left-color: black;
+}
+
+/* input search field */
+.joint-stencil.joint-theme-default .search {
+    color: black;
+    border: none;
+    background: white;
+}
+
+/* no matches found - search */
+.joint-stencil.joint-theme-default:after {
+    font-size: 12px;
+    border-top: 1px solid lightgrey;
+    background: white;
+    color: black;
+}
+
+/* expand, collapse buttons */
+.joint-stencil.joint-theme-default .groups-toggle .btn {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: none;
+    outline: none;
+    color: black;
+    cursor: pointer;
+    width: 20px;
+    height: 16px;
+    line-height: 12px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+}
+
+.joint-stencil.joint-theme-default .groups-toggle .btn-collapse {
+    left: 25px;
+}
+
+.joint-stencil.joint-theme-default .groups-toggle .btn:focus {
+    outline: none;
+}
+
+.joint-stencil.joint-theme-default .groups-toggle .btn:hover {
+    cursor: pointer;
+    background: lightgrey;
+}

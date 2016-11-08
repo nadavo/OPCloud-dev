@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,16 +11,13 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-//      JointJS library.
-//      (c) 2011-2013 client IO
-
 joint.shapes.erd = {};
 
 joint.shapes.erd.Entity = joint.dia.Element.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><polygon class="outer"/><polygon class="inner"/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Entity',
         size: { width: 150, height: 60 },
@@ -37,8 +34,8 @@ joint.shapes.erd.Entity = joint.dia.Element.extend({
             text: {
                 text: 'Entity',
                 'font-family': 'Arial', 'font-size': 14,
-                ref: '.outer', 'ref-x': .5, 'ref-y': .5,
-                'x-alignment': 'middle', 'y-alignment': 'middle'
+                'ref-x': .5, 'ref-y': .5,
+                'y-alignment': 'middle', 'text-anchor': 'middle'
             }
         }
 
@@ -47,7 +44,7 @@ joint.shapes.erd.Entity = joint.dia.Element.extend({
 
 joint.shapes.erd.WeakEntity = joint.shapes.erd.Entity.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.WeakEntity',
 
@@ -63,7 +60,7 @@ joint.shapes.erd.Relationship = joint.dia.Element.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><polygon class="outer"/><polygon class="inner"/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Relationship',
         size: { width: 80, height: 80 },
@@ -80,8 +77,8 @@ joint.shapes.erd.Relationship = joint.dia.Element.extend({
             text: {
                 text: 'Relationship',
                 'font-family': 'Arial', 'font-size': 12,
-                ref: '.', 'ref-x': .5, 'ref-y': .5,
-                'x-alignment': 'middle', 'y-alignment': 'middle'
+                'ref-x': .5, 'ref-y': .5,
+                'y-alignment': 'middle', 'text-anchor': 'middle'
             }
         }
 
@@ -90,7 +87,7 @@ joint.shapes.erd.Relationship = joint.dia.Element.extend({
 
 joint.shapes.erd.IdentifyingRelationship = joint.shapes.erd.Relationship.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.IdentifyingRelationship',
 
@@ -106,7 +103,7 @@ joint.shapes.erd.Attribute = joint.dia.Element.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><ellipse class="outer"/><ellipse class="inner"/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Attribute',
         size: { width: 100, height: 50 },
@@ -125,10 +122,10 @@ joint.shapes.erd.Attribute = joint.dia.Element.extend({
                 fill: '#E67E22', display: 'none'
             },
             text: {
-                 'font-family': 'Arial', 'font-size': 14,
-                 ref: '.', 'ref-x': .5, 'ref-y': .5,
-                 'x-alignment': 'middle', 'y-alignment': 'middle'
-             }
+                'font-family': 'Arial', 'font-size': 14,
+                'ref-x': .5, 'ref-y': .5,
+                'y-alignment': 'middle', 'text-anchor': 'middle'
+            }
         }
 
     }, joint.dia.Element.prototype.defaults)
@@ -137,47 +134,49 @@ joint.shapes.erd.Attribute = joint.dia.Element.extend({
 
 joint.shapes.erd.Multivalued = joint.shapes.erd.Attribute.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Multivalued',
 
         attrs: {
-             '.inner': { display: 'block' },
-             text: { text: 'multivalued' }
-         }
+            '.inner': { display: 'block' },
+            text: { text: 'multivalued' }
+        }
+
     }, joint.shapes.erd.Attribute.prototype.defaults)
 });
 
 joint.shapes.erd.Derived = joint.shapes.erd.Attribute.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Derived',
 
         attrs: {
-             '.outer': { 'stroke-dasharray': '3,5' },
-             text: { text: 'derived' }
-         }
+            '.outer': { 'stroke-dasharray': '3,5' },
+            text: { text: 'derived' }
+        }
 
     }, joint.shapes.erd.Attribute.prototype.defaults)
 });
 
 joint.shapes.erd.Key = joint.shapes.erd.Attribute.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Key',
 
         attrs: {
-             ellipse: { 'stroke-width': 4 },
-             text: { text: 'key', 'font-weight': '800', 'text-decoration': 'underline' }
-         }
+            ellipse: { 'stroke-width': 4 },
+            text: { text: 'key', 'font-weight': '800', 'text-decoration': 'underline' }
+        }
+
     }, joint.shapes.erd.Attribute.prototype.defaults)
 });
 
 joint.shapes.erd.Normal = joint.shapes.erd.Attribute.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.Normal',
 
@@ -190,7 +189,7 @@ joint.shapes.erd.ISA = joint.dia.Element.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><polygon/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'erd.ISA',
         size: { width: 100, height: 50 },
@@ -201,8 +200,8 @@ joint.shapes.erd.ISA = joint.dia.Element.extend({
             },
             text: {
                 text: 'ISA', 'font-size': 18,
-                ref: 'polygon', 'ref-x': .5, 'ref-y': .3,
-                'x-alignment': 'middle', 'y-alignment': 'middle'
+                'ref-x': .5, 'ref-y': .3,
+                'y-alignment': 'middle', 'text-anchor': 'middle'
             }
         }
 

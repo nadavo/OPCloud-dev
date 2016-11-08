@@ -1,0 +1,82 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-tooltip.joint-theme-material {
+    color: #deebfb;
+    font-size: 14px;
+    background: #5fa9ee;
+    border: none;
+    border-radius: 3px;
+    font-family: lato-light, Arial, sans-serif;
+    -webkit-animation: pulse 200ms cubic-bezier(0,0,.2,1);
+    animation: pulse 200ms cubic-bezier(0,0,.2,1);
+}
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    opacity: 0; }
+  50% {
+    -webkit-transform: scale(0.99);
+            transform: scale(0.99); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;}
+}
+
+@keyframes pulse {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    opacity: 0; }
+  50% {
+    -webkit-transform: scale(0.99);
+            transform: scale(0.99); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;}
+}
+
+.joint-tooltip.joint-theme-material.left .tooltip-arrow-mask {
+    border-right-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.right .tooltip-arrow-mask {
+    border-left-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.top .tooltip-arrow-mask {
+    border-bottom-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.bottom .tooltip-arrow-mask {
+    border-top-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.left .tooltip-arrow {
+    border-right-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.right .tooltip-arrow {
+    border-left-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.top .tooltip-arrow {
+    border-bottom-color: #5fa9ee;
+}
+
+.joint-tooltip.joint-theme-material.bottom .tooltip-arrow {
+    border-top-color: #5fa9ee;
+}

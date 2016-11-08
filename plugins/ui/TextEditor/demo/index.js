@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -25,9 +25,14 @@ var rb = new joint.shapes.basic.Rect({
     position: { x: 50, y: 50 },
     size: { width: 100, height: 40 },
     attrs: {
-        text: { text: 'ab cd\nefgh\nijkl', fill: 'white', lineHeight: '1.5em', 'ref-x': 8, 'ref-y': 8, 'x-alignment': 0, 'y-alignment': 0, 'text-anchor': 'left', annotations: [
+        text: {
+            text: 'ab cd\nefgh\nijkl',
+            fill: 'white',
+            lineHeight: '1.5em', 'ref-x': 8, 'ref-y': 8, 'x-alignment': 0, 'y-alignment': 0, 'text-anchor': 'left',
+            annotations: [
                 { start: 3, end: 6, attrs: { 'font-size': '30', fill: 'red' } }
-            ] },
+            ]
+        },
         rect: { fill: '#0f87d2', stroke: 'none' }
     }
 });

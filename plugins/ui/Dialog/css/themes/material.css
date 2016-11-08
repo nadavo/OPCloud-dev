@@ -1,0 +1,91 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-dialog.joint-theme-material {
+    font-family: lato-light, Arial, sans-serif;
+}
+
+.joint-dialog.joint-theme-material .fg {
+    border: 2px solid #d0d8e8;
+    background-color: #ecf0f8;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.joint-dialog.joint-theme-material.inlined .fg {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: auto;
+    margin: 0;
+}
+
+.joint-dialog.joint-theme-material .titlebar {
+    color: #6a6c8a;
+    text-shadow: none;
+    background-color: #d0d8e8;
+    padding: 5px;
+    padding-right: 25px;
+}
+.joint-dialog.joint-theme-material[data-type="alert"] .fg {
+    border-color: #C00D0F;
+}
+.joint-dialog.joint-theme-material[data-type="alert"] .titlebar {
+    color:#deebfb;
+    background-color: #C00D0F;
+}
+.joint-dialog.joint-theme-material[data-type="warning"] .fg {
+    border-color: #daac0f;
+}
+.joint-dialog.joint-theme-material[data-type="warning"] .titlebar {
+    color: #deebfb;
+    background-color: #daac0f;
+}
+.joint-dialog.joint-theme-material[data-type="success"] .fg {
+    border-color: #5fa9ee;
+}
+.joint-dialog.joint-theme-material[data-type="success"] .titlebar {
+    color: #deebfb;
+    background-color: #5fa9ee;
+}
+
+.joint-dialog.joint-theme-material .btn-close {
+    color: #6a6c8a;
+    font-size: 16px;
+    background-color: transparent;
+    border: none;
+}
+.joint-dialog.joint-theme-material[data-type="alert"] .btn-close,
+.joint-dialog.joint-theme-material[data-type="warning"] .btn-close,
+.joint-dialog.joint-theme-material[data-type="success"] .btn-close {
+    color: #f6f6f6;
+}
+
+.joint-dialog.joint-theme-material .body {
+    color: #55627b;
+    padding: 10px;
+}
+
+.joint-dialog.joint-theme-material .controls .control-button {
+    border: none;
+    color: #fefefe;
+    background-color: #5faaee;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+.joint-dialog.joint-theme-material .controls .control-button:hover {
+    background-color: #4C88BE;
+}

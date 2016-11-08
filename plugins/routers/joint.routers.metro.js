@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -15,7 +15,7 @@ joint.routers.metro = (function() {
 
     if (!_.isFunction(joint.routers.manhattan)) {
 
-        throw('Metro requires the manhattan router.');
+        throw new Error('Metro requires the manhattan router.');
     }
 
     var config = {

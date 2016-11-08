@@ -1,0 +1,72 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-tree-layout {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.joint-tree-layout .hidden {
+    display: none;
+}
+
+.tree-layout-box {
+    position: absolute;
+    pointer-events: none;
+    opacity: 1;
+}
+
+.joint-tree-layout .tree-layout-box.translate {
+    z-index: 100;
+    transform: translate(-50%,-50%);
+}
+
+/* Prevent throwing exception in FF when trying to measure an element view inside the zero-sized paper. */
+.tree-layout-box > .joint-paper {
+    min-width: 1px;
+    min-height: 1px;
+    width: 100%;
+    height: 100%;
+}
+
+.tree-layout-box > .joint-paper > svg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+.tree-layout-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    cursor: move;
+}
+
+.tree-layout-mask.dropping-not-allowed {
+    cursor: not-allowed;
+}
+
+.tree-layout-preview-group .tree-layout-preview {
+    fill: none;
+}

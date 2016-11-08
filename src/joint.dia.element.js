@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -23,6 +23,24 @@ joint.dia.Element = joint.dia.Cell.extend({
         position: { x: 0, y: 0 },
         size: { width: 1, height: 1 },
         angle: 0
+    },
+
+    initialize: function() {
+
+        this._initializePorts();
+        joint.dia.Cell.prototype.initialize.apply(this, arguments);
+    },
+
+    /**
+     * @abstract
+     */
+    _initializePorts: function() {
+        // implemented in ports.js
+    },
+
+    isElement: function() {
+
+        return true;
     },
 
     position: function(x, y, opt) {
@@ -128,10 +146,10 @@ joint.dia.Element = joint.dia.Cell.extend({
         } else {
 
             this.set('position', translatedPosition, opt);
-
-            // Recursively call `translate()` on all the embeds cells.
-            _.invoke(this.getEmbeddedCells(), 'translate', tx, ty, opt);
         }
+
+        // Recursively call `translate()` on all the embeds cells.
+        _.invoke(this.getEmbeddedCells(), 'translate', tx, ty, opt);
 
         return this;
     },
@@ -140,7 +158,7 @@ joint.dia.Element = joint.dia.Cell.extend({
 
         opt = opt || {};
 
-        this.trigger('batch:start', _.extend({}, opt, { element: this, batchName: 'resize' }));
+        this.startBatch('resize', opt);
 
         if (opt.direction) {
 
@@ -228,7 +246,7 @@ joint.dia.Element = joint.dia.Cell.extend({
             // The top left corner on the unrotated element has to be half a width on the left
             // and half a height to the top from the center. This will be the origin of rectangle
             // we were looking for.
-            var origin = g.point(center).offset( width / -2, height / -2);
+            var origin = g.point(center).offset(width / -2, height / -2);
 
             // Resize the element (before re-positioning it).
             this.set('size', { width: width, height: height }, opt);
@@ -242,8 +260,18 @@ joint.dia.Element = joint.dia.Cell.extend({
             this.set('size', { width: width, height: height }, opt);
         }
 
-        this.trigger('batch:stop', _.extend({}, opt, { element: this, batchName: 'resize' }));
+        this.stopBatch('resize', opt);
 
+        return this;
+    },
+
+    scale: function(sx, sy, origin, opt) {
+
+        var scaledBBox = this.getBBox().scale(sx, sy, origin);
+        this.startBatch('scale', opt);
+        this.position(scaledBBox.x, scaledBBox.y, opt);
+        this.resize(scaledBBox.width, scaledBBox.height, opt);
+        this.stopBatch('scale');
         return this;
     },
 
@@ -259,7 +287,7 @@ joint.dia.Element = joint.dia.Cell.extend({
 
         if (embeddedCells.length > 0) {
 
-            this.trigger('batch:start', { batchName: 'fit-embeds' });
+            this.startBatch('fit-embeds', opt);
 
             if (opt.deep) {
                 // Recursively apply fitEmbeds on all embeds first.
@@ -268,13 +296,13 @@ joint.dia.Element = joint.dia.Cell.extend({
 
             // Compute cell's size and position  based on the children bbox
             // and given padding.
-            var bbox = this.graph.getBBox(embeddedCells);
+            var bbox = this.graph.getCellsBBox(embeddedCells);
             var padding = joint.util.normalizeSides(opt.padding);
 
             // Apply padding computed above to the bbox.
             bbox.moveAndExpand({
-                x: - padding.left,
-                y: - padding.top,
+                x: -padding.left,
+                y: -padding.top,
                 width: padding.right + padding.left,
                 height: padding.bottom + padding.top
             });
@@ -285,7 +313,7 @@ joint.dia.Element = joint.dia.Cell.extend({
                 size: { width: bbox.width, height: bbox.height }
             }, opt);
 
-            this.trigger('batch:stop', { batchName: 'fit-embeds' });
+            this.stopBatch('fit-embeds');
         }
 
         return this;
@@ -295,7 +323,7 @@ joint.dia.Element = joint.dia.Cell.extend({
     // If `origin` is not provided, it is considered to be the center of the element.
     // If `absolute` is `true`, the `angle` is considered is abslute, i.e. it is not
     // the difference from the previous angle.
-    rotate: function(angle, absolute, origin) {
+    rotate: function(angle, absolute, origin, opt) {
 
         if (origin) {
 
@@ -305,14 +333,17 @@ joint.dia.Element = joint.dia.Cell.extend({
             center.rotate(origin, this.get('angle') - angle);
             var dx = center.x - size.width / 2 - position.x;
             var dy = center.y - size.height / 2 - position.y;
-            this.trigger('batch:start', { batchName: 'rotate' });
-            this.translate(dx, dy);
-            this.rotate(angle, absolute);
-            this.trigger('batch:stop', { batchName: 'rotate' });
+            this.startBatch('rotate', { angle: angle, absolute: absolute, origin: origin });
+            // Cloning the options here so the flags added by the `translate` method
+            // won't propagate to the `rotate` method. This is important because of
+            // LinkView update optimalization.
+            this.translate(dx, dy, _.clone(opt));
+            this.rotate(angle, absolute, null, opt);
+            this.stopBatch('rotate');
 
         } else {
 
-            this.set('angle', absolute ? angle : (this.get('angle') + angle) % 360);
+            this.set('angle', absolute ? angle : (this.get('angle') + angle) % 360, opt);
         }
 
         return this;
@@ -330,7 +361,7 @@ joint.dia.Element = joint.dia.Cell.extend({
             // Add the model itself.
             elements.push(this);
 
-            return this.graph.getBBox(elements);
+            return this.graph.getCellsBBox(elements);
         }
 
         var position = this.get('position');
@@ -342,6 +373,7 @@ joint.dia.Element = joint.dia.Cell.extend({
 
 // joint.dia.Element base view and controller.
 // -------------------------------------------
+
 
 joint.dia.ElementView = joint.dia.CellView.extend({
 
@@ -361,23 +393,143 @@ joint.dia.ElementView = joint.dia.CellView.extend({
         'port'
     ],
 
+    /**
+     * @abstract
+     */
+    _removePorts: function() {
+        // implemented in ports.js
+    },
+
+    /**
+     *
+     * @abstract
+     */
+    _renderPorts: function() {
+        // implemented in ports.js
+    },
+
     className: function() {
-        return 'element ' + this.model.get('type').replace(/\./g, ' ');
+
+        var classNames = joint.dia.CellView.prototype.className.apply(this).split(' ');
+
+        classNames.push('element');
+
+        return classNames.join(' ');
     },
 
     initialize: function() {
 
-        _.bindAll(this, 'translate', 'resize', 'rotate');
-
         joint.dia.CellView.prototype.initialize.apply(this, arguments);
 
-        this.listenTo(this.model, 'change:position', this.translate);
-        this.listenTo(this.model, 'change:size', this.resize);
-        this.listenTo(this.model, 'change:angle', this.rotate);
+        var model = this.model;
+
+        this.listenTo(model, 'change:position', this.translate);
+        this.listenTo(model, 'change:size', this.resize);
+        this.listenTo(model, 'change:angle', this.rotate);
+        this.listenTo(model, 'change:markup', this.render);
+
+        this._initializePorts();
+    },
+
+    /**
+     * @abstract
+     */
+    _initializePorts: function() {
+
+    },
+
+    /**
+     * @param {jQuery} $selected
+     * @param {Object} attrs
+     */
+    updateAttr: function($selected, attrs) {
+
+        // Special attributes are treated by JointJS, not by SVG.
+        var specialAttributes = this.SPECIAL_ATTRIBUTES.slice();
+
+        // If the `filter` attribute is an object, it is in the special JointJS filter format and so
+        // it becomes a special attribute and is treated separately.
+        if (_.isObject(attrs.filter)) {
+
+            specialAttributes.push('filter');
+            this.applyFilter($selected, attrs.filter);
+        }
+
+        // If the `fill` or `stroke` attribute is an object, it is in the special JointJS gradient format and so
+        // it becomes a special attribute and is treated separately.
+        if (_.isObject(attrs.fill)) {
+
+            specialAttributes.push('fill');
+            this.applyGradient($selected, 'fill', attrs.fill);
+        }
+        if (_.isObject(attrs.stroke)) {
+
+            specialAttributes.push('stroke');
+            this.applyGradient($selected, 'stroke', attrs.stroke);
+        }
+
+        // Make special case for `text` attribute. So that we can set text content of the `<text>` element
+        // via the `attrs` object as well.
+        // Note that it's important to set text before applying the rest of the final attributes.
+        // Vectorizer `text()` method sets on the element its own attributes and it has to be possible
+        // to rewrite them, if needed. (i.e display: 'none')
+        if (!_.isUndefined(attrs.text)) {
+
+            $selected.each(function() {
+
+                if (!_.isUndefined(attrs.x)) {
+                    V(this).attr('x', attrs.x);
+                    specialAttributes.push('x');
+                }
+
+                if (!_.isUndefined(attrs.y)) {
+                    V(this).attr('y', attrs.y);
+                    specialAttributes.push('y');
+                }
+
+                V(this).text(attrs.text + '', {
+                    lineHeight: attrs.lineHeight,
+                    textPath: attrs.textPath,
+                    annotations: attrs.annotations
+                });
+            });
+            specialAttributes.push('lineHeight', 'textPath', 'annotations');
+        }
+
+        // Set regular attributes on the `$selected` subelement. Note that we cannot use the jQuery attr()
+        // method as some of the attributes might be namespaced (e.g. xlink:href) which fails with jQuery attr().
+        var finalAttributes = _.omit(attrs, specialAttributes);
+
+        $selected.each(function() {
+
+            V(this).attr(finalAttributes);
+        });
+
+        // `port` attribute contains the `id` of the port that the underlying magnet represents.
+        if (attrs.port) {
+            $selected.attr('port', _.isUndefined(attrs.port.id) ? attrs.port : attrs.port.id);
+        }
+
+        // `style` attribute is special in the sense that it sets the CSS style of the subelement.
+        if (attrs.style) {
+
+            $selected.css(attrs.style);
+        }
+
+        if (!_.isUndefined(attrs.html)) {
+
+            $selected.each(function() {
+
+                $(this).html(attrs.html + '');
+            });
+        }
+
     },
 
     // Default is to process the `attrs` object and set attributes on subelements based on the selectors.
     update: function(cell, renderingOnlyAttrs) {
+
+        this._removePorts();
 
         var allAttrs = this.model.get('attrs');
 
@@ -393,78 +545,16 @@ joint.dia.ElementView = joint.dia.CellView.extend({
         _.each(renderingOnlyAttrs || allAttrs, function(attrs, selector) {
 
             // Elements that should be updated.
-            var $selected = this.findBySelector(selector);
+            var $selected = (selector === '.')
+                    ? this.$el
+                    : this.findBySelector(selector);
+
             // No element matched by the `selector` was found. We're done then.
             if ($selected.length === 0) return;
 
             nodesBySelector[selector] = $selected;
 
-            // Special attributes are treated by JointJS, not by SVG.
-            var specialAttributes = this.SPECIAL_ATTRIBUTES.slice();
-
-            // If the `filter` attribute is an object, it is in the special JointJS filter format and so
-            // it becomes a special attribute and is treated separately.
-            if (_.isObject(attrs.filter)) {
-
-                specialAttributes.push('filter');
-                this.applyFilter($selected, attrs.filter);
-            }
-
-            // If the `fill` or `stroke` attribute is an object, it is in the special JointJS gradient format and so
-            // it becomes a special attribute and is treated separately.
-            if (_.isObject(attrs.fill)) {
-
-                specialAttributes.push('fill');
-                this.applyGradient($selected, 'fill', attrs.fill);
-            }
-            if (_.isObject(attrs.stroke)) {
-
-                specialAttributes.push('stroke');
-                this.applyGradient($selected, 'stroke', attrs.stroke);
-            }
-
-            // Make special case for `text` attribute. So that we can set text content of the `<text>` element
-            // via the `attrs` object as well.
-            // Note that it's important to set text before applying the rest of the final attributes.
-            // Vectorizer `text()` method sets on the element its own attributes and it has to be possible
-            // to rewrite them, if needed. (i.e display: 'none')
-            if (!_.isUndefined(attrs.text)) {
-
-                $selected.each(function() {
-
-                    V(this).text(attrs.text + '', { lineHeight: attrs.lineHeight, textPath: attrs.textPath, annotations: attrs.annotations });
-                });
-                specialAttributes.push('lineHeight', 'textPath', 'annotations');
-            }
-
-            // Set regular attributes on the `$selected` subelement. Note that we cannot use the jQuery attr()
-            // method as some of the attributes might be namespaced (e.g. xlink:href) which fails with jQuery attr().
-            var finalAttributes = _.omit(attrs, specialAttributes);
-
-            $selected.each(function() {
-
-                V(this).attr(finalAttributes);
-            });
-
-            // `port` attribute contains the `id` of the port that the underlying magnet represents.
-            if (attrs.port) {
-
-                $selected.attr('port', _.isUndefined(attrs.port.id) ? attrs.port : attrs.port.id);
-            }
-
-            // `style` attribute is special in the sense that it sets the CSS style of the subelement.
-            if (attrs.style) {
-
-                $selected.css(attrs.style);
-            }
-
-            if (!_.isUndefined(attrs.html)) {
-
-                $selected.each(function() {
-
-                    $(this).html(attrs.html + '');
-                });
-            }
+            this.updateAttr($selected, attrs);
 
             // Special `ref-x` and `ref-y` attributes make it possible to set both absolute or
             // relative positioning of subelements.
@@ -472,11 +562,11 @@ joint.dia.ElementView = joint.dia.CellView.extend({
                 !_.isUndefined(attrs['ref-y']) ||
                 !_.isUndefined(attrs['ref-dx']) ||
                 !_.isUndefined(attrs['ref-dy']) ||
-		!_.isUndefined(attrs['x-alignment']) ||
-		!_.isUndefined(attrs['y-alignment']) ||
+                !_.isUndefined(attrs['x-alignment']) ||
+                !_.isUndefined(attrs['y-alignment']) ||
                 !_.isUndefined(attrs['ref-width']) ||
                 !_.isUndefined(attrs['ref-height'])
-               ) {
+            ) {
 
                 _.each($selected, function(el, index, list) {
                     var $el = $(el);
@@ -508,7 +598,7 @@ joint.dia.ElementView = joint.dia.CellView.extend({
             var renderingOnlyElAttrs = renderingOnlyAttrs[$el.selector];
             var elAttrs = renderingOnlyElAttrs
                 ? _.merge({}, allAttrs[$el.selector], renderingOnlyElAttrs)
-            : allAttrs[$el.selector];
+                : allAttrs[$el.selector];
 
             this.positionRelative(V($el[0]), bbox, elAttrs, nodesBySelector);
 
@@ -518,6 +608,8 @@ joint.dia.ElementView = joint.dia.CellView.extend({
 
             rotatable.attr('transform', rotation || '');
         }
+
+        this._renderPorts();
     },
 
     positionRelative: function(vel, bbox, attributes, nodesBySelector) {
@@ -639,6 +731,7 @@ joint.dia.ElementView = joint.dia.CellView.extend({
                 tx = bbox.x + bbox.width + refDx;
             }
         }
+
         if (isFinite(refDy)) {
 
             if (scalable) {
@@ -673,9 +766,10 @@ joint.dia.ElementView = joint.dia.CellView.extend({
                 tx = bbox.x + refX;
             }
         }
+
         if (isFinite(refY)) {
 
-            if (refXPercentage || refY > 0 && refY < 1) {
+            if (refYPercentage || refY > 0 && refY < 1) {
 
                 ty = bbox.y + bbox.height * refY;
 
@@ -693,26 +787,52 @@ joint.dia.ElementView = joint.dia.CellView.extend({
 
         if (!_.isUndefined(yAlignment) || !_.isUndefined(xAlignment)) {
 
-            var velBBox = vel.bbox(false, this.paper.viewport);
+            // Get the boundind box with the tranformations applied by the the
+            // element itself only.
+            var node = vel.node;
+            var velBBox = vel.bbox(false, node.parentNode);
+
+            // Compensate the size with the bounding box origin offset for text elements.
+            var nodeName = node.nodeName.toUpperCase();
+            if (nodeName === 'TEXT' || nodeName === 'TSPAN') {
+                velBBox.height += velBBox.y;
+                velBBox.width += velBBox.x;
+            }
+
+            if (scalable) {
+                scale = scale || scalable.scale();
+                velBBox.width *= scale.sx;
+                velBBox.height *= scale.sy;
+            }
 
             // `y-alignment` when set to `middle` causes centering of the subelement around its new y coordinate.
+            // `y-alignment` when set to `bottom` uses the y coordinate as referenced to the bottom of the bbox.
             if (yAlignment === 'middle') {
 
                 ty -= velBBox.height / 2;
 
+            } else if (yAlignment === 'bottom') {
+
+                ty -= velBBox.height;
+
             } else if (isFinite(yAlignment)) {
 
-                ty += (yAlignment > -1 && yAlignment < 1) ?  velBBox.height * yAlignment : yAlignment;
+                ty += (yAlignment > -1 && yAlignment < 1) ? velBBox.height * yAlignment : yAlignment;
             }
 
             // `x-alignment` when set to `middle` causes centering of the subelement around its new x coordinate.
+            // `x-alignment` when set to `right` uses the x coordinate as referenced to the right of the bbox.
             if (xAlignment === 'middle') {
 
                 tx -= velBBox.width / 2;
 
+            } else if (xAlignment === 'right') {
+
+                tx -= velBBox.width;
+
             } else if (isFinite(xAlignment)) {
 
-                tx += (xAlignment > -1 && xAlignment < 1) ?  velBBox.width * xAlignment : xAlignment;
+                tx += (xAlignment > -1 && xAlignment < 1) ? velBBox.width * xAlignment : xAlignment;
             }
         }
 
@@ -727,7 +847,8 @@ joint.dia.ElementView = joint.dia.CellView.extend({
 
         if (markup) {
 
-            var nodes = V(markup);
+            var svg = joint.util.template(markup)();
+            var nodes = V(svg);
 
             this.vel.append(nodes);
 
@@ -742,12 +863,9 @@ joint.dia.ElementView = joint.dia.CellView.extend({
         this.$el.empty();
 
         this.renderMarkup();
-
         this.rotatableNode = this.vel.findOne('.rotatable');
         this.scalableNode = this.vel.findOne('.scalable');
-
         this.update();
-
         this.resize();
         this.rotate();
         this.translate();
@@ -767,16 +885,26 @@ joint.dia.ElementView = joint.dia.CellView.extend({
         this.vel.scale(sx, sy);
     },
 
-    resize: function() {
+    resize: function(cell, changed, opt) {
 
-        var size = this.model.get('size') || { width: 1, height: 1 };
-        var angle = this.model.get('angle') || 0;
+        var model = this.model;
+        var size = model.get('size') || { width: 1, height: 1 };
+        var angle = model.get('angle') || 0;
 
         var scalable = this.scalableNode;
         if (!scalable) {
-            // If there is no scalable elements, than there is nothing to resize.
+
+            if (angle !== 0) {
+                // update the origin of the rotation
+                this.rotate();
+            }
+            // update the ref attributes
+            this.update();
+
+            // If there is no scalable elements, than there is nothing to scale.
             return;
         }
+
         var scalableBbox = scalable.bbox(true);
         // Make sure `scalableBbox.width` and `scalableBbox.height` are not zero which can happen if the element does not have any content. By making
         // the width/height 1, we prevent HTML errors of the type `scale(Infinity, Infinity)`.
@@ -799,7 +927,7 @@ joint.dia.ElementView = joint.dia.CellView.extend({
             var rotatableBbox = scalable.bbox(false, this.paper.viewport);
 
             // Store new x, y and perform rotate() again against the new rotation origin.
-            this.model.set('position', { x: rotatableBbox.x, y: rotatableBbox.y });
+            model.set('position', { x: rotatableBbox.x, y: rotatableBbox.y }, opt);
             this.rotate();
         }
 
@@ -829,8 +957,11 @@ joint.dia.ElementView = joint.dia.CellView.extend({
         var ox = size.width / 2;
         var oy = size.height / 2;
 
-
-        rotatable.attr('transform', 'rotate(' + angle + ',' + ox + ',' + oy + ')');
+        if (angle !== 0) {
+            rotatable.attr('transform', 'rotate(' + angle + ',' + ox + ',' + oy + ')');
+        } else {
+            rotatable.removeAttr('transform');
+        }
     },
 
     getBBox: function(opt) {
@@ -853,18 +984,28 @@ joint.dia.ElementView = joint.dia.CellView.extend({
 
         var model = opt.model || this.model;
         var paper = opt.paper || this.paper;
+        var graph = paper.model;
+
+        model.startBatch('to-front', opt);
 
         // Bring the model to the front with all his embeds.
         model.toFront({ deep: true, ui: true });
 
+        // Note that at this point cells in the collection are not sorted by z index (it's running in the batch, see
+        // the dia.Graph._sortOnChangeZ), so we can't assume that the last cell in the collection has the highest z.
+        var maxZ = graph.get('cells').max('z').get('z');
+        var connectedLinks = graph.getConnectedLinks(model, { deep: true });
+
         // Move to front also all the inbound and outbound links that are connected
         // to any of the element descendant. If we bring to front only embedded elements,
         // links connected to them would stay in the background.
-        _.invoke(paper.model.getConnectedLinks(model, { deep: true }), 'toFront', { ui: true });
+        _.invoke(connectedLinks, 'set', 'z', maxZ + 1, { ui: true });
+
+        model.stopBatch('to-front');
 
         // Before we start looking for suitable parent we remove the current one.
         var parentId = model.get('parent');
-        parentId && paper.model.getCell(parentId).unembed(model, { ui: true });
+        parentId && graph.getCell(parentId).unembed(model, { ui: true });
     },
 
     processEmbedding: function(opt) {
@@ -910,14 +1051,23 @@ joint.dia.ElementView = joint.dia.CellView.extend({
 
         if (newCandidateView && newCandidateView != prevCandidateView) {
             // A new candidate view found. Highlight the new one.
-            prevCandidateView && prevCandidateView.unhighlight(null, { embedding: true });
+            this.clearEmbedding();
             this._candidateEmbedView = newCandidateView.highlight(null, { embedding: true });
         }
 
         if (!newCandidateView && prevCandidateView) {
             // No candidate view found. Unhighlight the previous candidate.
-            prevCandidateView.unhighlight(null, { embedding: true });
-            delete this._candidateEmbedView;
+            this.clearEmbedding();
+        }
+    },
+
+    clearEmbedding: function() {
+
+        var candidateView = this._candidateEmbedView;
+        if (candidateView) {
+            // No candidate view found. Unhighlight the previous candidate.
+            candidateView.unhighlight(null, { embedding: true });
+            this._candidateEmbedView = null;
         }
     },
 
@@ -948,9 +1098,13 @@ joint.dia.ElementView = joint.dia.CellView.extend({
 
         var paper = this.paper;
 
-        if (evt.target.getAttribute('magnet') && paper.options.validateMagnet.call(paper, this, evt.target)) {
+        if (
+            evt.target.getAttribute('magnet') &&
+            this.can('addLinkFromMagnet') &&
+            paper.options.validateMagnet.call(paper, this, evt.target)
+        ) {
 
-            this.model.trigger('batch:start', { batchName: 'add-link' });
+            this.model.startBatch('add-link');
 
             var link = paper.getDefaultLink(this, evt.target);
 
@@ -992,11 +1146,8 @@ joint.dia.ElementView = joint.dia.CellView.extend({
         } else {
 
             var grid = this.paper.options.gridSize;
-            var interactive = _.isFunction(this.options.interactive)
-                ? this.options.interactive(this, 'pointermove')
-                : this.options.interactive;
 
-            if (interactive !== false) {
+            if (this.can('elementMove')) {
 
                 var position = this.model.get('position');
 
@@ -1036,7 +1187,7 @@ joint.dia.ElementView = joint.dia.CellView.extend({
             // Let the linkview deal with this event.
             this._linkView.pointerup(evt, x, y);
             this._linkView = null;
-            this.model.trigger('batch:stop', { batchName: 'add-link' });
+            this.model.stopBatch('add-link');
 
         } else {
 
@@ -1049,5 +1200,4 @@ joint.dia.ElementView = joint.dia.CellView.extend({
             joint.dia.CellView.prototype.pointerup.apply(this, arguments);
         }
     }
-
 });

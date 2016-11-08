@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -17,7 +17,13 @@ joint.dia.CommandManager = Backbone.Model.extend({
 
     defaults: {
         cmdBeforeAdd: null,
-        cmdNameRegex: /^(?:add|remove|change:\w+)$/
+        cmdNameRegex: /^(?:add|remove|change:\w+)$/,
+        // List of options names that will passed when a command is applied (redone).
+        // e.g ['propertyPath', 'propertyValue']
+        // See `dia.Cell.prototype.prop()` for more about the `propertyPath` option.
+        applyOptionsList: ['propertyPath'],
+        // List of options names that will passed when a command is reverted (undone).
+        revertOptionsList: ['propertyPath']
     },
 
     // length of prefix 'change:' in the event name
@@ -194,9 +200,9 @@ joint.dia.CommandManager = Backbone.Model.extend({
                 this.trigger('add', batchCommand);
             }
 
-            delete this.batchCommand;
-            delete this.lastCmdIndex;
-            delete this.batchLevel;
+            this.batchCommand = null;
+            this.lastCmdIndex = null;
+            this.batchLevel = null;
 
         } else if (this.batchCommand && this.batchLevel > 0) {
 
@@ -262,13 +268,11 @@ joint.dia.CommandManager = Backbone.Model.extend({
         return filteredCommands;
     },
 
-    revertCommand: function(command) {
+    revertCommand: function(command, opt) {
 
         this.stopListening();
 
         var batchCommand;
-        var opt = { commandManager: this.id || this.cid };
-
         if (_.isArray(command)) {
             batchCommand = command;
         } else {
@@ -279,19 +283,22 @@ joint.dia.CommandManager = Backbone.Model.extend({
 
             var cmd = batchCommand[i];
             var cell = this.graph.getCell(cmd.data.id);
+            var cmdOpt = _.extend({
+                commandManager: this.id || this.cid
+            }, opt, _.pick(cmd.options, this.get('revertOptionsList')));
 
             switch (cmd.action) {
                 case 'add':
-                    cell.remove(opt);
+                    cell.remove(cmdOpt);
                     break;
 
                 case 'remove':
-                    this.graph.addCell(cmd.data.attributes, opt);
+                    this.graph.addCell(cmd.data.attributes, cmdOpt);
                     break;
 
                 default:
                     var attribute = cmd.action.substr(this.PREFIX_LENGTH);
-                    cell.set(attribute, cmd.data.previous[attribute], opt);
+                    cell.set(attribute, cmd.data.previous[attribute], cmdOpt);
                     break;
             }
         }
@@ -299,13 +306,11 @@ joint.dia.CommandManager = Backbone.Model.extend({
         this.listen();
     },
 
-    applyCommand: function(command) {
+    applyCommand: function(command, opt) {
 
         this.stopListening();
 
         var batchCommand;
-        var opt = { commandManager: this.id || this.cid };
-
         if (_.isArray(command)) {
             batchCommand = command;
         } else {
@@ -316,20 +321,23 @@ joint.dia.CommandManager = Backbone.Model.extend({
 
             var cmd = batchCommand[i];
             var cell = this.graph.getCell(cmd.data.id);
+            var cmdOpt = _.extend({
+                commandManager: this.id || this.cid
+            }, opt, _.pick(cmd.options, this.get('applyOptionsList')));
 
             switch (cmd.action) {
 
                 case 'add':
-                    this.graph.addCell(cmd.data.attributes, opt);
+                    this.graph.addCell(cmd.data.attributes, cmdOpt);
                     break;
 
                 case 'remove':
-                    cell.remove(opt);
+                    cell.remove(cmdOpt);
                     break;
 
                 default:
                     var attribute = cmd.action.substr(this.PREFIX_LENGTH);
-                    cell.set(attribute, cmd.data.next[attribute], opt);
+                    cell.set(attribute, cmd.data.next[attribute], cmdOpt);
                     break;
             }
         }
@@ -337,34 +345,33 @@ joint.dia.CommandManager = Backbone.Model.extend({
         this.listen();
     },
 
-    undo: function() {
+    undo: function(opt) {
 
         var command = this.undoStack.pop();
 
         if (command) {
 
-            this.revertCommand(command);
+            this.revertCommand(command, opt);
             this.redoStack.push(command);
         }
     },
 
-
-    redo: function() {
+    redo: function(opt) {
 
         var command = this.redoStack.pop();
 
         if (command) {
 
-            this.applyCommand(command);
+            this.applyCommand(command, opt);
             this.undoStack.push(command);
         }
     },
 
-    cancel: function() {
+    cancel: function(opt) {
 
         if (this.hasUndo()) {
 
-            this.revertCommand(this.undoStack.pop());
+            this.revertCommand(this.undoStack.pop(), opt);
             this.redoStack = [];
         }
     },

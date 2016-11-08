@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,91 +11,65 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-
 new joint.ui.Tooltip({
-    target: '.top-tooltip',
-    content: 'Top directed tooltip.',
-    top: '.top-tooltip',
-    direction: 'top'
+    rootTarget: '.tooltip-group',
+    target: '[data-tooltip]',
+    direction: 'auto',
+    padding: function(el) {
+        var elData = el.dataset || $(el).data();
+
+        if (elData['tooltipPadding']) {
+            return parseInt(elData['tooltipPadding'], 10);
+        }
+        return 10;
+    }
 });
 
 new joint.ui.Tooltip({
-    target: '.left-tooltip',
-    content: 'Left directed tooltip.',
-    left: '.left-tooltip',
-    direction: 'left'
+    rootTarget: '.tooltip-group-prefix',
+    dataAttributePrefix: 'custom',
+    target: '[data-custom]',
+    padding: 10,
+
+    /**
+     * This can override html definition of tooltip text. 'null' or 'undefined' as callback's results are ignored,
+     * joint.ui.Tooltip tries to get particular option from data attributes of html element, if this fails, it uses default.
+     * @param {HTMLElement} el
+     * @returns {*}
+     */
+    content: function(el) {
+
+        var elData = el.dataset || $(el).data();
+        var extraText = elData['other'];
+
+        return extraText ? elData['custom'] + ' ' + extraText : null;
+    }
 });
 
 new joint.ui.Tooltip({
-    target: '.right-tooltip',
-    content: 'Right directed tooltip.',
-    right: '.right-tooltip',
-    direction: 'right'
+    rootTarget: '.viewport-tooltips',
+    target: '[data-tooltip]',
+    viewport: { selector: '.viewport' },
+    content: '<h4>HTML Tooltip</h4> <img src="http://jointjs.client.io/images/logos/jointjs_1.png" width="80" style="position: absolute; top: 10px; right: 10px;"/><hr/><b>JointJS</b> tooltips can contain arbitrary HTML.'
 });
 
 new joint.ui.Tooltip({
-    target: '.bottom-tooltip',
-    content: 'Bottom directed tooltip.',
-    bottom: '.bottom-tooltip',
-    direction: 'bottom'
-});
-
-
-new joint.ui.Tooltip({
-    target: '.click-tooltip',
-    content: 'Bottom directed tooltip. Long text to see viewport (selector: null) constraint at works.',
-    bottom: '.click-tooltip',
-    direction: 'bottom',
-    trigger: 'click'
+    padding: 10,
+    minResizedWidth: 150,
+    rootTarget: '.boundaries',
+    target: '[data-tooltip-position]',
+    viewport: { selector: 'table', padding: 4 },
+    content: '<h4>HTML Tooltip</h4> <img src="http://jointjs.client.io/images/logos/jointjs_1.png" width="80" style="position: absolute; top: 10px; right: 10px;"/><hr/><b>JointJS</b> tooltips can contain arbitrary HTML.'
 });
 
 new joint.ui.Tooltip({
-    target: '.focus-tooltip',
-    content: 'Focus bottom directed tooltip.',
-    bottom: '.focus-tooltip',
-    direction: 'bottom',
+    rootTarget: '.focus-tooltip',
+    target: '[data-tooltip]',
     trigger: 'focus'
 });
 
-var tooltip = new joint.ui.Tooltip({
-    target: '.manual-tooltip',
-    content: 'Manual top directed tooltip.',
-    top: '.manual-tooltip',
-    direction: 'top',
-    trigger: 'manual'
-});
-
-tooltip.show();
-
 new joint.ui.Tooltip({
-    target: '.viewport-tooltip',
-    content: 'Click tooltip in a viewport<br/>Multiline<br/><br/>For enable vertical viewport<br/>constraint',
-    left: '.viewport-tooltip',
-    direction: 'left',
-    trigger: 'click',
-    viewport: { selector: '.viewport', padding: 0 }
-});
-
-new joint.ui.Tooltip({
-    target: '.viewport-tooltip-bottom',
-    content: 'Click tooltip in a viewport<br/>Multiline<br/><br/>For enable vertical viewport<br/>constraint<br/>with padding',
-    right: '.viewport-tooltip-bottom',
-    direction: 'right',
-    trigger: 'click',
-    viewport: { selector: '.viewport', padding: 16 }
-});
-
-new joint.ui.Tooltip({
-    className: 'tooltip animated-tooltip',
-    target: '.animated-tooltip-label',
-    content: 'Animated & delayed tooltip.',
-    top: '.animated-tooltip-label',
-    direction: 'top'
-});
-
-new joint.ui.Tooltip({
-    target: '.html-tooltip',
-    content: '<h4>HTML Tooltip</h4> <img src="http://jointjs.client.io/images/logos/jointjs_1.png" width="80" style="position: absolute; top: 10px; right: 10px;"/><hr/><b>JointJS</b> tooltips can contain arbitrary HTML.',
-    direction: 'left',
-    left: '.html-tooltip'
+    rootTarget: '.click-tooltip',
+    target: '[data-tooltip]',
+    trigger: 'click'
 });

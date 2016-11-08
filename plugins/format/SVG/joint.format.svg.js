@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -15,33 +15,27 @@ joint.dia.Paper.prototype.toSVG = function(callback, opt) {
 
     opt = opt || {};
 
-    // `viewportBbox` contains the real bounding box of the elements in the diagram, 'whitespace trimmed'.
-    // Unfortunately, Firefox returns `x = 0` and `y = 0` even though there is a whitespace between
-    // the left edge of the SVG and the leftmost element.
-    // var viewportBbox = this.viewport.getBBox();
+    this.trigger('beforeexport', opt);
 
-    var viewportTransform = V(this.viewport).attr('transform');
-    V(this.viewport).attr('transform', '');
+    var viewportBBox = (opt.area)
+            ? opt.area
+            : V.transformRect(this.getContentBBox(), this.viewport.getCTM().inverse());
 
-    var viewportBbox = this.getContentBBox();
-
-    // We'll be modifying `style` and `transform` attribute of elements/nodes. Therefore,
+    // We'll be modifying `style` attribute of elements/nodes. Therefore,
     // we're making a deep clone of the whole SVG document.
     var svgClone = this.svg.cloneNode(true);
-
-    V(this.viewport).attr('transform', viewportTransform || '');
 
     // We're removing css styles from the svg container. (i.e backround-image)
     svgClone.removeAttribute('style');
 
-    // When all elements are shifted towards the origin (0,0), make the SVG dimensions as small
-    // as the viewport. Note that those are set in the `viewBox` attribute rather then in the
+    // Make the SVG dimensions as small as the viewport.
+    // Note that those are set in the `viewBox` attribute rather then in the
     // `width`/`height` attributes. This allows for fitting the svg element inside containers.
     if (opt.preserveDimensions) {
 
         V(svgClone).attr({
-            width: viewportBbox.width,
-            height: viewportBbox.height
+            width: viewportBBox.width,
+            height: viewportBBox.height
         });
 
     } else {
@@ -49,10 +43,14 @@ joint.dia.Paper.prototype.toSVG = function(callback, opt) {
         V(svgClone).attr({ width: '100%', height: '100%' });
     }
 
+    // Remove the viewport transformation.
+    // We do not want the resulting SVG to be scaled or translated.
+    V(svgClone).findOne('.joint-viewport').removeAttr('transform');
+
     // Set SVG viewBox starting at top-leftmost element's position (viewportBbox.x|y).
     // We're doing this because we want to trim the `whitespace` areas of the SVG making its size
     // as small as necessary.
-    V(svgClone).attr('viewBox', viewportBbox.x + ' ' + viewportBbox.y + ' ' + viewportBbox.width + ' ' + viewportBbox.height);
+    V(svgClone).attr('viewBox', viewportBBox.x + ' ' + viewportBBox.y + ' ' + viewportBBox.width + ' ' + viewportBBox.height);
 
     // Now the fun part. The code below has one purpuse and i.e. store all the CSS declarations
     // from external stylesheets to the `style` attribute of the SVG document nodes.
@@ -93,7 +91,9 @@ joint.dia.Paper.prototype.toSVG = function(callback, opt) {
         // We're making a deep copy of the `computedStyle` so that it's not affected
         // by that next step when all the stylesheets are re-enabled again.
         var defaultComputedStyle = {};
-        _.each(computedStyle, function(property) { defaultComputedStyle[property] = computedStyle.getPropertyValue(property); });
+        _.each(computedStyle, function(property) {
+            defaultComputedStyle[property] = computedStyle.getPropertyValue(property);
+        });
 
         defaultComputedStyles[idx] = defaultComputedStyle;
     });
@@ -102,14 +102,16 @@ joint.dia.Paper.prototype.toSVG = function(callback, opt) {
     // bugSS: Check whether the stylesheets have been removed from document.styleSheets
     if (styleSheetsCount != document.styleSheets.length) {
         // bugSS: Copy all stylesheets back
-        _.each(styleSheetsCopy, function(copy, i) { document.styleSheets[i] = copy; });
+        _.each(styleSheetsCopy, function(copy, i) {
+            document.styleSheets[i] = copy;
+        });
     }
 
     // 2.
 
     // bugSS: Note that if stylesheet bug happen the document.styleSheets.length is still 0.
-    for (var i = 0; i < styleSheetsCount; i++) {
-        document.styleSheets[i].disabled = false;
+    for (var j = 0; j < styleSheetsCount; j++) {
+        document.styleSheets[j].disabled = false;
     }
     // bugSS: Now is document.styleSheets.length = number of stylesheets again.
 
@@ -146,6 +148,8 @@ joint.dia.Paper.prototype.toSVG = function(callback, opt) {
         }
     });
 
+    this.trigger('afterexport', opt);
+
     function serialize() {
 
         // Now, when our `svgClone` is ready, serialize it to a string and return it.
@@ -155,25 +159,24 @@ joint.dia.Paper.prototype.toSVG = function(callback, opt) {
             .replace(/&nbsp;/g, '\u00A0');
     }
 
+    function convertImages(done) {
+
+        var image = V(images.shift());
+        if (!image) return done();
+
+        // Firefox uses `href`, all the others 'xlink:href'
+        var url = image.attr('xlink:href') || image.attr('href');
+
+        joint.util.imageToDataUri(url, function(err, dataUri) {
+
+            image.attr('xlink:href', dataUri);
+            convertImages(done);
+        });
+    }
+
     if (opt.convertImagesToDataUris && images.length) {
 
-        function convertImages(done) {
-
-            var image = V(images.shift());
-            if (!image) return done();
-
-            // Firefox uses `href`, all the others 'xlink:href'
-            var url = image.attr('xlink:href') || image.attr('href');
-
-            joint.util.imageToDataUri(url, function(err, dataUri) {
-
-                image.attr('xlink:href', dataUri);
-                convertImages(done);
-            });
-        }
-
         convertImages(function() {
-
             callback(serialize());
         });
 

@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -19,6 +19,13 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 var joint = {
 
     version: '[%= pkg.version %]',
+
+    config: {
+        // The class name prefix config is for advanced use only.
+        // Be aware that if you change the prefix, the JointJS CSS will no longer function properly.
+        classNamePrefix: 'joint-',
+        defaultTheme: 'default'
+    },
 
     // `joint.dia` namespace.
     dia: {},
@@ -38,12 +45,25 @@ var joint = {
     // `joint.connectors` namespace.
     connectors: {},
 
+    // `joint.highlighters` namespace.
+    highlighters: {},
+
     // `joint.routers` namespace.
     routers: {},
 
     // `joint.mvc` namespace.
     mvc: {
         views: {}
+    },
+
+    setTheme: function(theme, opt) {
+
+        opt = opt || {};
+
+        _.invoke(joint.mvc.views, 'setTheme', theme, opt);
+
+        // Update the default theme on the view prototype.
+        joint.mvc.View.prototype.defaultTheme = theme;
     },
 
     // `joint.env` namespace.
@@ -69,7 +89,7 @@ var joint = {
             var fn = joint.env._tests[name];
 
             if (!fn) {
-                throw new Error('Test not defined ("' + name + '"). Use `joint.env.addTest(name, fn)` to add a new test.');
+                throw new Error('Test not defined ("' + name + '"). Use `joint.env.addTest(name, fn) to add a new test.`');
             }
 
             var result = joint.env._results[name];
@@ -224,81 +244,20 @@ var joint = {
         // Copy all the properties to the first argument from the following arguments.
         // All the properties will be overwritten by the properties from the following
         // arguments. Inherited properties are ignored.
-        mixin: function() {
-
-            var target = arguments[0];
-
-            for (var i = 1, l = arguments.length; i < l; i++) {
-
-                var extension = arguments[i];
-
-                // Only functions and objects can be mixined.
-
-                if ((Object(extension) !== extension) &&
-                    !_.isFunction(extension) &&
-                    (extension === null || extension === undefined)) {
-
-                    continue;
-                }
-
-                _.each(extension, function(copy, key) {
-
-                    if (this.mixin.deep && (Object(copy) === copy)) {
-
-                        if (!target[key]) {
-
-                            target[key] = _.isArray(copy) ? [] : {};
-                        }
-
-                        this.mixin(target[key], copy);
-                        return;
-                    }
-
-                    if (target[key] !== copy) {
-
-                        if (!this.mixin.supplement || !target.hasOwnProperty(key)) {
-
-                            target[key] = copy;
-                        }
-
-                    }
-
-                }, this);
-            }
-
-            return target;
-        },
+        mixin: _.assign,
 
         // Copy all properties to the first argument from the following
         // arguments only in case if they don't exists in the first argument.
         // All the function propererties in the first argument will get
         // additional property base pointing to the extenders same named
         // property function's call method.
-        supplement: function() {
-
-            this.mixin.supplement = true;
-            var ret = this.mixin.apply(this, arguments);
-            this.mixin.supplement = false;
-            return ret;
-        },
+        supplement: _.defaults,
 
         // Same as `mixin()` but deep version.
-        deepMixin: function() {
-
-            this.mixin.deep = true;
-            var ret = this.mixin.apply(this, arguments);
-            this.mixin.deep = false;
-            return ret;
-        },
+        deepMixin: _.mixin,
 
         // Same as `supplement()` but deep version.
-        deepSupplement: function() {
-
-            this.mixin.deep = this.mixin.supplement = true;
-            var ret = this.mixin.apply(this, arguments);
-            this.mixin.deep = this.mixin.supplement = false;
-            return ret;
-        },
+        deepSupplement: _.defaultsDeep,
 
         normalizeEvent: function(evt) {
 
@@ -317,17 +276,17 @@ var joint = {
             return evt;
         },
 
-        nextFrame:(function() {
+        nextFrame: (function() {
 
             var raf;
 
             if (typeof window !== 'undefined') {
 
-                raf = window.requestAnimationFrame     ||
-		    window.webkitRequestAnimationFrame ||
-	            window.mozRequestAnimationFrame    ||
-		    window.oRequestAnimationFrame      ||
-		    window.msRequestAnimationFrame;
+                raf = window.requestAnimationFrame ||
+                        window.webkitRequestAnimationFrame ||
+                        window.mozRequestAnimationFrame ||
+                        window.oRequestAnimationFrame ||
+                        window.msRequestAnimationFrame;
             }
 
             if (!raf) {
@@ -361,15 +320,15 @@ var joint = {
 
             if (client) {
 
-                caf = window.cancelAnimationFrame            ||
-		    window.webkitCancelAnimationFrame        ||
-	            window.webkitCancelRequestAnimationFrame ||
-		    window.msCancelAnimationFrame            ||
-	            window.msCancelRequestAnimationFrame     ||
-		    window.oCancelAnimationFrame             ||
-	            window.oCancelRequestAnimationFrame      ||
-	            window.mozCancelAnimationFrame           ||
-		    window.mozCancelRequestAnimationFrame;
+                caf = window.cancelAnimationFrame ||
+                        window.webkitCancelAnimationFrame ||
+                        window.webkitCancelRequestAnimationFrame ||
+                        window.msCancelAnimationFrame ||
+                        window.msCancelRequestAnimationFrame ||
+                        window.oCancelAnimationFrame ||
+                        window.oCancelRequestAnimationFrame ||
+                        window.mozCancelAnimationFrame ||
+                        window.mozCancelRequestAnimationFrame;
             }
 
             caf = caf || clearTimeout;
@@ -437,8 +396,18 @@ var joint = {
             var textSpan = textElement.firstChild;
             var textNode = document.createTextNode('');
 
-            textSpan.appendChild(textNode);
+            // Prevent flickering
+            textElement.style.opacity = 0;
+            // Prevent FF from throwing an uncaught exception when `getBBox()`
+            // called on element that is not in the render tree (is not measurable).
+            // <tspan>.getComputedTextLength() returns always 0 in this case.
+            // Note that the `textElement` resp. `textSpan` can become hidden
+            // when it's appended to the DOM and a `display: none` CSS stylesheet
+            // rule gets applied.
+            textElement.style.display = 'block';
+            textSpan.style.display = 'block';
 
+            textSpan.appendChild(textNode);
             svgDocument.appendChild(textElement);
 
             if (!opt.svgDocument) {
@@ -579,56 +548,80 @@ var joint = {
                 // and so we can bypass this error.
 
                 // Keep the async nature of the function.
-                return setTimeout(function() { callback(null, url); }, 0);
+                return setTimeout(function() {
+                    callback(null, url);
+                }, 0);
             }
 
-            var canvas = document.createElement('canvas');
-            var img = document.createElement('img');
+            // chrome IE10 IE11
+            var modernHandler = function(xhr, callback) {
 
-            img.onload = function() {
+                if (xhr.status === 200) {
 
-                var ctx = canvas.getContext('2d');
+                    var reader = new FileReader();
 
-                canvas.width = img.width;
-                canvas.height = img.height;
+                    reader.onload = function(evt) {
+                        var dataUri = evt.target.result;
+                        callback(null, dataUri);
+                    };
 
-                ctx.drawImage(img, 0, 0);
+                    reader.onerror = function() {
+                        callback(new Error('Failed to load image ' + url));
+                    };
 
-                try {
-
-                    // Guess the type of the image from the url suffix.
-                    var suffix = (url.split('.').pop()) || 'png';
-                    // A little correction for JPEGs. There is no image/jpg mime type but image/jpeg.
-                    var type = 'image/' + (suffix === 'jpg') ? 'jpeg' : suffix;
-                    var dataUri = canvas.toDataURL(type);
-
-                } catch (e) {
-
-                    if (/\.svg$/.test(url)) {
-                        // IE throws a security error if we try to render an SVG into the canvas.
-                        // Luckily for us, we don't need canvas at all to convert
-                        // SVG to data uri. We can just use AJAX to load the SVG string
-                        // and construct the data uri ourselves.
-                        var xhr = window.XMLHttpRequest ? new XMLHttpRequest : new ActiveXObject('Microsoft.XMLHTTP');
-                        xhr.open('GET', url, false);
-                        xhr.send(null);
-                        var svg = xhr.responseText;
-
-                        return callback(null, 'data:image/svg+xml,' + encodeURIComponent(svg));
-                    }
-
-                    console.error(img.src, 'fails to convert', e);
+                    reader.readAsDataURL(xhr.response);
+                } else {
+                    callback(new Error('Failed to load image ' + url));
                 }
 
-                callback(null, dataUri);
             };
 
-            img.ononerror = function() {
+            var legacyHandler = function(xhr, callback) {
 
-                callback(new Error('Failed to load image.'));
+                var Uint8ToString = function(u8a) {
+                    var CHUNK_SZ = 0x8000;
+                    var c = [];
+                    for (var i = 0; i < u8a.length; i += CHUNK_SZ) {
+                        c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SZ)));
+                    }
+                    return c.join('');
+                };
+
+
+                if (xhr.status === 200) {
+
+                    var bytes = new Uint8Array(xhr.response);
+
+                    var suffix = (url.split('.').pop()) || 'png';
+                    var map = {
+                        'svg': 'svg+xml'
+                    };
+                    var meta = 'data:image/' + (map[suffix] || suffix) + ';base64,';
+                    var b64encoded = meta + btoa(Uint8ToString(bytes));
+                    callback(null, b64encoded);
+                } else {
+                    callback(new Error('Failed to load image ' + url));
+                }
             };
 
-            img.src = url;
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', url, true);
+            xhr.addEventListener('error', function() {
+                callback(new Error('Failed to load image ' + url));
+            });
+
+            xhr.responseType = window.FileReader ? 'blob' : 'arraybuffer';
+
+            xhr.addEventListener('load', function() {
+                if (window.FileReader) {
+                    modernHandler(xhr, callback);
+                } else {
+                    legacyHandler(xhr, callback);
+                }
+            });
+
+            xhr.send();
         },
 
         getElementBBox: function(el) {
@@ -878,7 +871,7 @@ var joint = {
                 var margin = _.isFinite(args.margin) ? args.margin : 2;
                 var width = _.isFinite(args.width) ? args.width : 1;
 
-                return _.template(tpl)({
+                return joint.util.template(tpl)({
                     color: args.color || 'blue',
                     opacity: _.isFinite(args.opacity) ? args.opacity : 1,
                     outerRadius: margin + width,
@@ -894,7 +887,7 @@ var joint = {
 
                 var tpl = '<filter><feFlood flood-color="${color}" flood-opacity="${opacity}" result="colored"/><feMorphology result="morphed" in="SourceGraphic" operator="dilate" radius="${width}"/><feComposite result="composed" in="colored" in2="morphed" operator="in"/><feGaussianBlur result="blured" in="composed" stdDeviation="${blur}"/><feBlend in="SourceGraphic" in2="blured" mode="normal"/></filter>';
 
-                return _.template(tpl)({
+                return joint.util.template(tpl)({
                     color: args.color || 'red',
                     width: _.isFinite(args.width) ? args.width : 1,
                     blur: _.isFinite(args.blur) ? args.blur : 0,
@@ -908,7 +901,7 @@ var joint = {
 
                 var x = _.isFinite(args.x) ? args.x : 2;
 
-                return _.template('<filter><feGaussianBlur stdDeviation="${stdDeviation}"/></filter>')({
+                return joint.util.template('<filter><feGaussianBlur stdDeviation="${stdDeviation}"/></filter>')({
                     stdDeviation: _.isFinite(args.y) ? [x, args.y] : x
                 });
             },
@@ -924,7 +917,7 @@ var joint = {
                     ? '<filter><feDropShadow stdDeviation="${blur}" dx="${dx}" dy="${dy}" flood-color="${color}" flood-opacity="${opacity}"/></filter>'
                     : '<filter><feGaussianBlur in="SourceAlpha" stdDeviation="${blur}"/><feOffset dx="${dx}" dy="${dy}" result="offsetblur"/><feFlood flood-color="${color}"/><feComposite in2="offsetblur" operator="in"/><feComponentTransfer><feFuncA type="linear" slope="${opacity}"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
 
-                return _.template(tpl)({
+                return joint.util.template(tpl)({
                     dx: args.dx || 0,
                     dy: args.dy || 0,
                     opacity: _.isFinite(args.opacity) ? args.opacity : 1,
@@ -938,7 +931,7 @@ var joint = {
 
                 var amount = _.isFinite(args.amount) ? args.amount : 1;
 
-                return _.template('<filter><feColorMatrix type="matrix" values="${a} ${b} ${c} 0 0 ${d} ${e} ${f} 0 0 ${g} ${b} ${h} 0 0 0 0 0 1 0"/></filter>')({
+                return joint.util.template('<filter><feColorMatrix type="matrix" values="${a} ${b} ${c} 0 0 ${d} ${e} ${f} 0 0 ${g} ${b} ${h} 0 0 0 0 0 1 0"/></filter>')({
                     a: 0.2126 + 0.7874 * (1 - amount),
                     b: 0.7152 - 0.7152 * (1 - amount),
                     c: 0.0722 - 0.0722 * (1 - amount),
@@ -955,7 +948,7 @@ var joint = {
 
                 var amount = _.isFinite(args.amount) ? args.amount : 1;
 
-                return _.template('<filter><feColorMatrix type="matrix" values="${a} ${b} ${c} 0 0 ${d} ${e} ${f} 0 0 ${g} ${h} ${i} 0 0 0 0 0 1 0"/></filter>')({
+                return joint.util.template('<filter><feColorMatrix type="matrix" values="${a} ${b} ${c} 0 0 ${d} ${e} ${f} 0 0 ${g} ${h} ${i} 0 0 0 0 0 1 0"/></filter>')({
                     a: 0.393 + 0.607 * (1 - amount),
                     b: 0.769 - 0.769 * (1 - amount),
                     c: 0.189 - 0.189 * (1 - amount),
@@ -973,7 +966,7 @@ var joint = {
 
                 var amount = _.isFinite(args.amount) ? args.amount : 1;
 
-                return _.template('<filter><feColorMatrix type="saturate" values="${amount}"/></filter>')({
+                return joint.util.template('<filter><feColorMatrix type="saturate" values="${amount}"/></filter>')({
                     amount: 1 - amount
                 });
             },
@@ -981,7 +974,7 @@ var joint = {
             // `angle` ...  the number of degrees around the color circle the input samples will be adjusted.
             hueRotate: function(args) {
 
-                return _.template('<filter><feColorMatrix type="hueRotate" values="${angle}"/></filter>')({
+                return joint.util.template('<filter><feColorMatrix type="hueRotate" values="${angle}"/></filter>')({
                     angle: args.angle || 0
                 });
             },
@@ -991,7 +984,7 @@ var joint = {
 
                 var amount = _.isFinite(args.amount) ? args.amount : 1;
 
-                return _.template('<filter><feComponentTransfer><feFuncR type="table" tableValues="${amount} ${amount2}"/><feFuncG type="table" tableValues="${amount} ${amount2}"/><feFuncB type="table" tableValues="${amount} ${amount2}"/></feComponentTransfer></filter>')({
+                return joint.util.template('<filter><feComponentTransfer><feFuncR type="table" tableValues="${amount} ${amount2}"/><feFuncG type="table" tableValues="${amount} ${amount2}"/><feFuncB type="table" tableValues="${amount} ${amount2}"/></feComponentTransfer></filter>')({
                     amount: amount,
                     amount2: 1 - amount
                 });
@@ -1000,7 +993,7 @@ var joint = {
             // `amount` ... proportion of the conversion. A value of 0 will create an image that is completely black. A value of 1 leaves the input unchanged.
             brightness: function(args) {
 
-                return _.template('<filter><feComponentTransfer><feFuncR type="linear" slope="${amount}"/><feFuncG type="linear" slope="${amount}"/><feFuncB type="linear" slope="${amount}"/></feComponentTransfer></filter>')({
+                return joint.util.template('<filter><feComponentTransfer><feFuncR type="linear" slope="${amount}"/><feFuncG type="linear" slope="${amount}"/><feFuncB type="linear" slope="${amount}"/></feComponentTransfer></filter>')({
                     amount: _.isFinite(args.amount) ? args.amount : 1
                 });
             },
@@ -1010,7 +1003,7 @@ var joint = {
 
                 var amount = _.isFinite(args.amount) ? args.amount : 1;
 
-                return _.template('<filter><feComponentTransfer><feFuncR type="linear" slope="${amount}" intercept="${amount2}"/><feFuncG type="linear" slope="${amount}" intercept="${amount2}"/><feFuncB type="linear" slope="${amount}" intercept="${amount2}"/></feComponentTransfer></filter>')({
+                return joint.util.template('<filter><feComponentTransfer><feFuncR type="linear" slope="${amount}" intercept="${amount2}"/><feFuncG type="linear" slope="${amount}" intercept="${amount2}"/><feFuncB type="linear" slope="${amount}" intercept="${amount2}"/></feComponentTransfer></filter>')({
                     amount: amount,
                     amount2: .5 - amount / 2
                 });
@@ -1060,16 +1053,28 @@ var joint = {
                 }
 
                 switch (type) {
-                    case 'n': comma = true; type = 'g'; break;
-                    case '%': scale = 100; suffix = '%'; type = 'f'; break;
-                    case 'p': scale = 100; suffix = '%'; type = 'r'; break;
+                    case 'n':
+                        comma = true; type = 'g';
+                        break;
+                    case '%':
+                        scale = 100; suffix = '%'; type = 'f';
+                        break;
+                    case 'p':
+                        scale = 100; suffix = '%'; type = 'r';
+                        break;
                     case 'b':
                     case 'o':
                     case 'x':
-                    case 'X': if (symbol === '#') prefix = '0' + type.toLowerCase();
+                    case 'X':
+                        if (symbol === '#') prefix = '0' + type.toLowerCase();
+                        break;
                     case 'c':
-                    case 'd': integer = true; precision = 0; break;
-                    case 's': scale = -1; type = 'r'; break;
+                    case 'd':
+                        integer = true; precision = 0;
+                        break;
+                    case 's':
+                        scale = -1; type = 'r';
+                        break;
                 }
 
                 if (symbol === '$') {
@@ -1234,6 +1239,149 @@ var joint = {
                     i = Math.max(-24, Math.min(24, Math.floor((i <= 0 ? i + 1 : i - 1) / 3) * 3));
                 }
                 return prefixes[8 + i / 3];
+            }
+        },
+
+        /*
+            Pre-compile the HTML to be used as a template.
+        */
+        template: function(html) {
+
+            /*
+                Must support the variation in templating syntax found here:
+                https://lodash.com/docs#template
+            */
+            var regex = /<%= ([^ ]+) %>|\$\{ ?([^\{\} ]+) ?\}|\{\{([^\{\} ]+)\}\}/g;
+
+            return function(data) {
+
+                data = data || {};
+
+                return html.replace(regex, function(match) {
+
+                    var args = Array.prototype.slice.call(arguments);
+                    var attr = _.find(args.slice(1, 4), function(_attr) {
+                        return !!_attr;
+                    });
+
+                    var attrArray = attr.split('.');
+                    var value = data[attrArray.shift()];
+
+                    while (!_.isUndefined(value) && attrArray.length) {
+                        value = value[attrArray.shift()];
+                    }
+
+                    return !_.isUndefined(value) ? value : '';
+                });
+            };
+        },
+
+        /**
+         * @param {Element=} el Element, which content is intent to display in full-screen mode, 'document.body' is default.
+         */
+        toggleFullScreen: function(el) {
+
+            el = el || document.body;
+
+            function prefixedResult(el, prop) {
+
+                var prefixes = ['webkit', 'moz', 'ms', 'o', ''];
+                for (var i = 0; i < prefixes.length; i++) {
+                    var prefix = prefixes[i];
+                    var propName = prefix ? (prefix + prop) : (prop.substr(0, 1).toLowerCase() + prop.substr(1));
+                    if (!_.isUndefined(el[propName])) {
+                        return _.isFunction(el[propName]) ? el[propName]() : el[propName];
+                    }
+                }
+            }
+
+            if (prefixedResult(document, 'FullScreen') || prefixedResult(document, 'IsFullScreen')) {
+                prefixedResult(document, 'CancelFullScreen');
+            } else {
+                prefixedResult(el, 'RequestFullScreen');
+            }
+        },
+
+        addClassNamePrefix: function(className) {
+
+            if (!className) return className;
+
+            return _.map(className.toString().split(' '), function(_className) {
+
+                if (_className.substr(0, joint.config.classNamePrefix.length) !== joint.config.classNamePrefix) {
+                    _className = joint.config.classNamePrefix + _className;
+                }
+
+                return _className;
+
+            }).join(' ');
+        },
+
+        removeClassNamePrefix: function(className) {
+
+            if (!className) return className;
+
+            return _.map(className.toString().split(' '), function(_className) {
+
+                if (_className.substr(0, joint.config.classNamePrefix.length) === joint.config.classNamePrefix) {
+                    _className = _className.substr(joint.config.classNamePrefix.length);
+                }
+
+                return _className;
+
+            }).join(' ');
+        },
+
+        wrapWith: function(object, methods, wrapper) {
+
+            if (_.isString(wrapper)) {
+
+                if (!joint.util.wrappers[wrapper]) {
+                    throw new Error('Unknown wrapper: "' + wrapper + '"');
+                }
+
+                wrapper = joint.util.wrappers[wrapper];
+            }
+
+            if (!_.isFunction(wrapper)) {
+                throw new Error('Wrapper must be a function.');
+            }
+
+            _.each(methods, function(method) {
+                object[method] = wrapper(object[method]);
+            });
+        },
+
+        wrappers: {
+
+            /*
+                Prepares a function with the following usage:
+
+                    fn([cell, cell, cell], opt);
+                    fn([cell, cell, cell]);
+                    fn(cell, cell, cell, opt);
+                    fn(cell, cell, cell);
+            */
+            cells: function(fn) {
+
+                return function() {
+
+                    var args = Array.prototype.slice.call(arguments);
+                    var cells = args.length > 0 && _.first(args) || [];
+                    var opt = args.length > 1 && _.last(args) || {};
+
+                    if (!_.isArray(cells)) {
+
+                        if (opt instanceof joint.dia.Cell) {
+                            cells = args;
+                            opt = {};
+                        } else {
+                            cells = _.initial(args);
+                        }
+                    }
+
+                    return fn.call(this, cells, opt);
+                };
             }
         }
     }

@@ -1,0 +1,28 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+html, body, #tree-app,
+.joint-paper-scroller.joint-theme-material {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.joint-halo.joint-theme-material  .box {
+    width: 160px;
+    text-align: left;
+    font-size: 0.9em;
+    color: #3c4260;
+    background-color: rgba(255,255,255,0.7);
+}

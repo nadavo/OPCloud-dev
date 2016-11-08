@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -23,11 +23,8 @@ joint.connectors.smooth = function(sourcePoint, targetPoint, vertices) {
         // if we have no vertices use a default cubic bezier curve, cubic bezier requires
         // two control points. The two control points are both defined with X as mid way
         // between the source and target points. SourceControlPoint Y is equal to sourcePoint Y
-        // and targetControlPointY being equal to targetPointY. Handle situation were
-        // sourcePointX is greater or less then targetPointX.
-        var controlPointX = (sourcePoint.x < targetPoint.x)
-                ? targetPoint.x - ((targetPoint.x - sourcePoint.x) / 2)
-                : sourcePoint.x - ((sourcePoint.x - targetPoint.x) / 2);
+        // and targetControlPointY being equal to targetPointY.
+        var controlPointX = (sourcePoint.x + targetPoint.x) / 2;
 
         d = [
             'M', sourcePoint.x, sourcePoint.y,

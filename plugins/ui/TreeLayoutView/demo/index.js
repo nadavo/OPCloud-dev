@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -22,8 +22,6 @@ function makeLink(parentElementLabel, childElementLabel) {
 }
 
 function makeElement(label) {
-
-    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
 
     // Compute width/height of the rectangle based on the number
     // of lines in the label and the letter size. 0.6 * letterSize is
@@ -64,18 +62,6 @@ function buildGraphFromAdjacencyList(adjacencyList) {
     // elements must be in the graph already.
     return elements.concat(links);
 }
-
-var list = {
-    'az': ['b', 'cy'],
-    'b': ['fxf'],
-    'cy': ['ey', 'dxdy'],
-    'dxdy': ['iy'],
-    'ey': ['hy'],
-    'fxf': ['g'],
-    'g': [],
-    'hy': [],
-    'iy': []
-};
 
 var list = {
     'Xa': ['Lb', 'Lc_', 'Ra', 'Ta', 'Ba'],
@@ -128,7 +114,8 @@ var graphLayout = new joint.layout.TreeLayout({
     graph: graph,
     verticalGap: 20,
     horizontalGap: 40,
-    direction: 'B'
+    firstChildGap: 20,
+    direction: 'TL'
 });
 
 var treeLayoutView = new joint.ui.TreeLayoutView({
@@ -140,7 +127,6 @@ var treeLayoutView = new joint.ui.TreeLayoutView({
     }
 });
 
-var root = cells[0].position(400, 400).set('layoutType', 'LR');
+var root = cells[0].position(400, 400);
 
 graphLayout.layout();
-

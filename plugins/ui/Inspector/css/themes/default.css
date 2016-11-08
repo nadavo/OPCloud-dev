@@ -1,0 +1,177 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-inspector.joint-theme-default {
+    color: black;
+    background: white;
+    border: 1px solid lightgrey;
+}
+
+.joint-inspector.joint-theme-default label {
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.joint-inspector.joint-theme-default output,
+.joint-inspector.joint-theme-default .units {
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.joint-inspector.joint-theme-default .group > .group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.joint-inspector.joint-theme-default .group {
+    border-bottom: 1px solid lightgrey;
+}
+/* arrow */
+.joint-inspector.joint-theme-default .group > .group-label:before {
+    border-top: 5px solid black;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+.joint-inspector.joint-theme-default .group.closed > .group-label:before {
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-left: 5px solid black;
+}
+
+/* toggle */
+.joint-inspector.joint-theme-default .toggle {
+    width: 60px;
+}
+.joint-inspector.joint-theme-default .toggle input:checked + span {
+    background: white;
+}
+.joint-inspector.joint-theme-default .toggle span {
+    background: lightgrey;
+    border: 1px solid lightgrey;
+    border-radius: 40px;
+}
+.joint-inspector.joint-theme-default .toggle input:checked + span i:before {
+    content: "on";
+    right: 115%;
+    color: black;
+}
+.joint-inspector.joint-theme-default .toggle span i:before {
+    content: "off";
+    position: absolute;
+    top: 50%;
+    margin-top: -5px;
+    right: -80%;
+    text-transform: uppercase;
+    color: black;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    font-style: normal;
+}
+.joint-inspector.joint-theme-default .toggle span i {
+    background: white;
+    width: 50%;
+    right: 50%;
+}
+.joint-inspector.joint-theme-default .toggle input:checked + span i {
+    background: lightgrey;
+}
+
+.joint-inspector.joint-theme-default .btn-list-add,
+.joint-inspector.joint-theme-default .btn-list-del {
+    background: transparent;
+    color: black;
+    border: 1px solid lightgrey;
+}
+
+.joint-inspector.joint-theme-default .list-item {
+    border: 1px solid lightgrey;
+}
+
+.joint-inspector.joint-theme-default input {
+    width: 100%;
+    height: 15px;
+    text-shadow: none;
+    box-shadow: none;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.joint-inspector.joint-theme-default input[type="range"] {
+    background: transparent;
+    position: relative;
+    height: 20px;
+    border: none;
+    outline: none;
+    padding: 0;
+}
+
+.joint-inspector.joint-theme-default input[type="range"]::-ms-thumb {
+    position: relative;
+    width: 6px;
+    height: 12px;
+    top: 0;
+    z-index: 2;
+    border: 1px solid lightgrey;
+    background: white;
+}
+
+.joint-inspector.joint-theme-default input[type="range"]::-ms-track {
+    position: absolute;
+    left: 0;
+    top: 9px;
+    content: ' ';
+    width: 100%;
+    height: 2px;
+    background: lightgrey;
+    border-color: transparent;
+    border-radius: 3px;
+    color: transparent;
+}
+
+.joint-inspector.joint-theme-default input[type="range"]::-ms-fill-lower {
+    background: transparent;
+    border-color: transparent;
+}
+
+.joint-inspector.joint-theme-default input[type="range"]:focus {
+    outline: none;
+}
+
+.joint-inspector.joint-theme-default input[type="text"],
+.joint-inspector.joint-theme-default input[type="number"],
+.joint-inspector.joint-theme-default textarea,
+.joint-inspector.joint-theme-default .content-editable,
+.joint-inspector.joint-theme-default select,
+.joint-inspector.joint-theme-default option {
+    width: 100%;
+    height: auto;
+    line-height: 16px;
+    background: transparent;
+    border: 1px solid lightgrey;
+    box-sizing: border-box;
+    outline: none;
+    padding: 5px;
+}
+
+.joint-inspector.joint-theme-default input[type="color"] {
+    width: 40px;
+    height: 40px;
+}
+
+.joint-inspector.joint-theme-default select:not([multiple]) {
+    height: 28px
+}

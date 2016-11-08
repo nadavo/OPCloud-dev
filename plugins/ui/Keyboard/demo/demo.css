@@ -1,0 +1,88 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+
+.demo_item, .demo_mod{
+    display: inline-block;
+    min-width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+
+    border: 2px solid #feb663;
+    border-radius: 3px;
+
+    padding: 5px;
+    margin: 5px 5px 5px 0;
+}
+
+.demo_mod {
+    border-color: #31d0c6;
+}
+
+.disabled {
+    border-color: #6a6c8a;
+    background-color: #c6c7e2;
+    color: #6a6c8a;
+}
+
+.demo_item.active {
+    background-color: #feb663;
+    color: #222138;
+}
+.demo_mod.active {
+    background-color: #31d0c6;
+    color: #222138;
+}
+
+.spec {
+    width: 40%;
+}
+
+textarea, input, select {
+    width: 160px;
+    vertical-align: top;
+    margin: 5px;
+}
+
+fieldset {
+    margin: 5px;
+}
+
+.log {
+    position: fixed;
+    left: 50%;
+    top:10px;
+}
+.clear {
+    clear: both;
+}
+
+.demo {
+    width: 400px;
+}
+.demo.header {
+    font-weight: bold;
+}
+.demo .g2, .g4 {
+    float: left;
+}
+
+.demo .g2 {
+    width: 50px;
+}
+
+.demo .g4 {
+    width: 100px;
+}
+

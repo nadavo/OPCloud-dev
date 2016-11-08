@@ -1,0 +1,96 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-dialog .bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: .5;
+    z-index: 10000;
+}
+
+.joint-dialog .fg {
+    width: 80%;
+    margin: 0 auto;
+    top: 100px;
+    left: 0;
+    right: 0;
+    z-index: 10001;
+    position: absolute;
+}
+
+.joint-dialog.inlined .bg {
+    display: none;
+}
+
+.joint-dialog:not(.modal) .bg {
+    display: none;
+}
+.joint-dialog:not(.modal) .fg {
+    /* Make sure modal dialogs are always on top. */
+    z-index: 9999;
+}
+
+.joint-dialog.inlined .fg {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin: 0;
+    z-index: auto;
+}
+
+.joint-dialog .titlebar {
+    text-rendering: optimizeLegibility;
+}
+
+.joint-dialog.draggable .titlebar {
+    cursor: move;
+   -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.joint-dialog .titlebar.empty {
+    display: none;
+}
+
+.joint-dialog .btn-close {
+    line-height: 1;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+.joint-dialog .body {
+    padding: 10px;
+}
+
+.joint-dialog .controls .control-button {
+    float: right;
+    line-height: 30px;
+    margin-left: 5px;
+    height: 30px;
+    margin-top: 20px;
+    margin-right: 5px;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 10px;
+}
+.joint-dialog .controls .control-button.left {
+    float: left;
+    margin-left: 10px;
+    margin-right: 5px;
+}

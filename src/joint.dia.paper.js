@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -14,7 +14,6 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 //      JointJS library.
 //      (c) 2011-2015 client IO
 
-
 joint.dia.Paper = joint.mvc.View.extend({
 
     className: 'paper',
@@ -25,6 +24,13 @@ joint.dia.Paper = joint.mvc.View.extend({
         height: 600,
         origin: { x: 0, y: 0 }, // x,y coordinates in top-left corner
         gridSize: 1,
+
+        /*
+            Whether or not to draw the grid lines on the paper's DOM element.
+            e.g drawGrid: true, drawGrid: { color: 'red', thickness: 2 }
+         */
+        drawGrid: false,
+
         perpendicularLinks: false,
         elementView: joint.dia.ElementView,
         linkView: joint.dia.LinkView,
@@ -39,6 +45,30 @@ joint.dia.Paper = joint.mvc.View.extend({
             // FALSE means the event isn't guarded.
             return false;
         },
+
+        highlighting: {
+            'default': {
+                name: 'stroke',
+                options: {
+                    padding: 3
+                }
+            },
+            magnetAvailability: {
+                name: 'addClass',
+                options: {
+                    className: 'available-magnet'
+                }
+            },
+            elementAvailability: {
+                name: 'addClass',
+                options: {
+                    className: 'available-cell'
+                }
+            }
+        },
+
+        // Prevent the default context menu from being displayed.
+        preventContextMenu: true,
 
         // Restrict the translation of elements by given bounding box.
         // Option accepts a boolean:
@@ -68,7 +98,7 @@ joint.dia.Paper = joint.mvc.View.extend({
 
         // A router that is used by links with no router defined on the model.
         // e.g. { name: 'oneSide', args: { padding: 10 }} or a function
-        defaultRouter: null,
+        defaultRouter: { name: 'normal' },
 
         /* CONNECTING */
 
@@ -117,7 +147,10 @@ joint.dia.Paper = joint.mvc.View.extend({
         clickThreshold: 0,
 
         // The namespace, where all the cell views are defined.
-        cellViewNamespace: joint.shapes
+        cellViewNamespace: joint.shapes,
+
+        // The namespace, where all the cell views are defined.
+        highlighterNamespace: joint.highlighters
     },
 
     events: {
@@ -126,27 +159,35 @@ joint.dia.Paper = joint.mvc.View.extend({
         'dblclick': 'mousedblclick',
         'click': 'mouseclick',
         'touchstart': 'pointerdown',
-        'mousemove': 'pointermove',
+        'touchend': 'mouseclick',
         'touchmove': 'pointermove',
-        'mouseover .element': 'cellMouseover',
-        'mouseover .link': 'cellMouseover',
-        'mouseout .element': 'cellMouseout',
-        'mouseout .link': 'cellMouseout',
-        'contextmenu': 'contextmenu'
+        'mousemove': 'pointermove',
+        'mouseover .joint-cell': 'cellMouseover',
+        'mouseout .joint-cell': 'cellMouseout',
+        'contextmenu': 'contextmenu',
+        'mousewheel': 'mousewheel',
+        'DOMMouseScroll': 'mousewheel'
     },
+
+    _highlights: [],
 
     init: function() {
 
         _.bindAll(this, 'pointerup');
+
+        this.model = this.options.model || new joint.dia.Graph;
 
         // This is a fix for the case where two papers share the same options.
         // Changing origin.x for one paper would change the value of origin.x for the other.
         // This prevents that behavior.
         this.options.origin = _.clone(this.options.origin);
         this.options.defaultConnector = _.clone(this.options.defaultConnector);
+        // Return default highlighting options into the user specified options.
+        _.defaults(this.options.highlighting, this.constructor.prototype.options.highlighting);
+        this.options.highlighting = _.cloneDeep(this.options.highlighting);
 
         this.svg = V('svg').node;
-        this.viewport = V('g').addClass('viewport').node;
+        this.viewport = V('g').addClass(joint.util.addClassNamePrefix('viewport')).node;
         this.defs = V('defs').node;
 
         // Append `<defs>` element to the SVG document. This is useful for filters and gradients.
@@ -154,13 +195,14 @@ joint.dia.Paper = joint.mvc.View.extend({
 
         this.$el.append(this.svg);
 
-        this.setOrigin();
-        this.setDimensions();
-
         this.listenTo(this.model, 'add', this.onCellAdded);
         this.listenTo(this.model, 'remove', this.removeView);
         this.listenTo(this.model, 'reset', this.resetViews);
-        this.listenTo(this.model, 'sort', this.sortViews);
+        this.listenTo(this.model, 'sort', this._onSort);
+        this.listenTo(this.model, 'batch:stop', this._onBatchStop);
+
+        this.setOrigin();
+        this.setDimensions();
 
         $(document).on('mouseup touchend', this.pointerup);
 
@@ -169,8 +211,21 @@ joint.dia.Paper = joint.mvc.View.extend({
         // Hash of all cell views.
         this._views = {};
 
-        // default cell highlighting
-        this.on({ 'cell:highlight': this.onCellHighlight, 'cell:unhighlight': this.onCellUnhighlight });
+        this.on('cell:highlight', this.onCellHighlight, this);
+        this.on('cell:unhighlight', this.onCellUnhighlight, this);
+    },
+
+    _onSort: function() {
+        if (!this.model.hasActiveBatch('add')) {
+            this.sortViews();
+        }
+    },
+
+    _onBatchStop: function(data) {
+        var name = data && data.batchName;
+        if (name === 'add' && !this.model.hasActiveBatch('add')) {
+            this.sortViews();
+        }
     },
 
     onRemove: function() {
@@ -199,6 +254,10 @@ joint.dia.Paper = joint.mvc.View.extend({
         V(this.viewport).translate(ox, oy, { absolute: true });
 
         this.trigger('translate', ox, oy);
+
+        if (this.options.drawGrid) {
+            this.drawGrid();
+        }
     },
 
     // Expand/shrink the paper to fit the content. Snap the width/height to the grid
@@ -360,14 +419,12 @@ joint.dia.Paper = joint.mvc.View.extend({
         // for non-default origin we need to take the viewport translation into account
         var viewportCTM = this.viewport.getCTM();
 
-        var bbox = g.rect({
+        return g.rect({
             x: crect.left - screenCTM.e + viewportCTM.e,
             y: crect.top - screenCTM.f + viewportCTM.f,
             width: crect.width,
             height: crect.height
         });
-
-        return bbox;
     },
 
     // Returns a geometry rectangle represeting the entire
@@ -490,7 +547,7 @@ joint.dia.Paper = joint.mvc.View.extend({
 
         // Make sure links are always added AFTER elements.
         // They wouldn't find their sources/targets in the DOM otherwise.
-        cells.sort(function(a, b) { return a instanceof joint.dia.Link ? 1 : -1; });
+        cells.sort(function(a) { return a instanceof joint.dia.Link ? 1 : -1; });
 
         return cells;
     },
@@ -501,8 +558,6 @@ joint.dia.Paper = joint.mvc.View.extend({
     },
 
     resetViews: function(cellsCollection, opt) {
-
-        $(this.viewport).empty();
 
         // clearing views removes any event listeners
         this.removeViews();
@@ -623,6 +678,10 @@ joint.dia.Paper = joint.mvc.View.extend({
         V(this.viewport).scale(sx, sy);
 
         this.trigger('scale', sx, sy, ox, oy);
+
+        if (this.options.drawGrid) {
+            this.drawGrid();
+        }
 
         return this;
     },
@@ -813,13 +872,98 @@ joint.dia.Paper = joint.mvc.View.extend({
 
     // Cell highlighting
     // -----------------
+    resolveHighlighter: function(opt) {
 
-    onCellHighlight: function(cellView, el) {
-        V(el).addClass('highlighted');
+        opt = opt || {};
+        var highlighterDef = opt.highlighter;
+        var paperOpt = this.options;
+
+        /*
+            Expecting opt.highlighter to have the following structure:
+            {
+                name: 'highlighter-name',
+                options: {
+                    some: 'value'
+                }
+            }
+        */
+        if (_.isUndefined(highlighterDef)) {
+
+            // check for built-in types
+            var type = _.chain(opt)
+                .pick('embedding', 'connecting', 'magnetAvailability', 'elementAvailability')
+                .keys().first().value();
+
+            highlighterDef = (type && paperOpt.highlighting[type]) || paperOpt.highlighting['default'];
+        }
+
+        // Do nothing if opt.highlighter is falsey.
+        // This allows the case to not highlight cell(s) in certain cases.
+        // For example, if you want to NOT highlight when embedding elements.
+        if (!highlighterDef) return false;
+
+        // Allow specifying a highlighter by name.
+        if (_.isString(highlighterDef)) {
+            highlighterDef = {
+                name: highlighterDef
+            };
+        }
+
+        var name = highlighterDef.name;
+        var highlighter = paperOpt.highlighterNamespace[name];
+
+        // Highlighter validation
+        if (!highlighter) {
+            throw new Error('Unknown highlighter ("' + name + '")');
+        }
+        if (typeof highlighter.highlight !== 'function') {
+            throw new Error('Highlighter ("' + name + '") is missing required highlight() method');
+        }
+        if (typeof highlighter.unhighlight !== 'function') {
+            throw new Error('Highlighter ("' + name + '") is missing required unhighlight() method');
+        }
+
+        return {
+            highlighter: highlighter,
+            options: highlighterDef.options || {},
+            name: name
+        };
     },
 
-    onCellUnhighlight: function(cellView, el) {
-        V(el).removeClass('highlighted');
+    onCellHighlight: function(cellView, magnetEl, opt) {
+
+        opt = this.resolveHighlighter(opt);
+        if (!opt) return;
+
+        var key = opt.name + magnetEl.id + JSON.stringify(opt.options);
+        if (!this._highlights[key]) {
+
+            var highlighter = opt.highlighter;
+            highlighter.highlight(cellView, magnetEl, _.clone(opt.options));
+
+            this._highlights[key] = {
+                cellView: cellView,
+                magnetEl: magnetEl,
+                opt: opt.options,
+                highlighter: highlighter
+            };
+        }
+    },
+
+    onCellUnhighlight: function(cellView, magnetEl, opt) {
+
+        opt = this.resolveHighlighter(opt);
+        if (!opt) return;
+
+        var key = opt.name + magnetEl.id + JSON.stringify(opt.options);
+        var highlight = this._highlights[key];
+        if (highlight) {
+
+            // Use the cellView and magnetEl that were used by the highlighter.highlight() method.
+            highlight.highlighter.unhighlight(highlight.cellView, highlight.magnetEl, highlight.opt);
+
+            this._highlights[key] = null;
+        }
     },
 
     // Interaction.
@@ -873,16 +1017,18 @@ joint.dia.Paper = joint.mvc.View.extend({
     guard: function(evt, view) {
 
         if (this.options.guard && this.options.guard(evt, view)) {
-
             return true;
         }
 
+        if (evt.data && !_.isUndefined(evt.data.guarded)) {
+            return evt.data.guarded;
+        }
+
         if (view && view.model && (view.model instanceof joint.dia.Cell)) {
-
             return false;
+        }
 
-        } else if (this.svg === evt.target || this.el === evt.target || $.contains(this.svg, evt.target)) {
-
+        if (this.svg === evt.target || this.el === evt.target || $.contains(this.svg, evt.target)) {
             return false;
         }
 
@@ -892,6 +1038,11 @@ joint.dia.Paper = joint.mvc.View.extend({
     contextmenu: function(evt) {
 
         evt = joint.util.normalizeEvent(evt);
+
+        if (this.options.preventContextMenu) {
+            evt.preventDefault();
+        }
+
         var view = this.findView(evt.target);
         if (this.guard(evt, view)) return;
 
@@ -934,10 +1085,10 @@ joint.dia.Paper = joint.mvc.View.extend({
 
     pointermove: function(evt) {
 
-        evt.preventDefault();
-        evt = joint.util.normalizeEvent(evt);
-
         if (this.sourceView) {
+
+            evt.preventDefault();
+            evt = joint.util.normalizeEvent(evt);
 
             // Mouse moved counter.
             this._mousemoved++;
@@ -967,6 +1118,26 @@ joint.dia.Paper = joint.mvc.View.extend({
         }
     },
 
+    mousewheel: function(evt) {
+
+        evt = joint.util.normalizeEvent(evt);
+        var view = this.findView(evt.target);
+        if (this.guard(evt, view)) return;
+
+        var originalEvent = evt.originalEvent;
+        var localPoint = this.snapToGrid({ x: originalEvent.clientX, y: originalEvent.clientY });
+        var delta = Math.max(-1, Math.min(1, (originalEvent.wheelDelta || -originalEvent.detail)));
+
+        if (view) {
+
+            view.mousewheel(evt, localPoint.x, localPoint.y, delta);
+
+        } else {
+
+            this.trigger('blank:mousewheel', evt, localPoint.x, localPoint.y, delta);
+        }
+    },
+
     cellMouseover: function(evt) {
 
         evt = joint.util.normalizeEvent(evt);
@@ -985,5 +1156,70 @@ joint.dia.Paper = joint.mvc.View.extend({
             if (this.guard(evt, view)) return;
             view.mouseout(evt);
         }
+    },
+
+    setGridSize: function(gridSize) {
+
+        this.options.gridSize = gridSize;
+
+        if (this.options.drawGrid) {
+            this.drawGrid();
+        }
+
+        return this;
+    },
+
+    clearGrid: function() {
+
+        this.el.style.backgroundImage = 'none';
+        return this;
+    },
+
+    drawGrid: function(opt) {
+
+        opt = _.defaults(opt || {}, this.options.drawGrid, {
+            color: '#aaa',
+            thickness: 1
+        });
+
+        var gridSize = this.options.gridSize;
+
+        if (gridSize <= 1) {
+            return this.clearGrid();
+        }
+
+        var currentScale = V(this.viewport).scale();
+        var scaleX = currentScale.sx;
+        var scaleY = currentScale.sy;
+        var originX = this.options.origin.x;
+        var originY = this.options.origin.y;
+        var gridX = gridSize * scaleX;
+        var gridY = gridSize * scaleY;
+
+        var canvas = document.createElement('canvas');
+
+        canvas.width = gridX;
+        canvas.height = gridY;
+
+        gridX = originX >= 0 ? originX % gridX : gridX + originX % gridX;
+        gridY = originY >= 0 ? originY % gridY : gridY + originY % gridY;
+
+        var context = canvas.getContext('2d');
+        context.beginPath();
+        context.rect(gridX, gridY, opt.thickness * scaleX, opt.thickness * scaleY);
+        context.fillStyle = opt.color;
+        context.fill();
+
+        var backgroundImage = canvas.toDataURL('image/png');
+        this.el.style.backgroundImage = 'url("' + backgroundImage + '")';
+
+        return this;
+    },
+
+    setInteractivity: function(value) {
+
+        this.options.interactive = value;
+
+        _.invoke(this._views, 'setInteractivity', value);
     }
 });

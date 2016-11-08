@@ -1,0 +1,177 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-widget.joint-theme-default input[type="range"] {
+    margin: 0 0 0 6px;
+    position: relative;
+    border: 0;
+    padding: 0;
+    width: 80px;
+}
+
+.joint-widget.joint-theme-default input[type="range"]::-ms-thumb {
+    position: relative;
+    width: 6px;
+    height: 12px;
+    top: 0;
+    z-index: 2;
+    border: 1px solid lightgrey;
+    background: white;
+}
+
+.joint-widget.joint-theme-default input[type="range"]::-ms-track {
+    position: absolute;
+    left: 0;
+    top: 9px;
+    content: ' ';
+    width: 100%;
+    height: 2px;
+    background-color: lightgrey;
+    border-radius: 3px;
+}
+
+button.joint-widget.joint-theme-default:hover {
+    background: lightgrey;
+}
+
+button.joint-widget.joint-theme-default {
+    outline: none;
+    cursor: pointer;
+    color: black;
+    padding: 5px;
+    background: white;
+    border: 1px solid lightgrey;
+    min-width: 30px;
+    min-height: 30px;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.joint-widget.joint-theme-default[data-type="undo"]:after {
+    content: 'undo';
+}
+
+.joint-widget.joint-theme-default[data-type="redo"]:after {
+    content: 'redo';
+}
+
+.joint-widget.joint-theme-default[data-type="zoomToFit"]:after {
+    content: 'fit';
+}
+
+.joint-widget.joint-theme-default[data-type="zoomIn"]:after {
+    content: '+';
+}
+
+.joint-widget.joint-theme-default[data-type="zoomOut"]:after {
+    content: '-';
+}
+
+.joint-widget.joint-theme-default[data-type="toggle"] > input {
+    margin-bottom: 0;
+}
+
+.joint-widget.joint-theme-default[data-type="toggle"] span:first-child {
+    float: left;
+}
+
+.joint-widget.joint-theme-default[data-type="separator"] {
+    line-height: 38px;
+    margin-right: 4px;
+    border-color: lightgray;
+}
+
+/*toggle*/
+.joint-widget.joint-theme-default .toggle {
+    width: 60px;
+}
+.joint-widget.joint-theme-default .toggle input:checked + span {
+    background: white;
+}
+.joint-widget.joint-theme-default .toggle span {
+    background: lightgrey;
+    border: 1px solid lightgrey;
+    border-radius: 40px;
+}
+.joint-widget.joint-theme-default .toggle input:checked + span i:before {
+    content: "on";
+    right: 115%;
+    color: black;
+}
+.joint-widget.joint-theme-default .toggle span i:before {
+    content: "off";
+    position: absolute;
+    top: 50%;
+    margin-top: -5px;
+    right: -80%;
+    text-transform: uppercase;
+    color: black;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    font-style: normal;
+}
+.joint-widget.joint-theme-default .toggle span i {
+    background: white;
+    width: 50%;
+    right: 50%;
+}
+.joint-widget.joint-theme-default .toggle input:checked + span i {
+    background: lightgrey;
+}
+
+/*inputs*/
+.joint-widget.joint-theme-default input[type="text"],
+.joint-widget.joint-theme-default input[type="number"],
+.joint-widget.joint-theme-default textarea {
+    width: 100%;
+    height: auto;
+    line-height: 14px;
+    border: 1px solid lightgrey;
+    box-sizing: border-box;
+    outline: none;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.joint-widget.joint-theme-default .joint-select-button-group {
+    font-size: 16px;
+}
+
+/*label space*/
+.joint-widget.joint-theme-default[data-type="inputText"] label,
+.joint-widget.joint-theme-default[data-type="inputNumber"] label,
+.joint-widget.joint-theme-default[data-type="inputTextArea"] label,
+.joint-widget.joint-theme-default[data-type="checkbox"] > span,
+.joint-widget.joint-theme-default[data-type="toggle"] > span {
+    padding-right: 2px;
+}
+
+/* IE 8,9,10*/
+@media screen\0 {
+    /* toggle and select button group*/
+    .joint-widget.joint-theme-default[data-type="toggle"],
+    .joint-widget.joint-theme-default[data-type="selectButtonGroup"] {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+    /* range*/
+    .joint-widget.joint-theme-default[data-type="zoomSlider"],
+    .joint-widget.joint-theme-default[data-type="range"] {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+    .joint-widget.joint-theme-default input[type="range"] + output {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}

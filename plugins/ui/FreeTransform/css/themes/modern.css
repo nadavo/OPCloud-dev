@@ -1,0 +1,55 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-free-transform.joint-theme-modern {
+    border: 1px solid #c6c7e2;
+}
+.joint-free-transform.joint-theme-modern .resize,
+.joint-free-transform.joint-theme-modern .rotate {
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(#6a6c8a, #3c4260);
+    border-radius: 0;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="top-left"] {
+    top: -3px;
+    left: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="top-right"] {
+    top: -3px;
+    right: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="bottom-left"] {
+    bottom: -3px;
+    left: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="bottom-right"] {
+    bottom: -3px;
+    right: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="top"] {
+    top: -3px;
+    margin-left: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="bottom"] {
+    bottom: -3px;
+    margin-left: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="left"] {
+    left: -3px;
+    margin-top: -3px;
+}
+.joint-free-transform.joint-theme-modern .resize[data-position="right"] {
+    right: -3px;
+    margin-top: -3px;
+}

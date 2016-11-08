@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -15,7 +15,18 @@ joint.layout = joint.layout || {};
 
 joint.layout.GridLayout = {
 
-    layout: function(graph, opt) {
+    layout: function(graphOrCells, opt) {
+
+        var graph;
+
+        if (graphOrCells instanceof joint.dia.Graph) {
+            graph = graphOrCells;
+        } else {
+            graph = (new joint.dia.Graph()).resetCells(graphOrCells);
+        }
+
+        // This is not needed anymore.
+        graphOrCells = null;
 
         opt = opt || {};
 
@@ -41,6 +52,12 @@ joint.layout.GridLayout = {
 
         // resize the elements to fit a grid cell & preserves ratio
         var resizeToFit = !!opt.resizeToFit;
+
+        var marginX = opt.marginX || 0;
+        var marginY = opt.marginY || 0;
+
+        // Wrap all graph changes into a batch.
+        graph.startBatch('layout');
 
         // iterate the elements and position them accordingly
         _.each(elements, function(element, index) {
@@ -73,11 +90,16 @@ joint.layout.GridLayout = {
                 cy = (rowHeight - elementSize.height) / 2;
             }
 
+            cx += marginX;
+            cy += marginY;
+
             element.set('position', {
                 x: (index % columns) * columnWidth + dx + cx,
                 y: Math.floor(index / columns) * rowHeight + dy + cy
             });
         });
+
+        graph.stopBatch('layout');
     },
 
     // find maximal dimension (width/height) in an array of the elements

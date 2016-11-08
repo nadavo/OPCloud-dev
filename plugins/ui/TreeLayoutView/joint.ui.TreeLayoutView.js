@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -19,14 +19,12 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 joint.ui.TreeLayoutView = joint.mvc.View.extend({
 
     MINIMAL_PREVIEW_SIZE: 10,
-
     className: 'tree-layout',
 
     options: {
 
         // SVG attributes for the child and parent preview SVG elements.
         previewAttrs: {
-            child: {},
             parent: { rx: 2, ry: 2 }
         },
 
@@ -51,6 +49,7 @@ joint.ui.TreeLayoutView = joint.mvc.View.extend({
         this.toggleDefaultInteraction(false);
         this.startListening();
         this.render();
+        this.onSetTheme(null, this.theme);
     },
 
     // @public
@@ -65,17 +64,7 @@ joint.ui.TreeLayoutView = joint.mvc.View.extend({
     // Enable/Disable the default paper interactions.
     toggleDefaultInteraction: function(interactive) {
 
-        var paper = this.options.paper;
-
-        // New elements added to the paper will not be interactive.
-        paper.options.interactive = interactive;
-
-        // Set interactive to false to all existing elements.
-        _.chain(paper.model.getElements())
-            .map(paper.findViewByModel, paper)
-            .each(function(view) {
-                view && (view.options.interactive = interactive);
-            }).value();
+        this.options.paper.setInteractivity(interactive);
     },
 
     render: function() {
@@ -119,6 +108,31 @@ joint.ui.TreeLayoutView = joint.mvc.View.extend({
         this.$el.appendTo(paper.el);
 
         return this;
+    },
+
+    onSetTheme: function(oldTheme, newTheme) {
+
+        var $elsWithThemeClass = [
+            this.svgPreview,
+            this.$mask
+        ];
+
+        _.each($elsWithThemeClass, function($elWithThemeClass) {
+
+            if ($elWithThemeClass) {
+
+                if (oldTheme) {
+                    $elWithThemeClass.removeClass(this.themeClassNamePrefix + oldTheme);
+                }
+
+                $elWithThemeClass.addClass(this.themeClassNamePrefix + newTheme);
+            }
+        }, this);
+    },
+
+    onRemove: function() {
+
+        this.svgPreview.remove();
     },
 
     toggleDropping: function(state) {
@@ -357,22 +371,29 @@ joint.ui.TreeLayoutView = joint.mvc.View.extend({
 
     findDirection: function(layoutArea, point) {
 
-        var type = layoutArea.root.get('layout') || layoutArea.getType() || layoutArea.direction;
-
+        var directions;
+        var type = layoutArea.root.get('layout') || layoutArea.getType();
         switch (type) {
-            case 'LR':
-                if (point.x > layoutArea.rootCX) return 'R';
-                return 'L';
-            case 'TB':
-                if (point.y > layoutArea.rootCY) return 'B';
-                return 'T';
+            case 'BL-BR':
+            case 'TL-TR':
+            case 'L-R':
+                directions = type.split('-');
+                return (point.x > layoutArea.rootCX) ? directions[1] : directions[0];
+            case 'BL-TL':
+            case 'BR-TR':
+            case 'B-T':
+                directions = type.split('-');
+                return (point.y > layoutArea.rootCY) ? directions[0] : directions[1];
             case 'L':
             case 'R':
             case 'T':
             case 'B':
+            case 'TR':
+            case 'TL':
+            case 'BR':
+            case 'BL':
                 return type;
             default:
-                // TBD
                 return layoutArea.direction;
         }
     },
@@ -412,7 +433,7 @@ joint.ui.TreeLayoutView = joint.mvc.View.extend({
         return '.tree-layout-' + this.cid;
     },
 
-    startDragging: function(elements, x, y) {
+    startDragging: function(elements) {
 
         var draggedElements = _.isArray(elements) ? elements : [elements];
         if (!_.isEmpty(draggedElements)) {
@@ -422,9 +443,9 @@ joint.ui.TreeLayoutView = joint.mvc.View.extend({
         }
     },
 
-    onPointerdown: function(elementView, evt, x, y) {
+    onPointerdown: function(elementView) {
 
-        this.startDragging(elementView.model, x, y);
+        this.startDragging(elementView.model);
     },
 
     onPointermove: function(evt) {

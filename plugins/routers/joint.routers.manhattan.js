@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,7 +11,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-joint.routers.manhattan = (function(g, _) {
+joint.routers.manhattan = (function(g, _, joint) {
 
     'use strict';
 
@@ -86,18 +86,19 @@ joint.routers.manhattan = (function(g, _) {
             };
         },
 
+        // * Deprecated *
         // a simple route used in situations, when main routing method fails
         // (exceed loops, inaccessible).
-        fallbackRoute: function(from, to, opts) {
-
+        /* i.e.
+          function(from, to, opts) {
             // Find an orthogonal route ignoring obstacles.
-
             var point = ((opts.previousDirAngle || 0) % 180 === 0)
                     ? g.point(from.x, to.y)
                     : g.point(to.x, from.y);
-
             return [point, to];
-        },
+          },
+        */
+        fallbackRoute: _.constant(null),
 
         // if a function is provided, it's used to route the link while dragging an end
         // i.e. function(from, to, opts) { return []; }
@@ -130,7 +131,7 @@ joint.routers.manhattan = (function(g, _) {
         var source = graph.getCell(link.get('source').id);
         if (source) {
             excludedAncestors = _.union(excludedAncestors, _.map(source.getAncestors(), 'id'));
-        };
+        }
 
         var target = graph.getCell(link.get('target').id);
         if (target) {
@@ -238,17 +239,24 @@ joint.routers.manhattan = (function(g, _) {
         return item;
     };
 
+    function normalizePoint(point) {
+        return g.point(
+            point.x === 0 ? 0 : Math.abs(point.x) / point.x,
+            point.y === 0 ? 0 : Math.abs(point.y) / point.y
+        );
+    }
+
     // reconstructs a route by concating points with their parents
-    function reconstructRoute(parents, point) {
+    function reconstructRoute(parents, point, startCenter, endCenter) {
 
         var route = [];
-        var prevDiff = { x: 0, y: 0 };
+        var prevDiff = normalizePoint(endCenter.difference(point));
         var current = point;
         var parent;
 
         while ((parent = parents[current])) {
 
-            var diff = parent.difference(current);
+            var diff = normalizePoint(current.difference(parent));
 
             if (!diff.equals(prevDiff)) {
 
@@ -259,7 +267,10 @@ joint.routers.manhattan = (function(g, _) {
             current = parent;
         }
 
-        route.unshift(current);
+        var startDiff = normalizePoint(g.point(current).difference(startCenter));
+        if (!startDiff.equals(prevDiff)) {
+            route.unshift(current);
+        }
 
         return route;
     }
@@ -286,7 +297,7 @@ joint.routers.manhattan = (function(g, _) {
         }).value();
 
         return startPoints;
-    };
+    }
 
     // returns a direction index from start point to end point
     function getDirectionAngle(start, end, dirLen) {
@@ -309,7 +320,7 @@ joint.routers.manhattan = (function(g, _) {
         for (var i = 0, len = endPoints.length; i < len; i++) {
             var cost = from.manhattanDistance(endPoints[i]);
             if (cost < min) min = cost;
-        };
+        }
 
         return min;
     }
@@ -324,19 +335,19 @@ joint.routers.manhattan = (function(g, _) {
         // set of points we start pathfinding from
         if (start instanceof g.rect) {
             startPoints = getRectPoints(start, opt.startDirections, opt);
-            startCenter = start.center();
+            startCenter = start.center().snapToGrid(step);
         } else {
             startCenter = start.clone().snapToGrid(step);
-            startPoints = [start];
+            startPoints = [startCenter];
         }
 
         // set of points we want the pathfinding to finish at
         if (end instanceof g.rect) {
             endPoints = getRectPoints(end, opt.endDirections, opt);
-            endCenter = end.center();
+            endCenter = end.center().snapToGrid(step);
         } else {
             endCenter = end.clone().snapToGrid(step);
-            endPoints = [end];
+            endPoints = [endCenter];
         }
 
         // take into account only accessible end points
@@ -385,7 +396,7 @@ joint.routers.manhattan = (function(g, _) {
                     dirChange = getDirectionChange(currentDirAngle, getDirectionAngle(currentPoint, endCenter, dirLen));
                     if (currentPoint.equals(endCenter) || dirChange < 180) {
                         opt.previousDirAngle = currentDirAngle;
-                        return reconstructRoute(parents, currentPoint);
+                        return reconstructRoute(parents, currentPoint, startCenter, endCenter);
                     }
                 }
 
@@ -395,7 +406,9 @@ joint.routers.manhattan = (function(g, _) {
                     dir = dirs[i];
                     dirChange = getDirectionChange(currentDirAngle, dir.angle);
                     // if the direction changed rapidly don't use this point
-                    if (dirChange > opt.maxAllowedDirectionChange) {
+                    // Note that check is relevant only for points with previousDirAngle i.e.
+                    // any direction is allowed for starting points
+                    if (previousDirAngle && dirChange > opt.maxAllowedDirectionChange) {
                         continue;
                     }
 
@@ -415,8 +428,8 @@ joint.routers.manhattan = (function(g, _) {
                         parents[neighborKey] = currentPoint;
                         costs[neighborKey] = costFromStart;
                         openSet.add(neighborKey, costFromStart + estimateCost(neighborPoint, endPoints));
-                    };
-                };
+                    }
+                }
 
                 loopsRemain--;
             }
@@ -436,11 +449,10 @@ joint.routers.manhattan = (function(g, _) {
 
         _.each(opt.directions, function(direction) {
 
-            var point1 = new g.point(0, 0);
-            var point2 = new g.point(direction.offsetX, direction.offsetY);
-            var angle = g.normalizeAngle(point1.theta(point2));
+            var point1 = g.point(0, 0);
+            var point2 = g.point(direction.offsetX, direction.offsetY);
 
-            direction.angle = angle;
+            direction.angle = g.normalizeAngle(point1.theta(point2));
         });
     }
 
@@ -489,6 +501,15 @@ joint.routers.manhattan = (function(g, _) {
             // if partial route has not been calculated yet use the main routing method to find one
             partialRoute = partialRoute || findRoute(from, to, map, opt);
 
+            if (partialRoute === null) {
+                // The partial route could not be found.
+                // use orthogonal (do not avoid elements) route instead.
+                if (!_.isFunction(joint.routers.orthogonal)) {
+                    throw new Error('Manhattan requires the orthogonal router.');
+                }
+                return joint.routers.orthogonal(vertices, opt, this);
+            }
+
             var leadPoint = _.first(partialRoute);
 
             if (leadPoint && leadPoint.equals(tailPoint)) {
@@ -499,7 +520,7 @@ joint.routers.manhattan = (function(g, _) {
             tailPoint = _.last(partialRoute) || tailPoint;
 
             Array.prototype.push.apply(newVertices, partialRoute);
-        };
+        }
 
         return newVertices;
     }
@@ -510,4 +531,4 @@ joint.routers.manhattan = (function(g, _) {
         return router.call(linkView, vertices, _.extend({}, config, opt));
     };
 
-})(g, _);
+})(g, _, joint);

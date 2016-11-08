@@ -1,0 +1,93 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-widget[data-type="zoomSlider"] output,
+.joint-widget[data-type="range"] output {
+    min-width: 1.6em;
+    display: inline-block;
+    text-align: right;
+}
+
+.joint-widget[data-type="separator"] {
+    border-right: 1px solid #b3b3b3;
+}
+
+.joint-widget[data-type="separator"]:after {
+    content: "\00a0";
+}
+
+.joint-widget input[type="range"]::-ms-track {
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+.joint-widget input[type="range"]::-ms-fill-lower {
+    background: transparent;
+    border-color: transparent;
+}
+
+/* Toggle */
+
+.joint-widget .toggle {
+   position: relative;
+   width: 97px;
+   height: 14px;
+}
+.joint-widget .toggle input {
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+   filter: alpha(opacity=0);
+   -moz-opacity: 0;
+   opacity: 0;
+   z-index: 100;
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   cursor: pointer;
+   box-sizing: border-box;
+   padding: 0;
+   box-shadow: none;
+   -webkit-appearance: none;
+}
+.joint-widget .toggle span {
+   display: block;
+   width: 100%;
+   height: 100%;
+   border-radius: 40px;
+   position: relative;
+}
+.joint-widget .toggle input:checked + span i {
+   right: 0;
+}
+.joint-widget .toggle span i {
+   display: block;
+   height: 100%;
+   width: 60%;
+   border-radius: inherit;
+   position: absolute;
+   z-index: 2;
+   right: 40%;
+   top: 0;
+}
+
+/* IE 8,9,10*/
+@media screen\0 {
+    .joint-widget {
+        float: left;
+    }
+}

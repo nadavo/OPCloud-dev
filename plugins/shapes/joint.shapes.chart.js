@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -226,9 +226,9 @@ joint.shapes.chart.PlotView = joint.dia.ElementView.extend({
         V(this.elMarkings).attr('clip-path', 'url(#' + this.elDataClipPath.id + ')');
     },
 
-    update: function(series) {
+    update: function() {
 
-        series = this.filterSeries(series);
+        var series = this.filterSeries();
 
         // Get statistics about the series.
         this.calculateStats(series);
@@ -443,11 +443,8 @@ joint.shapes.chart.PlotView = joint.dia.ElementView.extend({
     seriePathClipData: function(points, serie) {
 
         var padding = 10;
-
         var size = this.model.get('size');
         var firstPoint = _.first(points);
-        var lastPoint = _.last(points);
-
         var d = ['M', firstPoint.x, firstPoint.y, 'V', size.height + padding];
         return d.join(' ');
     },
@@ -620,7 +617,6 @@ joint.shapes.chart.PlotView = joint.dia.ElementView.extend({
         // The `canvasHeighRatio` helps us adjust the range to which we map the values
         // from the axis domain.
         var canvasHeightRatio = this.canvas.height / height;
-        var canvasWidthRatio = this.canvas.width / width;
 
         // Axis line.
         V(this.elYAxisPath).attr('d', ['M', 0, 0, 'L', 0, height].join(' '));
@@ -636,9 +632,7 @@ joint.shapes.chart.PlotView = joint.dia.ElementView.extend({
         var yDomain = [this.stats.minY, this.stats.maxY];
         var xRange = [this.canvas.x, this.canvas.x + this.canvas.width];
         var yRange = [0, this.canvas.height];
-        var xDomainSpan = xDomain[1] - xDomain[0];
         var yDomainSpan = yDomain[1] - yDomain[0];
-
         var yAxis = axis && axis['y-axis'] || {};
         var xAxis = axis && axis['x-axis'] || {};
 
@@ -904,8 +898,6 @@ joint.shapes.chart.PlotView = joint.dia.ElementView.extend({
 
         var angle = this.model.get('angle');
         var bbox = this.model.getBBox();
-        var series = this.model.get('series');
-
         var localPoint = g.point(V(this.paper.viewport).toLocalPoint(clientX, clientY)).rotate(bbox.center(), angle);
 
         if (g.rect(bbox).containsPoint(localPoint)) {
@@ -1091,7 +1083,7 @@ joint.shapes.chart.PieView = joint.dia.ElementView.extend({
         // Little optimization that update only the serie changed
         this.listenTo(this.model, 'change:series change:serieDefaults change:sliceDefaults change:pieHole',
             function(model, attr, opt) {
-                this.update(null, null, opt.changedSerieIndex);
+                this.update(null, null, null, opt.changedSerieIndex);
             });
 
         this.on('cell:pointerclick', this.onClickSlice, this);
@@ -1122,7 +1114,7 @@ joint.shapes.chart.PieView = joint.dia.ElementView.extend({
         this.elLegendSlice = V(this.model.legendSliceMarkup);
     },
 
-    update: function(cell, renderingOnlyAttrs, serieIndex) {
+    update: function(cell, renderingOnlyAttrs, opt, serieIndex) {
 
         var series = this.calculateSeries(serieIndex);
 
@@ -1207,7 +1199,7 @@ joint.shapes.chart.PieView = joint.dia.ElementView.extend({
                     // Init default params for outer slice
                     slice = _.defaults(slice, _.pick(sliceDefaults, 'offset', 'onClickEffect', 'onHoverEffect'));
 
-                    slice.outer = true;
+                    slice.isOuter = true;
                     slice.offset = slice.offset > 1 ? slice.offset : slice.offset * slice.outerRadius;
                     slice.onClickEffect.offset = slice.onClickEffect.offset > 1 ? slice.onClickEffect.offset : slice.onClickEffect.offset * slice.outerRadius;
                 }
@@ -1386,7 +1378,7 @@ joint.shapes.chart.PieView = joint.dia.ElementView.extend({
         elSlice.addClass('serie-' + slice.serieIndex + ' slice-' + slice.sliceIndex);
 
         // Is an outer slice
-        if (slice.outer) {
+        if (slice.isOuter) {
             elSlice.addClass('outer');
 
             // Apply init offset for explode some slices
@@ -1437,7 +1429,7 @@ joint.shapes.chart.PieView = joint.dia.ElementView.extend({
         elSlice.toggleClass('hover');
 
         // Do effect if it is an outer slice and requested
-        if (slice.outer && !_.isEmpty(slice.onHoverEffect)) {
+        if (slice.isOuter && !_.isEmpty(slice.onHoverEffect)) {
             this.effectOnSlice(elSlice, slice, slice.onHoverEffect, elSlice.hasClass('hover') ? false : true);
         }
 
@@ -1475,7 +1467,7 @@ joint.shapes.chart.PieView = joint.dia.ElementView.extend({
 
         var slice = this._series[serieIndex].data[sliceIndex];
 
-        if (!slice.outer) return;
+        if (!slice.isOuter) return;
 
         if (!elSlice.hasClass('clicked')) {
             elSlice.addClass('clicked');
@@ -1713,28 +1705,29 @@ joint.shapes.chart.MatrixView = joint.dia.ElementView.extend({
         // Cells.
         // ------
 
+        var row, j, elGridLine, cell, elCell;
+
         for (var i = 0; i < cells.length; i++) {
 
-            var elGridLine = this.elGridLine.clone();
+            elGridLine = this.elGridLine.clone();
             elGridLine.addClass('horizontal');
             elGridLine.attr('d', 'M 0 ' + (i * cellHeight) + ' ' + size.width + ' ' + (i * cellHeight));
             elGridLinesFragment.appendChild(elGridLine.node);
 
-            var row = cells[i];
-            for (var j = 0; j < row.length; j++) {
+            row = cells[i];
+            for (j = 0; j < row.length; j++) {
 
                 if (i === 0) {
 
-                    var elGridLine = this.elGridLine.clone();
+                    elGridLine = this.elGridLine.clone();
                     elGridLine.addClass('vertical');
                     elGridLine.attr('d', 'M ' + (j * cellWidth) + ' 0 ' + (j * cellWidth) + ' ' + size.height);
                     elGridLinesFragment.appendChild(elGridLine.node);
                 }
 
-                var cell = row[j];
-
+                cell = row[j];
                 if (cell) {
-                    var elCell = this.elCell.clone();
+                    elCell = this.elCell.clone();
                     elCell.attr(_.extend({
                         x: j * cellWidth,
                         y: i * cellHeight,
@@ -1765,9 +1758,9 @@ joint.shapes.chart.MatrixView = joint.dia.ElementView.extend({
         var rowLabels = labels.rows || [];
         var columnLabels = labels.columns || [];
         var size = this.model.get('size');
-
         var cellHeight = size.height / cells.length;
         var cellWidth = size.width / cells.length;
+        var label, elLabel;
 
         this.elRowLabels.textContent = '';
         this.elColumnLabels.textContent = '';
@@ -1775,8 +1768,8 @@ joint.shapes.chart.MatrixView = joint.dia.ElementView.extend({
         var elRowLabelsFragment = document.createDocumentFragment();
         for (var i = 0; i < rowLabels.length; i++) {
 
-            var label = labels.rows[i];
-            var elLabel = this.elLabel.clone();
+            label = labels.rows[i];
+            elLabel = this.elLabel.clone();
             elLabel.text(label.text);
             elLabel.attr(_.extend({
                 x: -(labels.padding || 5),
@@ -1790,14 +1783,15 @@ joint.shapes.chart.MatrixView = joint.dia.ElementView.extend({
         }
         this.elRowLabels.appendChild(elRowLabelsFragment);
 
+        var x, y;
         var elColumnLabelsFragment = document.createDocumentFragment();
         for (var j = 0; j < columnLabels.length; j++) {
 
-            var label = labels.columns[j];
-            var elLabel = this.elLabel.clone();
+            label = labels.columns[j];
+            elLabel = this.elLabel.clone();
             elLabel.text(label.text);
-            var x = j * cellWidth + cellWidth / 2;
-            var y = -(labels.padding || 5);
+            x = j * cellWidth + cellWidth / 2;
+            y = -(labels.padding || 5);
             elLabel.attr(_.extend({
                 x: x,
                 y: y,

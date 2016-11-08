@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -46,7 +46,7 @@ joint.ui.Snaplines = joint.mvc.View.extend({
         this.listenTo(this.options.paper, 'cell:pointermove', this.snapWhileMoving);
         this.listenTo(this.options.paper.model, 'batch:stop', this.onBatchStop);
 
-        $(document).on('mouseup', this.hide);
+        $(document).on('mouseup touchend', this.hide);
 
         // Cache filters and make tham a hash table for easier and faster access.
         // `options.filter` can contain either strings in which case they are considered
@@ -76,19 +76,21 @@ joint.ui.Snaplines = joint.mvc.View.extend({
         }
     },
 
-    onBatchStop: function(opt) {
+    onBatchStop: function(data) {
 
-        opt = opt || {};
+        data = data || {};
 
-        if (opt.batchName === 'resize') {
+        if (data.batchName === 'resize') {
 
-            this.snapWhileResizing(opt.element, opt);
+            this.snapWhileResizing(data.cell, data);
         }
     },
 
     captureCursorOffset: function(cellView, evt, x, y) {
 
-        if (cellView instanceof joint.dia.LinkView) return;
+        if (!this.canElementMove(cellView)) {
+            return ;
+        }
 
         var cellPosition = cellView.model.get('position');
 
@@ -105,7 +107,9 @@ joint.ui.Snaplines = joint.mvc.View.extend({
 
         var cellView = this.options.paper.findViewByModel(cell);
 
-        if (cellView instanceof joint.dia.LinkView) return;
+        if (!cellView || !cellView.model.isElement()) {
+            return ;
+        }
 
         var cellBBox = cell.getBBox();
         var cellBBoxRotated = cellBBox.bbox(cell.get('angle'));
@@ -119,13 +123,17 @@ joint.ui.Snaplines = joint.mvc.View.extend({
         // The vertical and horizontal lines to use when checking for snaplines.
         var cellLine = { vertical: 0, horizontal: 0 };
 
-        if (opt.trueDirection.indexOf('right') !== -1) {
+        var direction = opt.direction;
+        var trueDirection = opt.trueDirection;
+        var relativeDirection = opt.relativeDirection;
+
+        if (trueDirection.indexOf('right') !== -1) {
             cellLine.vertical = cellBottomRight.x;
         } else {
             cellLine.vertical = cellTopLeft.x;
         }
 
-        if (opt.trueDirection.indexOf('bottom') !== -1) {
+        if (trueDirection.indexOf('bottom') !== -1) {
             cellLine.horizontal = cellBottomRight.y;
         } else {
             cellLine.horizontal = cellTopLeft.y;
@@ -205,7 +213,7 @@ joint.ui.Snaplines = joint.mvc.View.extend({
 
             if (_.isNumber(vertical)) {
 
-                if (opt.trueDirection.indexOf('right') !== -1) {
+                if (trueDirection.indexOf('right') !== -1) {
                     diffX = vertical - cellBBoxRotated.corner().x;
                 } else {
                     diffX = cellBBoxRotated.origin().x - vertical;
@@ -216,7 +224,7 @@ joint.ui.Snaplines = joint.mvc.View.extend({
 
             if (_.isNumber(horizontal)) {
 
-                if (opt.trueDirection.indexOf('bottom') !== -1) {
+                if (trueDirection.indexOf('bottom') !== -1) {
                     diffY = horizontal - cellBBoxRotated.corner().y;
                 } else {
                     diffY = cellBBoxRotated.origin().y - horizontal;
@@ -225,22 +233,7 @@ joint.ui.Snaplines = joint.mvc.View.extend({
 
             var diffWidth = 0;
             var diffHeight = 0;
-            var angle = (normalizedAngle % 90);
             var isAtRightAngle = !(normalizedAngle % 90);
-
-            // See:
-            // https://www.mathsisfun.com/algebra/trig-four-quadrants.html
-            var quadrant;
-
-            if (normalizedAngle >= 0 && normalizedAngle < 90) {
-                quadrant = 1;
-            } else if (normalizedAngle >= 90 && normalizedAngle < 180) {
-                quadrant = 4;
-            } else if (normalizedAngle >= 180 && normalizedAngle < 270) {
-                quadrant = 3;
-            } else {
-                quadrant = 2;
-            }
 
             if (isAtRightAngle) {
 
@@ -259,7 +252,19 @@ joint.ui.Snaplines = joint.mvc.View.extend({
 
                 // A little bit more complicated.
 
-                var angleInRadians = g.toRad(angle);
+                // See:
+                // https://www.mathsisfun.com/algebra/trig-four-quadrants.html
+                var quadrant;
+
+                if (normalizedAngle >= 0 && normalizedAngle < 90) {
+                    quadrant = 1;
+                } else if (normalizedAngle >= 90 && normalizedAngle < 180) {
+                    quadrant = 4;
+                } else if (normalizedAngle >= 180 && normalizedAngle < 270) {
+                    quadrant = 3;
+                } else {
+                    quadrant = 2;
+                }
 
                 if (horizontal && vertical) {
 
@@ -273,6 +278,8 @@ joint.ui.Snaplines = joint.mvc.View.extend({
                         vertical = null;
                     }
                 }
+
+                var angleInRadians = g.toRad(normalizedAngle % 90);
 
                 if (diffX) {
                     if (quadrant === 3) {
@@ -292,7 +299,7 @@ joint.ui.Snaplines = joint.mvc.View.extend({
 
                 var isQuadrantOneOrThree = quadrant === 1 || quadrant === 3;
 
-                switch (opt.relativeDirection) {
+                switch (relativeDirection) {
 
                     case 'top':
                     case 'bottom':
@@ -316,7 +323,7 @@ joint.ui.Snaplines = joint.mvc.View.extend({
                 }
             }
 
-            switch (opt.relativeDirection) {
+            switch (relativeDirection) {
 
                 case 'top':
                 case 'bottom':
@@ -331,24 +338,81 @@ joint.ui.Snaplines = joint.mvc.View.extend({
                     break;
             }
 
-            var newWidth = cellBBox.width + diffWidth;
-            var newHeight = cellBBox.height + diffHeight;
+            var gridSize = this.options.paper.options.gridSize;
+            var newWidth = Math.max(cellBBox.width + diffWidth, gridSize);
+            var newHeight = Math.max(cellBBox.height + diffHeight, gridSize);
 
-            cell.resize(newWidth, newHeight, {
-                restrictedArea: this.options.paper.getRestrictedArea(cellView),
-                snapped: true,
-                direction: opt.direction,
-                relativeDirection: opt.relativeDirection,
-                trueDirection: opt.trueDirection
-            });
+            if (opt.minWidth && opt.minWidth > gridSize) {
+                newWidth = Math.max(newWidth, opt.minWidth);
+            }
+
+            if (opt.minHeight && opt.minHeight > gridSize) {
+                newHeight = Math.max(newHeight, opt.minHeight);
+            }
+
+            if (opt.maxWidth) {
+                newWidth = Math.min(newWidth, opt.maxWidth);
+            }
+
+            if (opt.maxHeight) {
+                newHeight = Math.min(newHeight, opt.maxHeight);
+            }
+
+            if (opt.preserveAspectRatio) {
+
+                if (diffWidth > diffHeight) {
+                    newHeight = newWidth * (cellBBox.height / cellBBox.width);
+                } else {
+                    newWidth = newHeight * (cellBBox.width / cellBBox.height);
+                }
+            }
+
+            if (newWidth !== cellBBox.width || newHeight !== cellBBox.height) {
+
+                cell.resize(newWidth, newHeight, {
+                    snaplines: this.cid,
+                    restrictedArea: this.options.paper.getRestrictedArea(cellView),
+                    direction: direction,
+                    relativeDirection: relativeDirection,
+                    trueDirection: trueDirection,
+                    // backwards compatibility
+                    snapped: true
+                });
+            }
+
+            // Due to the applying minimal/maximal width/height the element might not be
+            // snapped to a snapline in the end. We need to check this.
+            var resBBox = cell.getBBox().bbox(normalizedAngle);
+            var precision = 1;
+            if (
+                vertical &&
+                (Math.abs(resBBox.x - vertical) > precision) &&
+                (Math.abs(resBBox.width + resBBox.x - vertical) > precision)
+            ) {
+                vertical = null;
+            }
+            if (
+                horizontal &&
+                (Math.abs(resBBox.y - horizontal) > precision) &&
+                (Math.abs(resBBox.height + resBBox.y - horizontal) > precision)
+            ) {
+                horizontal = null;
+            }
 
             this.show({ vertical: vertical, horizontal: horizontal });
         }
     },
 
+    canElementMove: function(cellView) {
+
+        return cellView && cellView.model.isElement() && cellView.can('elementMove');
+    },
+
     snapWhileMoving: function(cellView, evt, x, y) {
 
-        if (cellView instanceof joint.dia.LinkView) return;
+        if (!this.canElementMove(cellView)) {
+            return ;
+        }
 
         var cell = cellView.model;
         var currentPosition = cell.get('position');

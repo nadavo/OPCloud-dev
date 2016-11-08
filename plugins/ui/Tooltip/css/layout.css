@@ -1,0 +1,103 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-tooltip {
+   position: absolute;
+   z-index: 10000;
+   border-radius: 5px;
+   pointer-events: none;
+}
+
+.joint-tooltip .tooltip-content{
+   padding: 10px;
+}
+
+.joint-tooltip.left, .joint-tooltip.right {
+    margin-top: -2px;
+}
+
+.joint-tooltip.top, .joint-tooltip.bottom {
+    margin-left: -2px;
+}
+
+.joint-tooltip.small {
+   padding: 5px;
+   font-size: 10px;
+}
+
+.joint-tooltip .tooltip-arrow, .joint-tooltip .tooltip-arrow-mask {
+   border: solid transparent;
+   content: " ";
+   height: 0;
+   width: 0;
+   position: absolute;
+   pointer-events: none;
+}
+
+.joint-tooltip.left .tooltip-arrow-mask, .joint-tooltip.left .tooltip-arrow {
+   margin-right: -1px;
+   right: 100%;
+}
+
+.joint-tooltip.right .tooltip-arrow-mask, .joint-tooltip.right .tooltip-arrow {
+   margin-left: -1px;
+   left: 100%;
+}
+
+.joint-tooltip.top .tooltip-arrow-mask, .joint-tooltip.top .tooltip-arrow {
+   bottom: 100%;
+}
+
+.joint-tooltip.bottom .tooltip-arrow-mask, .joint-tooltip.bottom .tooltip-arrow {
+   top: 100%;
+}
+
+.joint-tooltip .tooltip-arrow-mask {
+   border-width: 6px;
+}
+
+.joint-tooltip.left .tooltip-arrow-mask {
+   margin-top: -6px;
+}
+
+.joint-tooltip.right .tooltip-arrow-mask {
+   margin-top: -6px;
+}
+
+.joint-tooltip.top .tooltip-arrow-mask {
+   margin-left: -6px;
+}
+
+.joint-tooltip.bottom .tooltip-arrow-mask {
+   margin-left: -6px;
+}
+
+.joint-tooltip .tooltip-arrow {
+   border-width: 8px;
+}
+
+.joint-tooltip.left .tooltip-arrow {
+   margin-top: -8px;
+}
+
+.joint-tooltip.right .tooltip-arrow {
+   margin-top: -8px;
+}
+
+.joint-tooltip.top .tooltip-arrow {
+   margin-left: -8px;
+}
+
+.joint-tooltip.bottom .tooltip-arrow {
+   margin-left: -8px;
+}

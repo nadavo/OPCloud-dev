@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -15,24 +15,49 @@ var graph = new joint.dia.Graph;
 
 var paper = new joint.dia.Paper({
     el: document.getElementById('paper'),
-    width: 500,
-    height: 300,
+    width: 800,
+    height: 600,
     gridSize: 1,
     perpendicularLinks: true,
-    model: graph
+    model: graph,
+    defaultLink: new joint.dia.Link({
+        markup: [
+            '<path class="connection" stroke="black" d="M 0 0 0 0"/>',
+            '<path class="marker-source" fill="black" stroke="black" d="M 0 0 0 0"/>',
+            '<path class="marker-target" fill="black" stroke="black" d="M 0 0 0 0"/>',
+            '<path class="connection-wrap" d="M 0 0 0 0"/>',
+            '<g class="marker-vertices"/>',
+            '<g class="marker-arrowheads"/>'
+        ].join(''),
+        attrs: {
+            '.marker-target': { fill: 'black', d: 'M 10 0 L 0 5 L 10 10 z' }
+        }
+    }),
+    interactive: {
+        vertexAdd: false
+    }
 });
 
-paper.on('cell:pointerup', function(cellView, evt) {
+/**
+ * @param {joint.dia.LinkView|joint.dia.ElementView} cellView
+ * @param {Object} evt
+ * @param {Object=} coordinates
+ */
+var createHalo = function(cellView, evt, coordinates) {
 
     var cell = cellView.model;
-    if (cell.isLink()) return;
 
     var options = {
-        graph: graph,
-        paper: paper,
+        theme: 'modern',
         cellView: cellView,
+        bbox: coordinates,
         rotateAngleGrid: 2,
-        type: { 'basic.Rect': 'pie', 'basic.Circle': 'surrounding', 'devs.Model': 'toolbar' }[cell.get('type')],
+        type: {
+            'basic.Rect': 'pie',
+            'basic.Circle': 'surrounding',
+            'devs.Model': 'toolbar',
+            'link': 'toolbar'
+        }[cell.get('type')],
         clone: function(cell, opt) {
             var clone = cell.clone().unset('z');
             if (opt.fork) clone.translate(cell.get('size').width + 20, 0);
@@ -56,21 +81,32 @@ paper.on('cell:pointerup', function(cellView, evt) {
     // Adding a custom action.
     halo.addHandle({ name: 'myaction', position: 's', icon: 'myaction.png' });
     halo.on('action:myaction:pointerdown', function(evt) {
-
-        evt.stopPropagation();
-        alert('My custom action.');
-    });
-
-    //halo.toggleState('left');
-
-    // Example on preventing creating loose links via Halo:
-    /*
-    halo.on('action:link:add', function(link) {
-        if (!link.get('source').id || !link.get('target').id) {
-            link.remove();
+        if (cell.isLink()) {
+            cellView.addVertex(coordinates);
+        } else {
+            evt.stopPropagation();
+            alert('My custom action.');
         }
     });
-    */
+};
+
+paper.on('element:pointerdown', function(cellView, evt) {
+    createHalo(cellView, evt);
+});
+
+paper.on('link:pointerdown', function(linkView, evt) {
+    joint.ui.Halo.clear(linkView.paper);
+    // display no halo if user drags either source or target.
+    var vel = V(evt.target);
+    var coordinates = {
+        x: evt.offsetX,
+        y: evt.offsetY,
+        width: 20,
+        height: 20
+    };
+    if (!vel.hasClass('marker-arrowhead') && !vel.findParentByClass('marker-vertices', linkView.el)) {
+        createHalo(linkView, evt, coordinates);
+    }
 });
 
 var r = new joint.shapes.basic.Rect({
@@ -81,14 +117,14 @@ var r = new joint.shapes.basic.Rect({
 graph.addCell(r);
 
 var c = new joint.shapes.basic.Circle({
-    position: { x: 250, y: 50 },
+    position: { x: 500, y: 70 },
     size: { width: 50, height: 50 },
     attrs: { text: { text: 'Circle' } }
 });
 graph.addCell(c);
 
 var m = new joint.shapes.devs.Model({
-    position: { x: 350, y: 150 },
+    position: { x: 500, y: 250 },
     size: { width: 70, height: 90 },
     inPorts: ['in1', 'in2'],
     outPorts: ['out']
@@ -96,9 +132,19 @@ var m = new joint.shapes.devs.Model({
 graph.addCell(m);
 
 var multiplePieToggleButtons = new joint.shapes.basic.Rect({
-    position: { x: 50, y: 180 },
+    position: { x: 50, y: 250 },
     size: { width: 120, height: 80 },
     attrs: { text: { text: 'Multi Toggle' } },
     multiplePieToggleButtons: true
 });
 graph.addCell(multiplePieToggleButtons);
+
+paper.getDefaultLink().set({
+    source: { id: r.id },
+    target: { id: m.id, port: 'in1' }
+}).addTo(graph);
+
+paper.getDefaultLink().set({
+    source: { id: multiplePieToggleButtons },
+    target: { id: m.id, port: 'in2' }
+}).addTo(graph);
