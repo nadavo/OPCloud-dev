@@ -4,58 +4,32 @@
         <meta charset="utf8"/>
 <!--        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/> -->
 
-        <title>OPCloud Example with Rappid</title>
+        <title>OPCloud Demo made with Rappid 2</title>
 
-        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" type="text/css" />
+        <!--<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" type="text/css" />-->
 
-        <link rel="stylesheet" type="text/css" href="./build/rappid.min.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/layout.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/paper.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/inspector.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/navigator.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/stencil.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/halo.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/selection.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/toolbar.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/statusbar.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/freetransform.css" />
-        <link rel="stylesheet" type="text/css" href="./opcloud/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="./build/rappid.css" />
+        <link rel="stylesheet" type="text/css" href="./OPCloud/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="./OPCloud/css/theme-picker.css" />
+        <link rel="icon" href="./OPCloud/favicon.ico" type="image/x-icon" />
+
     </head>
     <body>
-        <h1>OPCloud made with <a href="http://www.jointjs.com/rappid/tour" target="_blank" style="color:yellow">Rappid</a></h1>
-        <div class="toolbar-container">
-            <button id="btn-undo" class="btn" data-tooltip="Undo"><img src="./opcloud/img/undo.png" alt="Undo"/></button>
-            <button id="btn-redo" class="btn" data-tooltip="Redo"><img src="./opcloud/img/redo.png" alt="Redo"/></button>
-            <button id="btn-clear" class="btn" data-tooltip="Clear Paper"><img src="./opcloud/img/clear.png" alt="Clear"/></button>
-            <button id="btn-svg" class="btn" data-tooltip="Open as SVG in a New Window">open as SVG</button>
-            <button id="btn-png" class="btn" data-tooltip="Open as PNG in a New Window">open as PNG</button>
-            <button id="btn-print" class="btn" data-tooltip="Open a Print Dialog"><img src="./opcloud/img/print.png" alt="Print"/></button>
-            <button id="btn-zoom-in" class="btn" data-tooltip="Zoom In"><img src="./opcloud/img/zoomin.png" alt="Zoom in"/></button>
-            <button id="btn-zoom-out" class="btn" data-tooltip="Zoom Out"><img src="./opcloud/img/zoomout.png" alt="Zoom out"/></button>
-            <div class="panel">
-              <span id="zoom-level">100</span>
-              <span>%</span>
+        <div id="app">
+            <div class="app-header">
+                <div class="app-title">
+                    <h1>OPCloud Demo</h1>
+                    <h2>made with <a href="http://www.jointjs.com/rappid/tour" target="_blank" style="color:yellow">Rappid 2</a></h2>
+                </div>
+                <div class="toolbar-container"></div>
             </div>
-            <button id="btn-zoom-to-fit" class="btn" data-tooltip="Zoom To Fit"><img src="./opcloud/img/zoomtofit.png" alt="Zoom To Fit"/></button>
-            <button id="btn-fullscreen" class="btn" data-tooltip="Toggle Fullscreen Mode"><img src="./opcloud/img/fullscreen.png" alt="Fullscreen"/></button>
-            <button id="btn-to-front" class="btn" data-tooltip="Bring Object to Front">to front</button>
-            <button id="btn-to-back" class="btn" data-tooltip="Send Object to Back">to back</button>
-            <button id="btn-layout" class="btn" data-tooltip="Auto-layout Graph">layout</button>
-            <label data-tooltip="Change Grid Size">Grid size:</label>
-            <input type="range" value="10" min="1" max="50" step="1" id="input-gridsize" />
-            <output id="output-gridsize">10</output>
-            <label data-tooltip="Enable/Disable Snaplines">Snaplines:</label>
-            <input type="checkbox" id="snapline-switch" checked/>
+            <div class="app-body">
+                <div class="stencil-container"></div>
+                <div class="paper-container"></div>
+                <div class="inspector-container"></div>
+                <div class="navigator-container"></div>
+            </div>
         </div>
-        <div class="stencil-container">
-            <label>Stencil</label>
-            <button class="btn-expand" title="Expand all">+</button>
-            <button class="btn-collapse" title="Collapse all">-</button>
-        </div>
-        <div class="paper-container"></div>
-        <div class="inspector-container"></div>
-        <div class="navigator-container"></div>
-        <div class="statusbar-container"><span class="rt-colab"></span></div>
 
         <!-- Dependencies: -->
         <script src="./node_modules/jquery/dist/jquery.js"></script>
@@ -64,35 +38,49 @@
         <script src="./node_modules/graphlib/dist/graphlib.core.js"></script>
         <script src="./node_modules/dagre/dist/dagre.core.js"></script>
 
-        <script src="./opcloud/lib/KeyboardJS/keyboard.js"></script>
+        <script src="./plugins/ui/Keyboard/joint.ui.Keyboard.js"></script>
 
-        <script src="./build/rappid.min.js"></script>
+        <script src="./build/rappid.js"></script>
         <script src="./joint.shapes.opm.js"></script>
 
-
-
-        <script src="./opcloud/src/inspector.js"></script>
-        <script src="./opcloud/src/stencil.js"></script>
-        <script src="./opcloud/src/main.js"></script>
-	<!--[if IE 9]>
-	    <script src="./lib/base64/base64.js"></script>
-	    <script type="text/javascript">
-	      // SVG Export requires window.btoa/atoa extension to convert binary data (the `b`)
-	      // to base64 (ascii, the `a`). Unfortunately it is not available in IE9.
-	      // To get it working under IE9 you may include compatible solution like `stringencoders`
-	      // (`https://code.google.com/p/stringencoders/source/browse/trunk/javascript/base64.js`)
-	      // and create a global alias `btoa`.
-	      window.btoa = base64.encode
-	      // `-ms-user-select: none` doesn't work in IE9
-	      document.onselectstart = function() { return false; };
-	    </script>
-	<![endif]-->
+        <!--<script src="./opcloud/src/inspector.js"></script>-->
+        <!--<script src="./opcloud/src/stencil.js"></script>-->
+        <!--<script src="./opcloud/src/main.js"></script>-->
+        <!-- Application files:  -->
+        <script src="./OPCloud/js/config/halo.js"></script>
+        <script src="./OPCloud/js/config/inspector.js"></script>
+        <script src="./OPCloud/js/config/stencil.js"></script>
+        <script src="./OPCloud/js/config/toolbar.js"></script>
+        <script src="./OPCloud/js/config/sample-graphs.js"></script>
+        <script src="./OPCloud/js/views/main.js"></script>
+        <script src="./OPCloud/js/views/theme-picker.js"></script>
+        <script src="./OPCloud/js/models/joint.shapes.app.js"></script>
         <script>
-            // Uncomment the following line and comment the line after if you
-            // want to use channels.
-            //var app = new Rappid({ channelUrl: 'ws://localhost:4141' });
-            var app = new Rappid;
-            Backbone.history.start();
+            joint.setTheme('modern');
+            app = new App.MainView({ el: '#app' });
+            themePicker = new App.ThemePicker({ mainView: app });
+            themePicker.render().$el.appendTo(document.body);
+//            app.graph.fromJSON(JSON.parse(App.config.sampleGraphs.emergencyProcedure));
+        </script>
+
+        <!-- Local file warning: -->
+        <div id="message-fs" style="display: none;">
+            <p>The application was open locally using the file protocol. It is recommended to access it trough a <b>Web server</b>.</p>
+            <p>Please see <a href="README.md">instructions</a>.</p>
+        </div>
+        <script>
+            (function() {
+                var fs = (document.location.protocol === 'file:');
+                var ff = (navigator.userAgent.toLowerCase().indexOf('firefox') !== -1);
+                if (fs && !ff) {
+                    (new joint.ui.Dialog({
+                        width: 300,
+                        type: 'alert',
+                        title: 'Local File',
+                        content: $('#message-fs').show()
+                    })).open();
+                }
+            })();
         </script>
     </body>
 </html>
