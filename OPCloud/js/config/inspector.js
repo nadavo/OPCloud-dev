@@ -21,7 +21,7 @@ App.config = App.config || {};
     var options = {
 
         colorPalette: [
-            { content: 'transparent', icon: 'assets/transparent-icon.png' },
+            //{ content: 'transparent', icon: 'assets/transparent-icon.png' },
             { content: '#f6f6f6' },
             { content: '#dcd7d7' },
             { content: '#8f8f8f' },
@@ -36,7 +36,13 @@ App.config = App.config || {};
             { content: '#4b4a67' },
             { content: '#3c4260' },
             { content: '#33334e' },
-            { content: '#222138' }
+            { content: '#222138' },
+            { content: '#DCDCDC' },
+            { content: '#006400' },
+            { content: '#00008B' },
+            { content: 'black' },
+            { content: 'grey' },
+            { content: '#f2f2f2' }
         ],
 
         fontWeight: [
@@ -88,11 +94,17 @@ App.config = App.config || {};
             { value: 'assets/member-female.png', content: '<img height="50px" src="assets/member-female.png" style="margin: 5px 0 0 2px;"/>' }
         ],
 
-        arrowheadSize: [
-            { value: 'scale(0.001)', content: 'None' },
-            { value: 'scale(1)', content: 'Small' },
-            { value: 'scale(2)', content: 'Medium' },
-            { value: 'scale(4)', content: 'Large' }
+        arrowheadType: [
+            { value: '', content: 'None' },
+            { value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', content: 'Consumption Link' },
+            { value: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0', content: 'Agent Link' },
+            { value: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0', content: 'Instrument Link' }
+        ],
+
+        linkType: [
+            { value: '', content: 'None' },
+            { value: { fill: '#f2f2f2' ,d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25','stroke-width': 2}, content: 'Consumption Link' },
+            { value: { fill: '#f2f2f2' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2}, content: 'Instrument Link' },
         ],
 
         strokeWidth: [
@@ -123,7 +135,7 @@ App.config = App.config || {};
 
     App.config.inspector = {
 
-        'app.Link': {
+        'opm.Link': {
             inputs: {
                 attrs: {
                     '.connection': {
@@ -151,12 +163,19 @@ App.config = App.config || {};
                             index: 6
                         }
                     },
-                    '.marker-source': {
-                        transform: {
+                    'marker-source': {
+                        type: 'select-box',
+                        options: options.linkType,
+                        group: 'marker-source',
+                        label: 'Source Link Type',
+                        index: 1
+                    },
+                    /*'.marker-source': {
+                        d: {
                             type: 'select-box',
-                            options: options.arrowheadSize,
+                            options: options.arrowheadType,
                             group: 'marker-source',
-                            label: 'Source arrowhead',
+                            label: 'Source Link Type',
                             index: 1
                         },
                         fill: {
@@ -167,13 +186,13 @@ App.config = App.config || {};
                             when: { ne: { 'attrs/.marker-source/transform': 'scale(0.001)'}},
                             index: 2
                         }
-                    },
+                    },*/
                     '.marker-target': {
-                        transform: {
+                        d: {
                             type: 'select-box',
-                            options: options.arrowheadSize,
+                            options: options.arrowheadType,
                             group: 'marker-target',
-                            label: 'Target arrowhead',
+                            label: 'Target Link Type',
                             index: 1
                         },
                         fill: {
@@ -283,7 +302,8 @@ App.config = App.config || {};
                 }
             }
         },
-        'basic.Rect': {
+
+        'opm.Object': {
             inputs: {
                 attrs: {
                     text: {
@@ -292,32 +312,6 @@ App.config = App.config || {};
                             label: 'Text',
                             group: 'text',
                             index: 1
-                        },
-                        'font-size': {
-                            type: 'range',
-                            min: 5,
-                            max: 80,
-                            unit: 'px',
-                            label: 'Font size',
-                            group: 'text',
-                            when: { ne: { 'attrs/text/text': '' }},
-                            index: 2
-                        },
-                        'font-family': {
-                            type: 'select-box',
-                            options: options.fontFamily,
-                            label: 'Font family',
-                            group: 'text',
-                            when: { ne: { 'attrs/text/text': '' }},
-                            index: 3
-                        },
-                        'font-weight': {
-                            type: 'select-box',
-                            options: options.fontWeight,
-                            label: 'Font thickness',
-                            group: 'text',
-                            when: { ne: { 'attrs/text/text': '' }},
-                            index: 4
                         },
                         fill: {
                             type: 'color-palette',
@@ -382,7 +376,7 @@ App.config = App.config || {};
                 }
             }
         },
-        'basic.Circle': {
+        'opm.Process': {
             inputs: {
                 attrs: {
                     text: {
@@ -427,7 +421,7 @@ App.config = App.config || {};
                             index: 5
                         }
                     },
-                    circle: {
+                    'ellipse': {
                         fill: {
                             type: 'color-palette',
                             options: options.colorPalette,

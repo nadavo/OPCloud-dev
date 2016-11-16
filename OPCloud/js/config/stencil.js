@@ -22,19 +22,19 @@ App.config = App.config || {};
 
     App.config.stencil.groups = {
         opm: { index: 1, label: 'OPM' },
-        basic: { index: 2, label: 'Basic shapes' },
+        /*basic: { index: 2, label: 'Basic shapes' },
         fsa: { index: 3, label: 'State machine' },
         pn: { index: 4, label: 'Petri nets' },
         erd: { index: 5, label: 'Entity-relationship' },
         uml: { index: 6, label: 'UML' },
-        org: { index: 7, label: 'ORG' }
+        org: { index: 7, label: 'ORG' }*/
     };
 
     App.config.stencil.shapes = {};
 
     App.config.stencil.shapes.opm = [
-        new joint.shapes.opm.ISProc,
-        new joint.shapes.opm.PSObj
+        new joint.shapes.opm.Process,
+        new joint.shapes.opm.Object
     ];
 
     App.config.stencil.shapes.basic = [
