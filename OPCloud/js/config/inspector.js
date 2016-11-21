@@ -63,6 +63,12 @@ App.config = App.config || {};
             { value: '10,5', content: 'Dashed' }
         ],
 
+        PhysicalInform: [
+            {content: 'Physical', value:'url(#dropShadowv-51979730529)'},
+            {content: 'Informatical', value:'null'},
+        ],
+
+
         side: [
             { value: 'top', content: 'Top Side' },
             { value: 'right', content: 'Right Side' },
@@ -361,6 +367,14 @@ App.config = App.config || {};
                                 ]
                             },
                             index: 4
+                        },
+                        'filter': {
+                            type: 'select-box',
+                            label: 'Physical/Informatical',
+                            options: options.PhysicalInform,
+                            defaultValue: 'null',
+                            group: 'presentation',
+                            index: 5
                         }
                     }
                 }
