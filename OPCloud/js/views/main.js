@@ -54,7 +54,7 @@ var App = window.App || {};
                 gridSize: 10,
                 drawGrid: true,
                 model: graph,
-                defaultLink: new joint.shapes.app.Link
+                defaultLink: new joint.shapes.opm.Link
             });
 
             paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);

@@ -129,7 +129,7 @@ var InspectorDefs = {
 
     'OPM.Object': {
     
-        inputs: _.extend({
+        inputs: {
             attrs: {
                 text: inp({
                     text: { group: 'text', index: 1 },
@@ -156,7 +156,7 @@ var InspectorDefs = {
                     ry: { group: 'presentation', index: 5 },
                 })
             }
-        }, CommonInspectorInputs),
+        },
         groups: CommonInspectorGroups
     },
 

@@ -123,70 +123,45 @@ App.config = App.config || {};
 
     App.config.inspector = {
 
-        'app.Link': {
+        'OPM.Link': {
             inputs: {
                 attrs: {
                     '.connection': {
-                        'stroke-width': {
-                            type: 'select-button-group',
-                            options: options.strokeWidth,
-                            group: 'connection',
-                            label: 'Link thickness',
-                            when: { ne: { 'attrs/.connection/stroke': 'transparent' }},
-                            index: 4
-                        },
-                        'stroke-dasharray': {
-                            type: 'select-box',
-                            options: options.strokeStyle,
-                            group: 'connection',
-                            label: 'Link style',
-                            when: { ne: { 'attrs/.connection/stroke': 'transparent' }},
-                            index: 5
-                        },
-                        stroke: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            group: 'connection',
-                            label: 'Color',
-                            index: 6
-                        }
+                        'stroke-width': { type: 'range', min: 0, max: 50, defaultValue: 1, unit: 'px', group: 'connection', label: 'stroke width', index: 1 },
+                        'stroke': { type: 'color', group: 'connection', label: 'stroke color', index: 2 },
+                        'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'connection', label: 'stroke dasharray', index: 3 }
                     },
                     '.marker-source': {
-                        transform: {
-                            type: 'select-box',
-                            options: options.arrowheadSize,
-                            group: 'marker-source',
-                            label: 'Source arrowhead',
-                            index: 1
-                        },
-                        fill: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            group: 'marker-source',
-                            label: 'Color',
-                            when: { ne: { 'attrs/.marker-source/transform': 'scale(0.001)'}},
-                            index: 2
-                        }
+                        transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-source', label: 'source arrowhead size', index: 1 },
+                        fill: { type: 'color', group: 'marker-source', label: 'source arrowhead color', index: 2 }
                     },
                     '.marker-target': {
-                        transform: {
-                            type: 'select-box',
-                            options: options.arrowheadSize,
-                            group: 'marker-target',
-                            label: 'Target arrowhead',
-                            index: 1
+                        'd': { type: 'select', group: 'marker-target', label: 'Link Type', index: 1, options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}]},
+                        fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 },
+                        transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 3 }
+                    },
+                    smooth: { type: 'toggle', group: 'connection', index: 4 },
+                    manhattan: { type: 'toggle', group: 'connection', index: 5 },
+                    labels: {
+                        type: 'list',
+                        group: 'labels',
+                        attrs: {
+                            label: { 'data-tooltip': 'Set (possibly multiple) labels for the link' }
                         },
-                        fill: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            group: 'marker-target',
-                            label: 'Color',
-                            when: { ne: { 'attrs/.marker-target/transform': 'scale(0.001)'}},
-                            index: 2
+                        item: {
+                            type: 'object',
+                            properties: {
+                                position: { type: 'range', min: 0.1, max: .9, step: .1, defaultValue: .5, label: 'position', index: 2, attrs: { label: { 'data-tooltip': 'Position the label relative to the source of the link' } } },
+                                attrs: {
+                                    text: {
+                                        text: { type: 'text', label: 'text', defaultValue: 'label', index: 1, attrs: { label: { 'data-tooltip': 'Set text of the label' } } }
+                                    }
+                                }
+                            }
                         }
                     }
                 },
-                router: {
+               /* router: {
                     name: {
                         type: 'select-button-group',
                         options: options.router,
@@ -205,8 +180,8 @@ App.config = App.config || {};
                             index: 2
                         }
                     }
-                },
-                connector: {
+                },*/
+                /*connector: {
                     name: {
                         type: 'select-button-group',
                         options: options.connector,
@@ -214,8 +189,8 @@ App.config = App.config || {};
                         label: 'Connection style',
                         index: 3
                     }
-                },
-                labels: {
+                },*/
+                /*labels: {
                     type: 'list',
                     group: 'labels',
                     label: 'Labels',
@@ -262,7 +237,7 @@ App.config = App.config || {};
                             }
                         }
                     }
-                }
+                }*/
             },
             groups: {
                 connection: {
@@ -280,6 +255,105 @@ App.config = App.config || {};
                 labels: {
                     label: 'Labels',
                     index: 4
+                }
+            }
+        },
+        'OPM.Object': {
+            inputs: {
+                attrs: {
+                    text: {
+                        text: {
+                            type: 'content-editable',
+                            label: 'Text',
+                            group: 'text',
+                            index: 1
+                        },
+                        'font-size': {
+                            type: 'range',
+                            min: 5,
+                            max: 80,
+                            unit: 'px',
+                            label: 'Font size',
+                            group: 'text',
+                            //when: { ne: { 'attrs/text/text': '' }},
+                            index: 2
+                        },
+                        'font-family': {
+                            type: 'select-box',
+                            options: options.fontFamily,
+                            label: 'Font family',
+                            group: 'text',
+                            //when: { ne: { 'attrs/text/text': '' }},
+                            index: 3
+                        },
+                        'font-weight': {
+                            type: 'select-box',
+                            options: options.fontWeight,
+                            label: 'Font thickness',
+                            group: 'text',
+                            //when: { ne: { 'attrs/text/text': '' }},
+                            index: 4
+                        },
+                        fill: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            label: 'Fill',
+                            group: 'text',
+                            //when: { ne: { 'attrs/text/text': '' }},
+                            index: 5
+                        }
+                    },
+                    rect: {
+                        fill: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            label: 'Fill',
+                            group: 'presentation',
+                            index: 1
+                        },
+                        stroke: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            label: 'Outline',
+                            group: 'presentation',
+                            index: 2
+                        },
+                        'stroke-width': {
+                            type: 'range',
+                            min: 0,
+                            max: 30,
+                            step: 1,
+                            defaultValue: 1,
+                            unit: 'px',
+                            label: 'Outline thickness',
+                            group: 'presentation',
+                            //when: { ne: { 'attrs/rect/stroke': 'transparent' }},
+                            index: 3
+                        },
+                        'stroke-dasharray': {
+                            type: 'select-box',
+                            options: options.strokeStyle,
+                            label: 'Outline style',
+                            group: 'presentation',
+                           /* when: {
+                                and: [
+                                    { ne: { 'attrs/rect/stroke': 'transparent' }},
+                                    { ne: { 'attrs/rect/stroke-width': 0 }}
+                                ]
+                            },*/
+                            index: 4
+                        }
+                    }
+                }
+            },
+            groups: {
+                presentation: {
+                    label: 'Presentation',
+                    index: 1
+                },
+                text: {
+                    label: 'Text',
+                    index: 2
                 }
             }
         },

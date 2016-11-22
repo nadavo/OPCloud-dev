@@ -170,7 +170,7 @@ App.config = App.config || {};
                 image: {
                     width: 53,
                     height: 42,
-                    'xlink:href': 'assets/image-icon1.svg'
+                    'xlink:href': './OPCloud/assets/image-icon1.svg'
                 },
                 text: {
                     text: 'image',
