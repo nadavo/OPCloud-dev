@@ -474,6 +474,14 @@ App.config = App.config || {};
                                 ]
                             },
                             index: 4
+                        },
+                        'filter': {
+                            type: 'select-box',
+                            label: 'Physical/Informatical',
+                            options: options.PhysicalInform,
+                            defaultValue: 'null',
+                            group: 'presentation',
+                            index: 5
                         }
                     }
                 }
