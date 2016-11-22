@@ -75,7 +75,7 @@ function inp(defs) {
 
 var InspectorDefs = {
 
-    'link': {
+    'opm.Link': {
 
         inputs: {
             attrs: {
@@ -127,7 +127,7 @@ var InspectorDefs = {
     // OPM
     // -----
 
-    'OPM.Object': {
+    'opm.Object': {
     
         inputs: {
             attrs: {
@@ -175,7 +175,7 @@ var InspectorDefs = {
         }
     },*/
     
-    'OPM.Process': {
+    'opm.Process': {
 
         inputs: _.extend({
             attrs: {

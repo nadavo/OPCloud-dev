@@ -21,7 +21,7 @@ App.config = App.config || {};
     var options = {
 
         colorPalette: [
-            { content: 'transparent', icon: 'assets/transparent-icon.png' },
+            //{ content: 'transparent', icon: 'assets/transparent-icon.png' },
             { content: '#f6f6f6' },
             { content: '#dcd7d7' },
             { content: '#8f8f8f' },
@@ -36,7 +36,13 @@ App.config = App.config || {};
             { content: '#4b4a67' },
             { content: '#3c4260' },
             { content: '#33334e' },
-            { content: '#222138' }
+            { content: '#222138' },
+            { content: '#DCDCDC' },
+            { content: '#006400' },
+            { content: '#00008B' },
+            { content: 'black' },
+            { content: 'grey' },
+            { content: '#f2f2f2' }
         ],
 
         fontWeight: [
@@ -56,6 +62,12 @@ App.config = App.config || {};
             { value: '2,5', content: 'Dotted' },
             { value: '10,5', content: 'Dashed' }
         ],
+
+        PhysicalInform: [
+            {content: 'Physical', value:'url(#dropShadowv-51979730529)'},
+            {content: 'Informatical', value:'null'},
+        ],
+
 
         side: [
             { value: 'top', content: 'Top Side' },
@@ -88,11 +100,17 @@ App.config = App.config || {};
             { value: 'assets/member-female.png', content: '<img height="50px" src="assets/member-female.png" style="margin: 5px 0 0 2px;"/>' }
         ],
 
-        arrowheadSize: [
-            { value: 'scale(0.001)', content: 'None' },
-            { value: 'scale(1)', content: 'Small' },
-            { value: 'scale(2)', content: 'Medium' },
-            { value: 'scale(4)', content: 'Large' }
+        arrowheadType: [
+            { value: '', content: 'None' },
+            { value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', content: 'Consumption Link' },
+            { value: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0', content: 'Agent Link' },
+            { value: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0', content: 'Instrument Link' }
+        ],
+
+        linkType: [
+            { value: '', content: 'None' },
+            { value: { fill: '#f2f2f2' ,d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25','stroke-width': 2}, content: 'Consumption Link' },
+            { value: { fill: '#f2f2f2' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2}, content: 'Instrument Link' },
         ],
 
         strokeWidth: [
@@ -123,7 +141,7 @@ App.config = App.config || {};
 
     App.config.inspector = {
 
-        'OPM.Link': {
+        'opm.Link': {
             inputs: {
                 attrs: {
                     '.connection': {
@@ -135,10 +153,50 @@ App.config = App.config || {};
                         transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-source', label: 'source arrowhead size', index: 1 },
                         fill: { type: 'color', group: 'marker-source', label: 'source arrowhead color', index: 2 }
                     },
+                    /*'marker-source': {
+                        type: 'select-box',
+                        options: options.linkType,
+                        group: 'marker-source',
+                        label: 'Source Link Type',
+                        index: 1
+                    },*/
+                    /*'.marker-source': {
+                        d: {
+                            type: 'select-box',
+                            options: options.arrowheadType,
+                            group: 'marker-source',
+                            label: 'Source Link Type',
+                            index: 1
+                        },
+                        fill: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            group: 'marker-source',
+                            label: 'Color',
+                            when: { ne: { 'attrs/.marker-source/transform': 'scale(0.001)'}},
+                            index: 2
+                        }
+                    },*/
                     '.marker-target': {
                         'd': { type: 'select', group: 'marker-target', label: 'Link Type', index: 1, options: [{content: 'Result/Consumption', value: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25'}, {content: 'Instrument', value: 'M 0 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 M 10,0 L 25,0'}]},
                         fill: { type: 'color', group: 'marker-target', label: 'target arrowhead color', index: 2 },
                         transform: { type: 'range', min: 1, max: 15, unit: 'x scale', defaultValue: 'scale(1)', valueRegExp: '(scale\\()(.*)(\\))', group: 'marker-target', label: 'target arrowhead size', index: 3 }
+                        /*d: {
+                            type: 'select-box',
+                            options: options.arrowheadType,
+                            group: 'marker-target',
+                            label: 'Target Link Type',
+                            index: 1
+                        },
+                        fill: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            group: 'marker-target',
+                            label: 'Color',
+                            when: { ne: { 'attrs/.marker-target/transform': 'scale(0.001)'}},
+                            index: 2
+                        }
+                    }*/
                     },
                     smooth: { type: 'toggle', group: 'connection', index: 4 },
                     manhattan: { type: 'toggle', group: 'connection', index: 5 },
@@ -147,7 +205,6 @@ App.config = App.config || {};
                         group: 'labels',
                         attrs: {
                             label: { 'data-tooltip': 'Set (possibly multiple) labels for the link' }
-                        },
                         item: {
                             type: 'object',
                             properties: {
@@ -258,7 +315,8 @@ App.config = App.config || {};
                 }
             }
         },
-        'OPM.Object': {
+
+        'opm.Object': {
             inputs: {
                 attrs: {
                     text: {
@@ -267,131 +325,6 @@ App.config = App.config || {};
                             label: 'Text',
                             group: 'text',
                             index: 1
-                        },
-                        'font-size': {
-                            type: 'range',
-                            min: 5,
-                            max: 80,
-                            unit: 'px',
-                            label: 'Font size',
-                            group: 'text',
-                            //when: { ne: { 'attrs/text/text': '' }},
-                            index: 2
-                        },
-                        'font-family': {
-                            type: 'select-box',
-                            options: options.fontFamily,
-                            label: 'Font family',
-                            group: 'text',
-                            //when: { ne: { 'attrs/text/text': '' }},
-                            index: 3
-                        },
-                        'font-weight': {
-                            type: 'select-box',
-                            options: options.fontWeight,
-                            label: 'Font thickness',
-                            group: 'text',
-                            //when: { ne: { 'attrs/text/text': '' }},
-                            index: 4
-                        },
-                        fill: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            label: 'Fill',
-                            group: 'text',
-                            //when: { ne: { 'attrs/text/text': '' }},
-                            index: 5
-                        }
-                    },
-                    rect: {
-                        fill: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            label: 'Fill',
-                            group: 'presentation',
-                            index: 1
-                        },
-                        stroke: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            label: 'Outline',
-                            group: 'presentation',
-                            index: 2
-                        },
-                        'stroke-width': {
-                            type: 'range',
-                            min: 0,
-                            max: 30,
-                            step: 1,
-                            defaultValue: 1,
-                            unit: 'px',
-                            label: 'Outline thickness',
-                            group: 'presentation',
-                            //when: { ne: { 'attrs/rect/stroke': 'transparent' }},
-                            index: 3
-                        },
-                        'stroke-dasharray': {
-                            type: 'select-box',
-                            options: options.strokeStyle,
-                            label: 'Outline style',
-                            group: 'presentation',
-                           /* when: {
-                                and: [
-                                    { ne: { 'attrs/rect/stroke': 'transparent' }},
-                                    { ne: { 'attrs/rect/stroke-width': 0 }}
-                                ]
-                            },*/
-                            index: 4
-                        }
-                    }
-                }
-            },
-            groups: {
-                presentation: {
-                    label: 'Presentation',
-                    index: 1
-                },
-                text: {
-                    label: 'Text',
-                    index: 2
-                }
-            }
-        },
-        'basic.Rect': {
-            inputs: {
-                attrs: {
-                    text: {
-                        text: {
-                            type: 'content-editable',
-                            label: 'Text',
-                            group: 'text',
-                            index: 1
-                        },
-                        'font-size': {
-                            type: 'range',
-                            min: 5,
-                            max: 80,
-                            unit: 'px',
-                            label: 'Font size',
-                            group: 'text',
-                            when: { ne: { 'attrs/text/text': '' }},
-                            index: 2
-                        },
-                        'font-family': {
-                            type: 'select-box',
-                            options: options.fontFamily,
-                            label: 'Font family',
-                            group: 'text',
-                            when: { ne: { 'attrs/text/text': '' }},
-                            index: 3
-                        },
-                        'font-weight': {
-                            type: 'select-box',
-                            options: options.fontWeight,
-                            label: 'Font thickness',
-                            group: 'text',
-                            when: { ne: { 'attrs/text/text': '' }},
-                            index: 4
                         },
                         fill: {
                             type: 'color-palette',
@@ -441,6 +374,14 @@ App.config = App.config || {};
                                 ]
                             },
                             index: 4
+                        },
+                        'filter': {
+                            type: 'select-box',
+                            label: 'Physical/Informatical',
+                            options: options.PhysicalInform,
+                            defaultValue: 'null',
+                            group: 'presentation',
+                            index: 5
                         }
                     }
                 }
@@ -456,7 +397,7 @@ App.config = App.config || {};
                 }
             }
         },
-        'basic.Circle': {
+        'opm.Process': {
             inputs: {
                 attrs: {
                     text: {
@@ -501,7 +442,7 @@ App.config = App.config || {};
                             index: 5
                         }
                     },
-                    circle: {
+                    'ellipse': {
                         fill: {
                             type: 'color-palette',
                             options: options.colorPalette,
