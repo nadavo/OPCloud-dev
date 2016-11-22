@@ -21,7 +21,7 @@ App.config = App.config || {};
     App.config.stencil = {};
 
     App.config.stencil.groups = {
-        opm: { index: 1, label: 'OPM' },
+        opm: { index: 1, label: 'OPM' }
         /*basic: { index: 2, label: 'Basic shapes' },
         fsa: { index: 3, label: 'State machine' },
         pn: { index: 4, label: 'Petri nets' },

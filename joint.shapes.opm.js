@@ -97,16 +97,17 @@ joint.shapes.opm.Process = joint.shapes.opm.Generic.extend({
                 rx: 30,
                 ry: 20,
                 cx: 30,
-                cy: 20
+                cy: 20,
+                filter: {name: 'dropShadow', args: {dx: 4, dy: 4, blur: 0, color: 'grey'}}
             },
             'text': {
-                'font-size': 14,
+                fill: 'black',
                 text: 'Process',
-                'text-anchor': 'middle',
+                'font-size': 14,
                 'ref-x': .5,
                 'ref-y': .5,
+                'text-anchor': 'middle',
                 'y-alignment': 'middle',
-                fill: 'black',
                 'font-family': 'Arial, helvetica, sans-serif',
                 'font-weight': 600
             }
