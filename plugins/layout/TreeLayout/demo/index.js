@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -22,8 +22,6 @@ function makeLink(parentElementLabel, childElementLabel) {
 }
 
 function makeElement(label) {
-
-    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
 
     // Compute width/height of the rectangle based on the number
     // of lines in the label and the letter size. 0.6 * letterSize is
@@ -101,21 +99,18 @@ var paper = new joint.dia.Paper({
     width: 2000,
     height: 4000,
     gridSize: 1,
-    model: graph
+    model: graph,
+    perpendicularLinks: true
 });
 
 graph.resetCells(cells);
 
 var graphLayout = new joint.layout.TreeLayout({
     graph: graph,
-    verticalGap: 20,
-    horizontalGap: 40,
     siblingGap: 10,
-    gap: 40,
-    direction: 'R',
-    filter: function(cell) {
-        return !cell.get('hidden');
-    }
+    parentGap: 10,
+    firstChildGap: 10,
+    direction: 'BR'
 });
 
 // root position stays the same after the layout

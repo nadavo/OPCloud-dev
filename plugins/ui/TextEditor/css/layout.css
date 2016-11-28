@@ -1,0 +1,109 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-text-editor {
+    margin: 0;
+    padding: 0;
+}
+
+@-webkit-keyframes text-editor-caret-blink {
+    0%   { opacity: 1 }
+    100%  { opacity: 0 }
+}
+@-moz-keyframes text-editor-caret-blink {
+    0%   { opacity: 1 }
+    100%  { opacity: 0 }
+}
+@-ms-keyframes text-editor-caret-blink {
+    0%   { opacity: 1 }
+    100%  { opacity: 0 }
+}
+@keyframes text-editor-caret-blink {
+    0%   { opacity: 1 }
+    100%  { opacity: 0 }
+}
+
+.joint-text-editor .caret {
+    position: absolute;
+    height: 15px;
+    margin-left: -1px;
+    margin-top: 2px;
+    width: 1px;
+    -webkit-animation: text-editor-caret-blink 1s linear 0s infinite;
+    -moz-animation: text-editor-caret-blink 1s linear 0s infinite;
+    -ms-animation: text-editor-caret-blink 1s linear 0s infinite;
+    animation: text-editor-caret-blink 1s linear 0s infinite;
+    pointer-events: none;
+    white-space: nowrap;
+}
+.joint-text-editor .caret.placeholder {
+    background-color: transparent;
+    -webkit-animation: none;
+    animation: none;
+    width: auto;
+}
+
+.joint-text-editor .caret.placeholder:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    width: 1px;
+    -webkit-animation: text-editor-caret-blink 1s linear 0s infinite;
+    -moz-animation: text-editor-caret-blink 1s linear 0s infinite;
+    -ms-animation: text-editor-caret-blink 1s linear 0s infinite;
+    animation: text-editor-caret-blink 1s linear 0s infinite;
+    float: left;
+}
+.joint-text-editor .caret.placeholder:after {
+    content: 'Enter text...';
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.joint-text-editor .caret[text-anchor="middle"].placeholder:after {
+    -ms-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.joint-text-editor .caret[text-anchor="end"].placeholder:after {
+    -ms-transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+}
+
+.joint-text-editor .char-selection-box {
+    position: absolute;
+    opacity: .8;
+    padding: 0;
+    margin: 0;
+    margin-top: 2px;
+    pointer-events: none;
+}
+
+.joint-text-editor .char-selection-box:hover {
+    cursor: text;
+}
+
+.joint-text-editor .textarea-container {
+    position: absolute;
+    height: 0;
+    overflow: hidden;
+}
+
+.joint-text-editor textarea {
+    position: absolute;/* to get document.execCommand('copy') to work in Chrome */
+    width: 1000px;
+    height: 1em;
+    outline: none;
+}

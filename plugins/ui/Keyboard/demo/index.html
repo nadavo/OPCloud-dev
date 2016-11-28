@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8"/>
+    <title>ui.Keyhboard</title>
+    <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css"/>
+    <link rel="stylesheet" type="text/css" href="demo.css"/>
+</head>
+<body>
+<div id="select-button-groups"></div>
+
+<button id="listening">Disable</button>
+<button id="listeningStart">Enable</button>
+
+<div class="spec">
+    <div class="demo_no_context">
+
+        <h3>Shortcut definitions</h3>
+        <fieldset>
+            <h4>single char</h4>
+            <div class="demo_layout">
+                <div class="demo_item">a</div>
+                <div class="demo_item">b</div>
+                <div class="demo_item">c</div>
+                <div class="demo_item">=</div>
+                <div class="demo_item">plus</div>
+                <div class="demo_item">-</div>
+                <div class="demo_item">minus</div>
+                <div class="demo_item">keyup:f</div>
+                <div class="demo_item">keydown:g</div>
+                <div class="demo_item">keyup:ctrl+c</div>
+                <div class="demo_item">keypress:h</div>
+                <div class="demo_item">shift</div>
+                <div class="demo_item">keyup:shift</div>
+            </div>
+            <div class="demo_layout">
+                <div class="demo_item">left</div>
+                <div class="demo_item">right</div>
+                <div class="demo_item">up</div>
+                <div class="demo_item">down</div>
+                <div class="demo_item">esc</div>
+                <div class="demo_item">escape</div>
+                <div class="demo_item">enter</div>
+                <div class="demo_item">return</div>
+            </div>
+
+            <h4>combinations: ' ' = OR, + = AND</h4>
+            <div class="demo_item">q w e</div>
+            <div class="demo_item">ctrl+c</div>
+            <div class="demo_item">ctrl+c ctrl+alt+t</div>
+        </fieldset>
+        <h3>Disabled</h3>
+        <fieldset>
+            <p>keyboard events are ignored if any of thes. e elements are focused. Check for modifiers still works,
+                however handlers for shortcuts should not be triggered. </p>
+            <div>
+                <div class="demo_item">a</div>
+                This should not be activated when you focus any of elements below and type 'a'
+            </div>
+            <textarea placeholder="type 'a' here"></textarea>
+            <input placeholder="type 'a' here"/>
+            <select>
+                <option>try focus this</option>
+                <option>try focus this</option>
+                <option>try focus this</option>
+                <option>try focus this</option>
+                <option>try focus this</option>
+            </select>
+        </fieldset>
+
+        <h3>Modifiers</h3>
+        <fieldset>
+            <h4>supported modifiers:</h4>
+            <div class="demo_mod">alt</div>
+            <div class="demo_mod">shift</div>
+            <div class="demo_mod">ctrl</div>
+            <div class="demo_mod">command</div>
+
+            <h4>modifier is active - define combo</h4>
+            <div class="demo_mod">alt+ctrl</div>
+            <div class="demo_mod">ctrl+shift+alt</div>
+        </fieldset>
+    </div>
+
+</div>
+
+<div class="log">
+    <h4>Log&nbsp;&nbsp;&nbsp;<span class="demo_log_status">loading...</span></h4>
+
+    <p>show all events from <code>joint.ui.Keyboard </code>plugin</p>
+    <div class="demo header">
+        <div class="g4">type</div>
+
+        <div class="g2">code</div>
+        <div class="g2">char</div>
+
+        <div class="g2">shift</div>
+        <div class="g2">ctrl</div>
+        <div class="g2">alt</div>
+        <div class="g2">command</div>
+    </div>
+    <div id="dump" class="demo"></div>
+</div>
+
+<!-- Dependencies: -->
+<script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+<script src="../../../../node_modules/lodash/index.js"></script>
+<script src="../../../../node_modules/backbone/backbone.js"></script>
+
+<script src="../../../../build/rappid.js"></script>
+
+<script src="./index.js"></script>
+
+
+</body>
+</html>

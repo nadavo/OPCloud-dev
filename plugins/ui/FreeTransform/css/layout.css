@@ -1,0 +1,112 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-free-transform {
+   position: absolute;
+   pointer-events: none;
+   -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+.joint-free-transform > div {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.joint-free-transform .resize {
+    border-radius: 6px;
+    width: 8px;
+    height: 8px;
+}
+
+.joint-free-transform .resize[data-position="top-left"] {
+    top: -5px;
+    left: -5px;
+}
+.joint-free-transform .resize[data-position="top-right"] {
+    top: -5px;
+    right: -5px;
+}
+.joint-free-transform .resize[data-position="bottom-left"] {
+    bottom: -5px;
+    left: -5px;
+}
+.joint-free-transform .resize[data-position="bottom-right"] {
+    bottom: -5px;
+    right: -5px;
+}
+.joint-free-transform .resize[data-position="top"] {
+    top: -5px;
+    left: 50%;
+    margin-left: -5px;
+}
+.joint-free-transform .resize[data-position="bottom"] {
+    bottom: -5px;
+    left: 50%;
+    margin-left: -5px;
+}
+.joint-free-transform .resize[data-position="left"] {
+    left: -5px;
+    top: 50%;
+    margin-top: -5px;
+}
+.joint-free-transform .resize[data-position="right"] {
+    right: -5px;
+    top: 50%;
+    margin-top: -5px;
+}
+
+.joint-free-transform.no-orthogonal-resize .resize[data-position="top"],
+.joint-free-transform.no-orthogonal-resize .resize[data-position="bottom"],
+.joint-free-transform.no-orthogonal-resize .resize[data-position="left"],
+.joint-free-transform.no-orthogonal-resize .resize[data-position="right"] {
+    display: none;
+}
+
+.joint-free-transform .resize.n { cursor: n-resize; }
+.joint-free-transform .resize.s { cursor: s-resize; }
+.joint-free-transform .resize.e { cursor: e-resize; }
+.joint-free-transform .resize.w { cursor: w-resize; }
+.joint-free-transform .resize.ne { cursor: ne-resize; }
+.joint-free-transform .resize.nw { cursor: nw-resize; }
+.joint-free-transform .resize.se { cursor: se-resize; }
+.joint-free-transform .resize.sw { cursor: sw-resize; }
+
+.joint-free-transform .rotate {
+    border-radius: 6px;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    left: -20px;
+    cursor: pointer;
+}
+
+.joint-free-transform.no-rotation .rotate {
+    display: none;
+}
+
+.joint-free-transform.in-operation {
+    border-style: hidden;
+}
+
+.joint-free-transform.in-operation > div{
+    display: none;
+}
+
+.joint-free-transform  > div.in-operation {
+    display: block;
+}

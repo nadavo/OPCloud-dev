@@ -1,0 +1,36 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.select-button-group-button {
+    display: inline-block;
+    min-width: 30px;
+    min-height: 30px;
+    line-height: 22px;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 2px;
+    margin: 0 1px;
+    vertical-align: middle;
+    position: relative;
+}
+.select-button-group-button-icon {
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: middle;
+}
+
+/* Availibility */
+
+.joint-select-button-group.disabled .select-button-group-button {
+    cursor: default;
+}

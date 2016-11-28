@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -47,9 +47,6 @@ joint.layout.ForceDirected = Backbone.Model.extend({
 
         var w = this.get('width');
         var h = this.get('height');
-
-        var elementsJSON = [];
-        var linksJSON = [];
 
         // Random layout.
         _.each(this.elements, function(el) {
@@ -110,25 +107,26 @@ joint.layout.ForceDirected = Backbone.Model.extend({
         var nElements = this.elements.length;
         var nLinks = this.links.length;
 
+        var v, u, dx, dy, distanceSquared, distance, fr, fx, fy;
+
         // Calculate repulsive forces.
         for (i = 0; i < nElements - 1; i++) {
 
-            var v = this.elements[i];
+            v = this.elements[i];
             xBefore += v.x;
             yBefore += v.y;
 
             for (j = i + 1; j < nElements; j++) {
 
-                var u = this.elements[j];
+                u = this.elements[j];
+                dx = u.x - v.x;
+                dy = u.y - v.y;
+                distanceSquared = dx * dx + dy * dy;
+                distance = Math.sqrt(distanceSquared);
 
-                var dx = u.x - v.x;
-                var dy = u.y - v.y;
-                var distanceSquared = dx * dx + dy * dy;
-                var distance = Math.sqrt(distanceSquared);
-
-                var fr = this.t * v.charge / distanceSquared;
-                var fx = fr * dx;
-                var fy = fr * dy;
+                fr = this.t * v.charge / distanceSquared;
+                fx = fr * dx;
+                fy = fr * dy;
 
                 v.fx -= fx;
                 v.fy -= fy;
@@ -143,24 +141,24 @@ joint.layout.ForceDirected = Backbone.Model.extend({
         xBefore += this.elements[nElements - 1].x;
         yBefore += this.elements[nElements - 1].y;
 
+        var link, fa, k;
+
         // Calculate attractive forces.
         for (i = 0; i < nLinks; i++) {
 
-            var link = this.links[i];
+            link = this.links[i];
+            v = link.source;
+            u = link.target;
 
-            var v = link.source;
-            var u = link.target;
+            dx = u.x - v.x;
+            dy = u.y - v.y;
+            distanceSquared = dx * dx + dy * dy;
+            distance = Math.sqrt(distanceSquared);
 
-            var dx = u.x - v.x;
-            var dy = u.y - v.y;
-            var distanceSquared = dx * dx + dy * dy;
-            var distance = Math.sqrt(distanceSquared);
-
-            var fa = this.t * link.strength * (distance - link.distance) / distance;
-            var fx = fa * dx;
-            var fy = fa * dy;
-
-            var k = v.weight / (v.weight + u.weight);
+            fa = this.t * link.strength * (distance - link.distance) / distance;
+            fx = fa * dx;
+            fy = fa * dy;
+            k = v.weight / (v.weight + u.weight);
 
             // Gauss-seidel. Changing positions directly so that other iterations work with the new positions.
             v.x += fx * (1 - k);
@@ -171,11 +169,13 @@ joint.layout.ForceDirected = Backbone.Model.extend({
             this.energy += fx * fx + fy * fy;
         }
 
+        var el, pos;
+
         // Set positions on elements.
         for (i = 0; i < nElements; i++) {
 
-            var el = this.elements[i];
-            var pos = { x: el.x, y: el.y };
+            el = this.elements[i];
+            pos = { x: el.x, y: el.y };
 
             // Gravity force.
             if (gravityCenter) {

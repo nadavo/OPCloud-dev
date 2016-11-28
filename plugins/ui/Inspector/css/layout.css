@@ -1,0 +1,227 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-inspector {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   right: 0;
+   left: 0;
+   overflow: auto;
+}
+
+.joint-inspector label {
+   display: block;
+   margin-top: 5px;
+   margin-bottom: 10px;
+}
+.joint-inspector label:after {
+    content: ':';
+}
+.joint-inspector input,
+.joint-inspector textarea {
+   width: 200px;
+   height: 20px;
+   line-height: 20px;
+}
+
+.joint-inspector label.with-output {
+    float: left;
+}
+
+.joint-inspector output {
+    float: left;
+    margin: 5px 2px 10px 2px;
+}
+
+.joint-inspector .units {
+    float: left;
+    margin: 5px 0 10px 0;
+}
+
+.joint-inspector input[type="range"] {
+   clear: both;
+   display: block;
+}
+
+.joint-inspector select {
+   display: block;
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    /* IE10 only */
+    .joint-inspector .group > .field > form {
+	height: 60px;
+    }
+
+    .joint-inspector input[type="range"] {
+	height: 10px;
+    }
+
+    .joint-inspector input[type="range"]::-ms-tooltip {
+	display: none;
+    }
+}
+
+.joint-inspector .group {
+    overflow: hidden;
+    padding: 0;
+    padding-bottom: 10px;
+}
+.joint-inspector .group.closed {
+    height: auto;
+    padding-bottom: 0;
+}
+.joint-inspector .group.empty {
+    display: none;
+}
+
+/* prevent tabbing into a close group */
+.joint-inspector .group.closed .field {
+   display: none;
+}
+
+.joint-inspector .group > .group-label {
+   position: relative;
+   padding: 5px 4px;
+   margin-top: 0;
+   margin-bottom: 0;
+   cursor: pointer;
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+.joint-inspector .group > .group-label:before {
+   content: '';
+   width: 0;
+   height: 0;
+   display: inline-block;
+   margin-left: 2px;
+   margin-right: 5px;
+   position: relative;
+   top: 5px;
+}
+.joint-inspector .group.closed > .group-label:before {
+   top: 2px;
+   left: 2px;
+}
+
+.link-tools .tool-options {
+   display: block;
+}
+
+/* Toggle */
+
+.joint-inspector .toggle {
+   position: relative;
+   width: 97px;
+   height: 14px;
+}
+.joint-inspector .toggle input {
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+   filter: alpha(opacity=0);
+   -moz-opacity: 0;
+   opacity: 0;
+   z-index: 100;
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   cursor: pointer;
+   box-sizing: border-box;
+   padding: 0;
+   box-shadow: none;
+   -webkit-appearance: none;
+}
+.joint-inspector .toggle span {
+   display: block;
+   width: 100%;
+   height: 100%;
+   border-radius: 40px;
+   position: relative;
+}
+.joint-inspector .toggle span:before {
+   box-sizing: border-box;
+   padding: 0;
+   margin: 0;
+   content: "";
+   position: absolute;
+   z-index: -1;
+   top: -18px;
+   right: -18px;
+   bottom: -18px;
+   left: -18px;
+   border-radius: inherit;
+}
+.joint-inspector .toggle input:checked + span i {
+   right: 0;
+}
+.joint-inspector .toggle span i {
+   display: block;
+   height: 100%;
+   width: 60%;
+   border-radius: inherit;
+   position: absolute;
+   z-index: 2;
+   right: 40%;
+   top: 0;
+}
+.joint-inspector .btn-list-add,
+.joint-inspector .btn-list-del {
+   cursor: pointer;
+   border-radius: 2px;
+   min-width: 23px;
+   margin: 2px;
+   margin-right: 8px;
+}
+
+.joint-inspector .list-items {
+   margin-top: 4px;
+}
+.joint-inspector .list-item {
+   margin-top: 2px;
+   padding: 10px;
+}
+
+.joint-inspector .list-item > .field > label {
+   display: none;
+}
+
+.joint-inspector .field {
+    display: block;
+    box-sizing: border-box;
+    padding: 4px 10px;
+}
+
+.joint-inspector .hidden {
+   display: none !important;
+}
+
+/* Built-in types */
+
+.joint-inspector .joint-select-box {
+    width: 100%;
+}
+.joint-inspector .joint-color-palette {
+    width: auto;
+}
+
+.joint-inspector .content-editable {
+    /* Safari: `user-select: none` is preventing the cursor
+    from ever being positioned within the contentEditable div */
+    -webkit-user-select: auto;
+}

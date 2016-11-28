@@ -1,0 +1,129 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-select-box.joint-color-palette.joint-theme-material {
+    background: transparent;
+}
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-option-content {
+    border: none;
+}
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-selection,
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-selection .select-box-option-content {
+	width: 30px;
+	height: 30px;
+    border: none;
+    border-radius: 6px;
+    padding: 0;
+}
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-selection:after,
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-option.selected:after {
+    display: none;
+}
+.joint-select-box.joint-color-palette.joint-select-box-options.joint-theme-material.rendered{
+    -webkit-animation: collor-pallete-animation 200ms cubic-bezier(0,0,.2,1);
+    animation: collor-pallete-animation 200ms cubic-bezier(0,0,.2,1);
+}
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-selection:before {
+    display: none;
+}
+@-webkit-keyframes collor-pallete-animation {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 0; }
+  1% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    opacity: 0; }
+  50% {
+    -webkit-transform: scale(0.99);
+            transform: scale(0.99); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;}
+}
+
+@keyframes collor-pallete-animation {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 0; }
+  1% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    opacity: 0; }
+  50% {
+    -webkit-transform: scale(0.99);
+            transform: scale(0.99); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;}
+}
+
+/*  Icons  */
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-option-icon {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+}
+/*  Icons  */
+
+
+/*  Options  */
+.joint-select-box-options.joint-color-palette.joint-theme-material {
+    width: 144px;
+    border: 2px solid #d0d8e8;
+    background: #ecf0f8;
+}
+
+/*  Arrow  */
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-options-arrow {
+    border-bottom-color: #d0d8e8;
+}
+.joint-select-box.joint-color-palette.joint-theme-material .select-box-options-arrow:after {
+    border-bottom-color: #ecf0f8;
+}
+/*  Arrow  */
+
+.joint-select-box-options.joint-color-palette.joint-theme-material .select-box-option {
+    width: 25px;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    padding: 0;
+}
+.joint-select-box-options.joint-color-palette.joint-theme-material .select-box-option {
+    border: 2px solid transparent;
+}
+.joint-select-box-options.joint-color-palette.joint-theme-material .select-box-option:hover {
+    border: 2px solid #d0d8e8;
+}
+/*  Options  */
+
+
+/*  When color palette is used for a stroke attribute  */
+.select-box[data-attribute$="/stroke"].joint-color-palette.joint-theme-material .select-box-selection .select-box-option-content:after {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 22px;
+    height: 22px;
+    background: #5fa9ee;
+    border-radius: 4px;
+    content: ' ';
+}
+/*  When color palette is used for a stroke attribute  */

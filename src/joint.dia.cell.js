@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -29,7 +29,7 @@ joint.dia.Cell = Backbone.Model.extend({
         this.attributes = {};
         if (options && options.collection) this.collection = options.collection;
         if (options && options.parse) attrs = this.parse(attrs, options) || {};
-        if (defaults = _.result(this, 'defaults')) {
+        if ((defaults = _.result(this, 'defaults'))) {
             //<custom code>
             // Replaced the call to _.defaults with _.merge.
             attrs = _.merge({}, defaults, attrs);
@@ -103,6 +103,9 @@ joint.dia.Cell = Backbone.Model.extend({
         this.on('change:attrs', this.processPorts, this);
     },
 
+    /**
+     * @deprecated
+     */
     processPorts: function() {
 
         // Whenever `attrs` changes, we extract ports from the `attrs` object and store it
@@ -162,7 +165,7 @@ joint.dia.Cell = Backbone.Model.extend({
         // Store the graph in a variable because `this.graph` won't' be accessbile after `this.trigger('remove', ...)` down below.
         var graph = this.graph;
         if (graph) {
-            graph.trigger('batch:start', { batchName: 'remove' });
+            graph.startBatch('remove');
         }
 
         // First, unembed this cell from its parent cell if there is one.
@@ -178,7 +181,7 @@ joint.dia.Cell = Backbone.Model.extend({
         this.trigger('remove', this, this.collection, opt);
 
         if (graph) {
-            graph.trigger('batch:stop', { batchName: 'remove' });
+            graph.stopBatch('remove');
         }
 
         return this;
@@ -192,7 +195,7 @@ joint.dia.Cell = Backbone.Model.extend({
 
             var z = (this.graph.getLastCell().get('z') || 0) + 1;
 
-            this.trigger('batch:start', { batchName: 'to-front' }).set('z', z, opt);
+            this.startBatch('to-front').set('z', z, opt);
 
             if (opt.deep) {
 
@@ -201,7 +204,7 @@ joint.dia.Cell = Backbone.Model.extend({
 
             }
 
-            this.trigger('batch:stop', { batchName: 'to-front' });
+            this.stopBatch('to-front');
         }
 
         return this;
@@ -215,7 +218,7 @@ joint.dia.Cell = Backbone.Model.extend({
 
             var z = (this.graph.getFirstCell().get('z') || 0) - 1;
 
-            this.trigger('batch:start', { batchName: 'to-back' });
+            this.startBatch('to-back');
 
             if (opt.deep) {
 
@@ -223,7 +226,7 @@ joint.dia.Cell = Backbone.Model.extend({
                 _.eachRight(cells, function(cell) { cell.set('z', z--, opt); });
             }
 
-            this.set('z', z, opt).trigger('batch:stop', { batchName: 'to-back' });
+            this.set('z', z, opt).stopBatch('to-back');
         }
 
         return this;
@@ -237,7 +240,7 @@ joint.dia.Cell = Backbone.Model.extend({
 
         } else {
 
-            this.trigger('batch:start', { batchName: 'embed' });
+            this.startBatch('embed');
 
             var embeds = _.clone(this.get('embeds') || []);
 
@@ -247,7 +250,7 @@ joint.dia.Cell = Backbone.Model.extend({
             cell.set('parent', this.id, opt);
             this.set('embeds', _.uniq(embeds), opt);
 
-            this.trigger('batch:stop', { batchName: 'embed' });
+            this.stopBatch('embed');
         }
 
         return this;
@@ -255,12 +258,12 @@ joint.dia.Cell = Backbone.Model.extend({
 
     unembed: function(cell, opt) {
 
-        this.trigger('batch:start', { batchName: 'unembed' });
+        this.startBatch('unembed');
 
         cell.unset('parent', opt);
         this.set('embeds', _.without(this.get('embeds'), cell.id), opt);
 
-        this.trigger('batch:stop', { batchName: 'unembed' });
+        this.stopBatch('unembed');
 
         return this;
     },
@@ -383,7 +386,11 @@ joint.dia.Cell = Backbone.Model.extend({
             // We don't want the clone to have the same ID as the original.
             clone.set('id', joint.util.uuid());
             // A shallow cloned element does not carry over the original embeds.
-            clone.set('embeds', '');
+            clone.unset('embeds');
+            // And can not be embedded in any cell
+            // as the clone is not part of the graph.
+            clone.unset('parent');
+
             return clone;
 
         } else {
@@ -537,7 +544,7 @@ joint.dia.Cell = Backbone.Model.extend({
 
         var setter = _.bind(function(runtime) {
 
-            var id, progress, propertyValue, status;
+            var id, progress, propertyValue;
 
             firstFrameTime = firstFrameTime || runtime;
             runtime -= firstFrameTime;
@@ -618,9 +625,24 @@ joint.dia.Cell = Backbone.Model.extend({
         return paper.findViewByModel(this);
     },
 
+    isElement: function() {
+
+        return false;
+    },
+
     isLink: function() {
 
         return false;
+    },
+
+    startBatch: function(name, opt) {
+        if (this.graph) { this.graph.startBatch(name, _.extend({}, opt, { cell: this })); }
+        return this;
+    },
+
+    stopBatch: function(name, opt) {
+        if (this.graph) { this.graph.stopBatch(name, _.extend({}, opt, { cell: this })); }
+        return this;
     }
 });
 
@@ -632,6 +654,21 @@ joint.dia.Cell = Backbone.Model.extend({
 joint.dia.CellView = joint.mvc.View.extend({
 
     tagName: 'g',
+
+    className: function() {
+
+        var classNames = ['cell'];
+        var type = this.model.get('type');
+
+        if (type) {
+
+            _.each(type.toLowerCase().split('.'), function(value, index, list) {
+                classNames.push('type-' + list.slice(0, index + 1).join('-'));
+            });
+        }
+
+        return classNames.join(' ');
+    },
 
     attributes: function() {
 
@@ -656,6 +693,9 @@ joint.dia.CellView = joint.mvc.View.extend({
         // Store reference to this to the <g> DOM element so that the view is accessible through the DOM tree.
         this.$el.data('view', this);
 
+        // Add the cell's type to the view's element as a data attribute.
+        this.$el.attr('data-type', this.model.get('type'));
+
         this.listenTo(this.model, 'change:attrs', this.onChangeAttrs);
     },
 
@@ -669,6 +709,18 @@ joint.dia.CellView = joint.mvc.View.extend({
         }
 
         return this.update(cell, attrs, opt);
+    },
+
+    // Return `true` if cell link is allowed to perform a certain UI `feature`.
+    // Example: `can('vertexMove')`, `can('labelMove')`.
+    can: function(feature) {
+
+        var interactive = _.isFunction(this.options.interactive)
+                            ? this.options.interactive(this)
+                            : this.options.interactive;
+
+        return (_.isObject(interactive) && interactive[feature] !== false) ||
+                (_.isBoolean(interactive) && interactive !== false);
     },
 
     // Override the Backbone `_ensureElement()` method in order to create a `<g>` node that wraps
@@ -707,17 +759,17 @@ joint.dia.CellView = joint.mvc.View.extend({
         return $selected;
     },
 
-    notify: function(evt) {
+    notify: function(eventName) {
 
         if (this.paper) {
 
             var args = Array.prototype.slice.call(arguments, 1);
 
             // Trigger the event on both the element itself and also on the paper.
-            this.trigger.apply(this, [evt].concat(args));
+            this.trigger.apply(this, [eventName].concat(args));
 
             // Paper event handlers receive the view object as the first argument.
-            this.paper.trigger.apply(this.paper, [evt, this].concat(args));
+            this.paper.trigger.apply(this.paper, [eventName, this].concat(args));
         }
     },
 
@@ -759,7 +811,7 @@ joint.dia.CellView = joint.mvc.View.extend({
 
         // set partial flag if the highlighted element is not the entire view.
         opt = opt || {};
-        opt.partial = el != this.el;
+        opt.partial = (el !== this.el);
 
         this.notify('cell:highlight', el, opt);
         return this;
@@ -781,27 +833,28 @@ joint.dia.CellView = joint.mvc.View.extend({
     findMagnet: function(el) {
 
         var $el = this.$(el);
+        var $rootEl = this.$el;
 
-        if ($el.length === 0 || $el[0] === this.el) {
+        if ($el.length === 0) {
+            $el = $rootEl;
+        }
 
-            // If the overall cell has set `magnet === false`, then return `undefined` to
-            // announce there is no magnet found for this cell.
-            // This is especially useful to set on cells that have 'ports'. In this case,
-            // only the ports have set `magnet === true` and the overall element has `magnet === false`.
-            var attrs = this.model.get('attrs') || {};
-            if (attrs['.'] && attrs['.']['magnet'] === false) {
-                return undefined;
+        do {
+
+            var magnet = $el.attr('magnet');
+            if ((magnet || $el.is($rootEl)) && magnet !== 'false') {
+                return $el[0];
             }
 
-            return this.el;
-        }
+            $el = $el.parent();
 
-        if ($el.attr('magnet')) {
+        } while ($el.length > 0);
 
-            return $el[0];
-        }
-
-        return this.findMagnet($el.parent());
+        // If the overall cell has set `magnet === false`, then return `undefined` to
+        // announce there is no magnet found for this cell.
+        // This is especially useful to set on cells that have 'ports'. In this case,
+        // only the ports have set `magnet === true` and the overall element has `magnet === false`.
+        return undefined;
     },
 
     // `selector` is a CSS selector or `'.'`. `filter` must be in the special JointJS filter format:
@@ -888,14 +941,21 @@ joint.dia.CellView = joint.mvc.View.extend({
             return prevSelector;
         }
 
-        var nthChild = V(el).index() + 1;
-        var selector = el.tagName + ':nth-child(' + nthChild + ')';
+        var selector;
 
-        if (prevSelector) {
-            selector += ' > ' + prevSelector;
+        if (el) {
+
+            var nthChild = V(el).index() + 1;
+            selector = el.tagName + ':nth-child(' + nthChild + ')';
+
+            if (prevSelector) {
+                selector += ' > ' + prevSelector;
+            }
+
+            selector = this.getSelector(el.parentNode, selector);
         }
 
-        return this.getSelector(el.parentNode, selector);
+        return selector;
     },
 
     // Interaction. The controller part.
@@ -920,9 +980,9 @@ joint.dia.CellView = joint.mvc.View.extend({
 
     pointerdown: function(evt, x, y) {
 
-        if (this.model.collection) {
-            this.model.trigger('batch:start', { batchName: 'pointer' });
-            this._collection = this.model.collection;
+        if (this.model.graph) {
+            this.model.startBatch('pointer');
+            this._graph = this.model.graph;
         }
 
         this.notify('cell:pointerdown', evt, x, y);
@@ -937,11 +997,11 @@ joint.dia.CellView = joint.mvc.View.extend({
 
         this.notify('cell:pointerup', evt, x, y);
 
-        if (this._collection) {
+        if (this._graph) {
             // we don't want to trigger event on model as model doesn't
             // need to be member of collection anymore (remove)
-            this._collection.trigger('batch:stop', { batchName: 'pointer' });
-            delete this._collection;
+            this._graph.stopBatch('pointer', { cell: this.model });
+            delete this._graph;
         }
     },
 
@@ -955,8 +1015,18 @@ joint.dia.CellView = joint.mvc.View.extend({
         this.notify('cell:mouseout', evt);
     },
 
+    mousewheel: function(evt, x, y, delta) {
+
+        this.notify('cell:mousewheel', evt, x, y, delta);
+    },
+
     contextmenu: function(evt, x, y) {
 
         this.notify('cell:contextmenu', evt, x, y);
+    },
+
+    setInteractivity: function(value) {
+
+        this.options.interactive = value;
     }
 });

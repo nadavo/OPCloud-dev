@@ -1,0 +1,83 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-select-box.joint-color-palette.joint-theme-modern .select-box-option-content {
+    border: none;
+}
+.joint-select-box.joint-color-palette.joint-theme-modern .select-box-selection,
+.joint-select-box.joint-color-palette.joint-theme-modern .select-box-selection .select-box-option-content {
+	width: 30px;
+	height: 30px;
+    border: none;
+    border-radius: 6px;
+    padding: 0;
+}
+.joint-select-box.joint-color-palette.joint-theme-modern .select-box-selection:after,
+.joint-select-box.joint-color-palette.joint-theme-modern .select-box-option.selected:after {
+    display: none;
+}
+
+    /*  Icons  */
+    .joint-select-box.joint-color-palette.joint-theme-modern .select-box-option-icon {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        margin: 0 auto;
+    }
+    /*  Icons  */
+
+
+    /*  Options  */
+    .joint-select-box-options.joint-color-palette.joint-theme-modern {
+        width: 144px;
+        border: 2px solid #e6e6e6;
+    }
+
+        /*  Arrow  */
+        .joint-select-box.joint-color-palette.joint-theme-modern .select-box-options-arrow {
+            border-bottom-color: #e6e6e6;
+        }
+        .joint-select-box.joint-color-palette.joint-theme-modern .select-box-options-arrow:after {
+            border-bottom-color: #f6f6f6;
+        }
+        /*  Arrow  */
+
+    .joint-select-box-options.joint-color-palette.joint-theme-modern .select-box-option {
+        width: 25px;
+        height: 25px;
+        border: none;
+        border-radius: 5px;
+        padding: 0;
+    }
+    .joint-select-box-options.joint-color-palette.joint-theme-modern .select-box-option {
+        border: 2px solid transparent;
+    }
+    .joint-select-box-options.joint-color-palette.joint-theme-modern .select-box-option.hover {
+        border: 2px solid #31d0c6;
+    }
+    /*  Options  */
+
+
+    /*  When color palette is used for a stroke attribute  */
+    .joint-select-box[data-attribute$="/stroke"].joint-color-palette.joint-theme-modern .select-box-selection .select-box-option-content:after {
+        position: absolute;
+        left: 4px;
+        top: 4px;
+        width: 22px;
+        height: 22px;
+        background: #383b61;
+        border-radius: 4px;
+        content: ' ';
+    }
+    /*  When color palette is used for a stroke attribute  */

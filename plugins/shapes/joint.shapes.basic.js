@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -18,7 +18,7 @@ joint.shapes.basic = {};
 
 joint.shapes.basic.Generic = joint.dia.Element.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Generic',
         attrs: {
@@ -32,7 +32,7 @@ joint.shapes.basic.Rect = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><rect/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Rect',
         attrs: {
@@ -71,7 +71,7 @@ joint.shapes.basic.Text = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><text/></g></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Text',
         attrs: {
@@ -88,7 +88,7 @@ joint.shapes.basic.Circle = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><circle/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Circle',
         size: { width: 60, height: 60 },
@@ -118,7 +118,7 @@ joint.shapes.basic.Ellipse = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><ellipse/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Ellipse',
         size: { width: 60, height: 40 },
@@ -149,7 +149,7 @@ joint.shapes.basic.Polygon = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><polygon/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Polygon',
         size: { width: 60, height: 40 },
@@ -176,7 +176,7 @@ joint.shapes.basic.Polyline = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><polyline/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Polyline',
         size: { width: 60, height: 40 },
@@ -203,7 +203,7 @@ joint.shapes.basic.Image = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><image/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Image',
         attrs: {
@@ -225,7 +225,7 @@ joint.shapes.basic.Path = joint.shapes.basic.Generic.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><path/></g><text/></g>',
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Path',
         size: { width: 60, height: 60 },
@@ -250,7 +250,7 @@ joint.shapes.basic.Path = joint.shapes.basic.Generic.extend({
 
 joint.shapes.basic.Rhombus = joint.shapes.basic.Path.extend({
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.Rhombus',
         attrs: {
@@ -304,11 +304,11 @@ joint.shapes.basic.PortsModelInterface = {
 
     updatePortsAttrs: function(eventName) {
 
-        // Delete previously set attributes for ports.
-        var currAttrs = this.get('attrs');
-        _.each(this._portSelectors, function(selector) {
-            if (currAttrs[selector]) delete currAttrs[selector];
-        });
+        if (this._portSelectors) {
+
+            var newAttrs = _.omit(this.get('attrs'), this._portSelectors);
+            this.set('attrs', newAttrs, { silent: true });
+        }
 
         // This holds keys to the `attrs` object for all the port specific attribute that
         // we set in this method. This is necessary in order to remove previously set
@@ -378,12 +378,13 @@ joint.shapes.basic.PortsViewInterface = {
         var $inPorts = this.$('.inPorts').empty();
         var $outPorts = this.$('.outPorts').empty();
 
-        var portTemplate = _.template(this.model.portMarkup);
+        var portTemplate = joint.util.template(this.model.portMarkup);
 
         _.each(_.filter(this.model.ports, function(p) { return p.type === 'in'; }), function(port, index) {
 
             $inPorts.append(V(portTemplate({ id: index, port: port })).node);
         });
+
         _.each(_.filter(this.model.ports, function(p) { return p.type === 'out'; }), function(port, index) {
 
             $outPorts.append(V(portTemplate({ id: index, port: port })).node);
@@ -400,7 +401,7 @@ joint.shapes.basic.TextBlock = joint.shapes.basic.Generic.extend({
         '</g>'
     ].join(''),
 
-    defaults: joint.util.deepSupplement({
+    defaults: _.defaultsDeep({
 
         type: 'basic.TextBlock',
 
@@ -535,7 +536,7 @@ joint.shapes.basic.TextBlockView = joint.dia.ElementView.extend({
         // Create copy of the text attributes
         var textAttrs = _.merge({}, (renderingOnlyAttrs || cell.get('attrs'))['.content']);
 
-        delete textAttrs.text;
+        textAttrs = _.omit(textAttrs, 'text');
 
         // Break the content to fit the element size taking into account the attributes
         // set on the model.

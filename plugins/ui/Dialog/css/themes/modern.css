@@ -1,0 +1,88 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-dialog.joint-theme-modern {
+    font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+}
+
+.joint-dialog.joint-theme-modern .bg {
+    background-color: #111;
+}
+
+.joint-dialog.joint-theme-modern .fg {
+    background-color: #f6f6f6;
+    box-shadow: 0 0 3px #888;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.joint-dialog.joint-theme-modern.inlined .fg {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: auto;
+    margin: 0;
+}
+
+.joint-dialog.joint-theme-modern .titlebar {
+    color: #6a6c8a;
+    text-shadow: none;
+    background-color: #efefef;
+    padding: 10px;
+    padding-right: 25px;
+}
+.joint-dialog.joint-theme-modern[data-type="alert"] .titlebar {
+    color: #f6f6f6;
+    background-color: #fe854f;
+}
+.joint-dialog.joint-theme-modern[data-type="warning"] .titlebar {
+    color: #f6f6f6;
+    background-color: #feb663;
+}
+.joint-dialog.joint-theme-modern[data-type="success"] .titlebar {
+    color: #f6f6f6;
+    background-color: #31d0c6;
+}
+
+.joint-dialog.joint-theme-modern .btn-close {
+    color: #6a6c8a;
+    font-size: 16px;
+    font-family: Arial;
+    background-color: transparent;
+    border: none;
+}
+.joint-dialog.joint-theme-modern[data-type="alert"] .btn-close,
+.joint-dialog.joint-theme-modern[data-type="warning"] .btn-close,
+.joint-dialog.joint-theme-modern[data-type="success"] .btn-close {
+    color: #f6f6f6;
+}
+
+.joint-dialog.joint-theme-modern .body {
+    color: #3c4260;
+    padding: 10px;
+}
+
+.joint-dialog.joint-theme-modern .controls .control-button {
+    border: 1px solid #6A6C8B;
+    color: #6A6C8B;
+    background-color: transparent;
+    border-radius: 15px;
+    padding: 0 15px;
+    font-size: 10pt;
+    font-family: 'Helvetica Neue';
+}
+
+.joint-dialog.joint-theme-modern .controls .control-button:hover {
+    color: #f6f6f6;
+    background-color: #6A6C8B;
+}

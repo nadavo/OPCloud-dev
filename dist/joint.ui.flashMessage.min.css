@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,4 +11,4 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-.flash-message .fg{top:0;border-radius:5px;max-width:30%;right:20px;left:auto;background-color:#7c68fc}.flash-message .titlebar{padding:5px;border-radius:0;border-bottom:0}.flash-message .body{color:#fff}.flash-message[data-type=alert] .fg{background-color:#fe854f}.flash-message[data-type=warning] .fg{background-color:#feb663}.flash-message[data-type=success] .fg{background-color:#31d0c6}.flash-message[data-type=neutral] .fg{background-color:#efefef}.flash-message[data-type=neutral] .body{color:#696c8a;text-shadow:none}
+.joint-flash-message .fg{top:0;max-width:30%;min-width:300px;right:20px;left:auto}.joint-flash-message .titlebar{border-radius:0;border-bottom:0}.joint-flash-message.joint-theme-default .fg{border-radius:5px;background-color:#7c68fc}.joint-flash-message.joint-theme-default .titlebar{padding:5px 25px 5px 5px}.joint-flash-message.joint-theme-default .body{color:#fff}.joint-flash-message.joint-theme-default[data-type=alert] .fg{background-color:#fe854f}.joint-flash-message.joint-theme-default[data-type=warning] .fg{background-color:#feb663}.joint-flash-message.joint-theme-default[data-type=success] .fg{background-color:#31d0c6}.joint-flash-message.joint-theme-default[data-type=neutral] .fg{background-color:#efefef}.joint-flash-message.joint-theme-default[data-type=neutral] .body{color:#696c8a;text-shadow:none}

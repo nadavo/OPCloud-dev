@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -77,7 +77,7 @@ joint.alg.PriorityQueue.prototype.peekPriority = function() {
 joint.alg.PriorityQueue.prototype.updatePriority = function(id, priority) {
 
     var index = this.index[id];
-    if (typeof index === 'undefined') {
+    if (index === null || typeof index === 'undefined') {
         throw new Error('Node with id ' + id + ' was not found in the heap.');
     }
 
@@ -101,7 +101,8 @@ joint.alg.PriorityQueue.prototype.remove = function() {
     var data = this.data;
     var peek = data[0];
     var last = data.pop();
-    delete this.index[data.length];
+
+    this.index[data.length] = null;
 
     if (data.length > 0) {
 

@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -162,7 +162,7 @@ paper.on('cell:pointerclick', function(view) {
         cellView: view,
         boxContent: function(cellView, boxElement) {
 
-            var tmpl =  _.template('x: <%= x %>, y: <%= y %>, width: <%= width %>, height: <%= height %>, angle: <%= angle %>, chars: <%= chars %>');
+            var tmpl =  joint.util.template('x: <%= x %>, y: <%= y %>, width: <%= width %>, height: <%= height %>, angle: <%= angle %>, chars: <%= chars %>');
             var bbox = cellView.model.getBBox();
 
             return tmpl({
@@ -303,17 +303,17 @@ function setCurrentAnnotation() {
     var attrs = _.clone(defaultAnnotation.attrs);
 
     if (_.isUndefined(_fontSize)) {
-        delete attrs['font-size'];
+        attrs = _.omit(attrs, 'font-size');
     } else {
         attrs['font-size'] = parseInt(_fontSize, 10);
     }
     if (_.isUndefined(_fontFamily)) {
-        delete attrs['font-family'];
+        attrs = _.omit(attrs, 'font-family');
     } else {
         attrs['font-family'] = _fontFamily;
     }
     if (_.isUndefined(_textColor)) {
-        delete attrs['fill'];
+        attrs = _.omit(attrs, 'fill');
     } else {
         attrs['fill'] = _textColor;
     }
@@ -321,17 +321,17 @@ function setCurrentAnnotation() {
     if (_.contains(_textStyle, 'bold')) {
         attrs['font-weight'] = 'bold';
     } else if (textStyle.fontWeightUndefined) {
-        delete attrs['font-weight'];
+        attrs = _.omit(attrs, 'font-weight');
     }
     if (_.contains(_textStyle, 'italic')) {
         attrs['font-style'] = 'italic';
     } else if (textStyle.fontStyleUndefined) {
-        delete attrs['font-style'];
+        attrs = _.omit(attrs, 'font-style');
     }
     if (_.contains(_textStyle, 'underline')) {
         attrs['text-decoration'] = 'underline';
     } else if (textStyle.textDecorationUndefined) {
-        delete attrs['text-decoration'];
+        attrs = _.omit(attrs, 'text-decoration');
     }
 
     //textStyle.fontWeightUndefined = false;

@@ -1,0 +1,44 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-toolbar.joint-theme-dark {
+    padding: 8px;
+    box-sizing: border-box;
+    color: #d3d3d5;
+    background: #5e6366;
+}
+
+.joint-toolbar.joint-theme-dark label,
+.joint-toolbar.joint-theme-dark .units,
+.joint-toolbar.joint-theme-dark output {
+    font-size: .8em;
+}
+
+.joint-toolbar.joint-theme-dark .joint-widget {
+    margin-left: 6px;
+}
+
+/* IE 8,9,10*/
+@media screen\0 {
+    .joint-toolbar.joint-theme-dark .joint-widget[data-type="selectButtonGroup"] {
+        padding-top: 1px;
+    }
+
+    .joint-toolbar.joint-theme-dark .joint-widget[data-type="toggle"] span:first-child {
+        line-height: 32px;
+    }
+
+    .joint-toolbar.joint-theme-dark label {
+        line-height: 33px;
+    }
+}

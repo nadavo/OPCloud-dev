@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -11,7 +11,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
  or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
 
 
-.snaplines {
+.joint-snaplines {
     position: absolute;
     top: 0;
     left: 0;
@@ -20,18 +20,58 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
     pointer-events: none;
 }
 
-.snapline {
+.joint-snaplines > .snapline {
     position: absolute;
     pointer-events: none;
     opacity: 1;
 }
 
-.snapline.horizontal {
+.joint-snaplines > .snapline.horizontal {
     width: 100%;
+}
+
+.joint-snaplines > .snapline.vertical {
+    height: 100%;
+}
+
+/* When the snaplines are inside the PaperScroller enlarge the snaplines so they appear as they would sit in the PaperScroller. */
+.joint-paper-scroller .joint-snaplines > .snapline.horizontal {
+    width: 700%;
+    left: -300%;
+}
+
+.joint-paper-scroller .joint-snaplines > .snapline.vertical {
+    height: 700%;
+    top: -300%;
+}
+
+.joint-snaplines.joint-theme-dark .snapline.horizontal {
+    border-bottom: 1px solid #feb663;
+}
+
+.joint-snaplines.joint-theme-dark .snapline.vertical {
+    border-right: 1px solid #feb663;
+}
+
+.joint-snaplines.joint-theme-default .snapline.horizontal {
+    border-bottom: 1px solid lightgrey;
+}
+
+.joint-snaplines.joint-theme-default .snapline.vertical {
+    border-right: 1px solid lightgrey;
+}
+
+.joint-snaplines.joint-theme-material .snapline.horizontal {
+    border-bottom: 1px solid #5faaee;
+}
+
+.joint-snaplines.joint-theme-material .snapline.vertical {
+    border-right: 1px solid #5faaee;
+}
+.joint-snaplines.joint-theme-modern .snapline.horizontal {
     border-bottom: 1px solid #2ECC71;
 }
 
-.snapline.vertical {
-    height: 100%;
+.joint-snaplines.joint-theme-modern .snapline.vertical {
     border-right: 1px solid #2ECC71;
 }

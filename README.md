@@ -1,59 +1,37 @@
-Hi Folks,
+# Rappid
 
-Let's consider this folder the official kick start to Opcloud. Starting from the src code provided in
-the Rappid demo, we can start to weed out features we don't want and implement features that we need.
+The HTML5 diagramming toolkit. Extends [JointJS](https://github.com/clientIO/joint) with plugins for UI, shapes, data storage, real-time collaboration, layout algorithms, and more.
 
-The cool part is much of the structure of the code is already implemented which should make our first
-foray into a larger scale project a bit easier to digest.
-
-I already implemented a rather ugly yet somewhat working demo using Rappid from scratch that we can
-show Dov. It's in the init Rappid demo folder saved in this branch. I suspect that any decent .js
-programmer would be appalled by it ;).
-
--Aviv
-
-Rappid demo application
-========================
-
-This application showcases the Rappid plugins in action and shows how the plugins
-can be combined together. You can take this demo app as a reference for your own application
-development.
-
-Rnning the app
---------------
-
-Just open index.html in your browser.
+See [http://jointjs.com/rappid/docs](http://jointjs.com/docs/rappid) for the complete list of modules and documentation.
 
 
-Running the app with real-time collaboration enabled
------------------------------------------------------
+## Quick Start
 
-For getting the real-time collaboration feature up and running, a couple of additional steps
-must be performed. The Channel plugin relies on a NodeJS server running in order to
-synchronize graphs between clients. Thanks to NodeJS and its package manager (npm), it is quite easy:
+Probably the best way to start is by opening `apps/KitchenSink/index.html` in your browser. The KitchenSink application is a good starting point to the Rappid framework. You can even use it as a foundation for your own applications and customize it to your needs.
 
-1. Install NodeJS (http://nodejs.org/). This installation already contains npm (Node Pacakge Manager).
-2. Go to the root directory of the Rappid package (where the package.json file is located) and run:
 
-npm install
+## Directory Structure
 
-This installs all the necessary packages.
+* `apps` - Various demo applications built with Rappid.
 
-3. Go to the Rappid/src directory and run:
+  `KitchenSink` - A demo application (the one that you can see at http://jointjs.com/demos/rappid).
+  `BPMNEditor` - A BPMN editor example application (the one that you can see at http://jointjs.com/demos/bpmn).
+  `Tree` - A demo showing powerful tree layout plugin (http://jointjs.com/demos/tree).
+  `OrgChart` - An organization chart demo (http://jointjs.com/demos/orgchart).
+  `QAD` - A dialog generator (http://jointjs.com/demos/qad).
 
-node channelHub
+* `3rdParty` - Demo applications showing integration with other frameworks.
 
-This runs the server-side channel and a hub for managing rooms of connected clients.
-If you're curious, you can run:
+   `AngularJS`
+   `NodeWebkit`
 
-node channelHub --repl
 
-which brings up a console that you can use to interact with the JointJS graph on the server side!
-Type: help <RET> to see examples of what you can do.
+## Support
 
-4. Edit the Rappid/index.html file and follow the instructions at the bottom of it. It's just
-commenting/uncommenting two lines of code in order to enable the channel plugin on the client side.
+Please use our [JointJS](https://github.com/clientIO/joint/issues) repository on GitHub to file bugs and feature requests. We cannot guarantee a response time but we'll do our best to fix bugs as soon as we can. Commercial support is available as well (see the [JointJS support page](http://jointjs.com/support)). If you have any questions, drop us an email at [support@client.io](mailto:support@client.io).
 
-5. Open Rappid/index.html file in your browser. You should see a link in the statusbar. If you open
-that link in another browser window and edit the diagram in one of the windows, you should see
-all the changes are reflected in the other window (and also on the server!).
+## License
+
+Rappid UI framework is licensed under the [Rappid License](http://jointjs.com/license/rappid).
+
+Copyright (c) 2016 client IO

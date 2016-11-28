@@ -1,0 +1,349 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-inspector.joint-theme-modern {
+    color: #c6c7e2;
+    background: #383b61;
+}
+
+.joint-inspector.joint-theme-modern label {
+    font-size: 12px;
+    padding-right: 4px;
+    margin-bottom: 6px;
+}
+
+.joint-inspector.joint-theme-modern input,
+.joint-inspector.joint-theme-modern .content-editable,
+.joint-inspector.joint-theme-modern textarea {
+    color: #ddd;
+    border: 2px solid #444;
+    background: transparent;
+}
+
+.joint-inspector.joint-theme-modern select.select {
+    color: #ddd;
+    -moz-appearance: none;
+}
+
+.joint-inspector.joint-theme-modern select.select::-ms-expand {
+    visibility: hidden;
+}
+
+.joint-inspector.joint-theme-modern option {
+    color: #222;
+}
+
+.joint-inspector.joint-theme-modern output,
+.joint-inspector.joint-theme-modern .units {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e6e6e6;
+    margin-bottom: 6px;
+}
+
+.joint-inspector.joint-theme-modern .group {
+    height: auto;
+    padding: 0;
+    padding-bottom: 20px;
+    margin-bottom: 1px;
+}
+.joint-inspector.joint-theme-modern .group.closed {
+    height: auto;
+    max-height: 31px;
+    padding: 0;
+}
+
+.joint-inspector.joint-theme-modern .group > .group-label {
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: 31px;
+    line-height: 31px;
+    color: #9093b1;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    background: #424568;
+    padding: 0 5px 0 34px;
+}
+
+.joint-inspector.joint-theme-modern .group > .group-label:before {
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    display: block;
+    width: 19px;
+    height: 19px;
+    background-color: transparent;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    border: none;
+    content: ' ';
+    margin: 0;
+    padding: 0;
+}
+
+.joint-inspector.joint-theme-modern .group > .group-label:before {
+    background-image: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%2218.75px%22%20height%3D%2218.75px%22%20viewBox%3D%220%200%2018.75%2018.75%22%20enable-background%3D%22new%200%200%2018.75%2018.75%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%3Cpath%20fill%3D%22%23C6C7E2%22%20d%3D%22M9.375%2C0.5c-4.688%2C0-8.5%2C3.813-8.5%2C8.5c0%2C4.688%2C3.812%2C8.5%2C8.5%2C8.5c4.687%2C0%2C8.5-3.812%2C8.5-8.5%20C17.875%2C4.313%2C14.062%2C0.5%2C9.375%2C0.5L9.375%2C0.5z%20M9.375%2C16.386C5.303%2C16.386%2C1.99%2C13.072%2C1.99%2C9s3.312-7.385%2C7.385-7.385%20S16.76%2C4.928%2C16.76%2C9S13.447%2C16.386%2C9.375%2C16.386L9.375%2C16.386z%20M9.375%2C16.386%22%2F%3E%3Cpath%20fill%3D%22%23C6C7E2%22%20d%3D%22M12.753%2C8.443H5.997c-0.308%2C0-0.558%2C0.25-0.558%2C0.557c0%2C0.309%2C0.25%2C0.559%2C0.558%2C0.559h6.756%20c0.308%2C0%2C0.558-0.25%2C0.558-0.559C13.311%2C8.693%2C13.061%2C8.443%2C12.753%2C8.443L12.753%2C8.443z%20M12.753%2C8.443%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E%20');
+}
+
+.joint-inspector.joint-theme-modern .group > .group-label:hover:before {
+    background-image: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%2218.75px%22%20height%3D%2218.75px%22%20viewBox%3D%220%200%2018.75%2018.75%22%20enable-background%3D%22new%200%200%2018.75%2018.75%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%3Cpath%20fill%3D%22%23D8D8EC%22%20d%3D%22M9.375%2C0.5c-4.688%2C0-8.5%2C3.813-8.5%2C8.5c0%2C4.688%2C3.812%2C8.5%2C8.5%2C8.5c4.687%2C0%2C8.5-3.812%2C8.5-8.5%20C17.875%2C4.313%2C14.062%2C0.5%2C9.375%2C0.5L9.375%2C0.5z%20M9.375%2C16.386C5.303%2C16.386%2C1.99%2C13.072%2C1.99%2C9s3.312-7.385%2C7.385-7.385%20S16.76%2C4.928%2C16.76%2C9S13.447%2C16.386%2C9.375%2C16.386L9.375%2C16.386z%20M9.375%2C16.386%22%2F%3E%3Cpath%20fill%3D%22%23D8D8EC%22%20d%3D%22M12.753%2C8.443H5.997c-0.308%2C0-0.558%2C0.25-0.558%2C0.557c0%2C0.309%2C0.25%2C0.559%2C0.558%2C0.559h6.756%20c0.308%2C0%2C0.558-0.25%2C0.558-0.559C13.311%2C8.693%2C13.061%2C8.443%2C12.753%2C8.443L12.753%2C8.443z%20M12.753%2C8.443%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E%20');
+}
+
+.joint-inspector.joint-theme-modern .group.closed > .group-label:before {
+    background-image: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%2218.75px%22%20height%3D%2218.75px%22%20viewBox%3D%220%200%2018.75%2018.75%22%20enable-background%3D%22new%200%200%2018.75%2018.75%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%3Cpath%20fill%3D%22%23C6C7E2%22%20d%3D%22M9.375%2C0.5c-4.688%2C0-8.5%2C3.813-8.5%2C8.5c0%2C4.688%2C3.812%2C8.5%2C8.5%2C8.5c4.687%2C0%2C8.5-3.812%2C8.5-8.5%20C17.875%2C4.313%2C14.062%2C0.5%2C9.375%2C0.5L9.375%2C0.5z%20M9.375%2C16.386C5.303%2C16.386%2C1.99%2C13.072%2C1.99%2C9s3.312-7.385%2C7.385-7.385%20S16.76%2C4.928%2C16.76%2C9S13.447%2C16.386%2C9.375%2C16.386L9.375%2C16.386z%20M9.375%2C16.386%22%2F%3E%3Cpath%20fill%3D%22%23C6C7E2%22%20d%3D%22M12.753%2C8.443H5.997c-0.308%2C0-0.558%2C0.25-0.558%2C0.557c0%2C0.309%2C0.25%2C0.559%2C0.558%2C0.559h6.756%20c0.308%2C0%2C0.558-0.25%2C0.558-0.559C13.311%2C8.693%2C13.061%2C8.443%2C12.753%2C8.443L12.753%2C8.443z%20M12.753%2C8.443%22%2F%3E%3Cpath%20fill%3D%22%23C6C7E2%22%20d%3D%22M8.817%2C5.623v6.756c0%2C0.307%2C0.25%2C0.557%2C0.558%2C0.557c0.309%2C0%2C0.558-0.25%2C0.558-0.557V5.623%20c0-0.309-0.25-0.559-0.558-0.559S8.817%2C5.314%2C8.817%2C5.623L8.817%2C5.623z%20M8.817%2C5.623%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E%20');
+}
+
+.joint-inspector.joint-theme-modern .group.closed > .group-label:hover:before {
+    background-image: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%2218.75px%22%20height%3D%2218.75px%22%20viewBox%3D%220%200%2018.75%2018.75%22%20enable-background%3D%22new%200%200%2018.75%2018.75%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%3Cpath%20fill%3D%22%23D8D8EC%22%20d%3D%22M9.375%2C0.5c-4.688%2C0-8.5%2C3.813-8.5%2C8.5c0%2C4.688%2C3.812%2C8.5%2C8.5%2C8.5c4.687%2C0%2C8.5-3.812%2C8.5-8.5%20C17.875%2C4.313%2C14.062%2C0.5%2C9.375%2C0.5L9.375%2C0.5z%20M9.375%2C16.386C5.303%2C16.386%2C1.99%2C13.072%2C1.99%2C9s3.312-7.385%2C7.385-7.385%20S16.76%2C4.928%2C16.76%2C9S13.447%2C16.386%2C9.375%2C16.386L9.375%2C16.386z%20M9.375%2C16.386%22%2F%3E%3Cpath%20fill%3D%22%23D8D8EC%22%20d%3D%22M12.753%2C8.443H5.997c-0.308%2C0-0.558%2C0.25-0.558%2C0.557c0%2C0.309%2C0.25%2C0.559%2C0.558%2C0.559h6.756%20c0.308%2C0%2C0.558-0.25%2C0.558-0.559C13.311%2C8.693%2C13.061%2C8.443%2C12.753%2C8.443L12.753%2C8.443z%20M12.753%2C8.443%22%2F%3E%3Cpath%20fill%3D%22%23D8D8EC%22%20d%3D%22M8.817%2C5.623v6.756c0%2C0.307%2C0.25%2C0.557%2C0.558%2C0.557c0.309%2C0%2C0.558-0.25%2C0.558-0.557V5.623%20c0-0.309-0.25-0.559-0.558-0.559S8.817%2C5.314%2C8.817%2C5.623L8.817%2C5.623z%20M8.817%2C5.623%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E%20');
+}
+
+.joint-inspector.joint-theme-modern .toggle {
+    width: 72px;
+}
+.joint-inspector.joint-theme-modern .toggle input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: none;
+    height: 12px;
+}
+.joint-inspector.joint-theme-modern .toggle input:checked + span {
+    background: #31d0c6;
+}
+.joint-inspector.joint-theme-modern .toggle span {
+    background: #c6c7e2;
+    border-radius: 40px;
+    box-shadow: none;
+}
+.joint-inspector.joint-theme-modern .toggle span:before {
+    background: #f6f6f6;
+    box-shadow: none;
+}
+.joint-inspector.joint-theme-modern .toggle span i:before {
+    content: "off";
+    position: absolute;
+    right: -50%;
+    top: 0;
+    text-transform: uppercase;
+    font-style: normal;
+    font-weight: bold;
+    color: #6a6c8a;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    line-height: 16px;
+    margin-top: -1px;
+    margin-right: -8px;
+}
+.joint-inspector.joint-theme-modern .toggle input:checked + span i:before {
+    content: "on";
+    right: 100%;
+    color: #f6f6f6;
+    margin-right: 12px;
+}
+.joint-inspector.joint-theme-modern .toggle span i {
+    right: 50%;
+    width: 50%;
+    background: #f6f6f6;
+    box-shadow: 0 0 3px #111;
+}
+
+.joint-inspector.joint-theme-modern .btn-list-add,
+.joint-inspector.joint-theme-modern .btn-list-del {
+    background: transparent;
+    color: #fff;
+    border: 1px solid gray;
+    box-shadow: 1px 1px 1px #000;
+}
+.joint-inspector.joint-theme-modern .btn-list-add:hover,
+.joint-inspector.joint-theme-modern .btn-list-del:hover {
+    box-shadow: inset 1px 1px 1px #000;
+}
+
+.joint-inspector.joint-theme-modern .joint-select-box {
+    color: #000;
+}
+
+.joint-inspector.joint-theme-modern .joint-select-box.joint-color-palette.joint-theme-modern div.select-box-selection {
+    color: #ddd;
+    border: 1px solid #4E517A;
+}
+
+.joint-select-box[data-attribute$="/stroke"].joint-color-palette.joint-theme-modern .select-box-selection div.select-box-option-content:after {
+    left: 5px;
+    top: 5px;
+}
+
+.joint-inspector.joint-theme-modern .group .field {
+    box-sizing: border-box;
+    padding: 0 18px;
+    margin-top: 12px;
+}
+
+.joint-inspector.joint-theme-modern input {
+    width: 100%;
+    height: auto;
+    text-shadow: none;
+    box-shadow: none;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"] {
+    position: relative;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    height: 20px;
+    margin: 0;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]:focus {
+    outline: none;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-ms-track {
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 8px;
+    margin-top: -2px;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-ms-thumb {
+    margin-top: 0;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-moz-range-thumb {
+    -moz-appearance: none;
+    appearance: none;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-ms-fill-lower,
+.joint-inspector.joint-theme-modern input[type="range"]::-ms-fill-upper {
+    width: 100%;
+    height: 3px;
+    background: #7c69fd;
+    border-radius: 3px;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 3px;
+    background: #7c69fd;
+    border-radius: 3px;
+}
+
+.joint-inspector.joint-theme-modern input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 3px;
+    background: #7c69fd;
+    border-radius: 3px;
+}
+
+.joint-inspector.joint-theme-modern input[type="text"],
+.joint-inspector.joint-theme-modern input[type="number"],
+.joint-inspector.joint-theme-modern textarea,
+.joint-inspector.joint-theme-modern .content-editable,
+.joint-inspector.joint-theme-modern select {
+    width: 100%;
+    height: auto;
+    line-height: 16px;
+    text-shadow: none;
+    background: transparent;
+    border: 2px solid #4E517A;
+    box-shadow: none;
+    box-sizing: border-box;
+    outline: none;
+    padding: 6px;
+    overflow: auto;
+}
+
+.joint-inspector.joint-theme-modern input[type="text"],
+.joint-inspector.joint-theme-modern input[type="number"],
+.joint-inspector.joint-theme-modern select:not([multiple]) {
+    height: 33px;
+}
+
+/* Chrome only */
+@media all and (-webkit-min-device-pixel-ratio:0) and (min-resolution: .001dpcm) {
+    /* change "6px padding" for visible text and same size as other browser */
+    .joint-inspector.joint-theme-modern input[type="text"],
+    .joint-inspector.joint-theme-modern input[type="number"] {
+        padding: 0 0 0 10px;
+    }
+    /* "on/off" text in the center of the button  */
+    .joint-inspector.joint-theme-modern .toggle span i:before {
+        margin-top: 0;
+    }
+}
+
+.joint-inspector.joint-theme-modern option {
+    background: #fff;
+    padding: 0 10px
+}
+
+.joint-inspector.joint-theme-modern input[type="color"] {
+    width: 40px;
+    height: 40px;
+}
+
+/*  Select Box  */
+.joint-inspector .joint-select-box.joint-theme-modern .select-box-selection {
+    border-color: #4E517A;
+    color: #fff;
+}
+.joint-inspector .joint-select-box.joint-color-palette.joint-theme-modern .select-box-option-content {
+    border: none;
+}
+.joint-inspector .joint-select-button-group.joint-theme-modern.disabled .select-button-group-button {
+    color: #4E517A;
+}
+.joint-inspector .joint-select-button-group.joint-theme-modern.disabled .select-button-group-button.selected {
+    border-color: #4E517A;
+}
+/*  Select Box  */
+
+
+/*  Lists  */
+.joint-inspector.joint-theme-modern .list-item {
+    background: #424568;
+    box-shadow: none;
+    border: none;
+    padding: 16px;
+}
+.joint-inspector.joint-theme-modern .list-item .field {
+    padding: 0;
+}
+/*  Lists  */

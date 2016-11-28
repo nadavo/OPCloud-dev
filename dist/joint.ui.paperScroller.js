@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -31,24 +31,41 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
 
     className: 'paper-scroller',
 
-    events: {
-        'mousedown': 'pointerdown',
-        'mousemove': 'pointermove',
-        'touchmove': 'pointermove'
-    },
-
     options: {
         paper: undefined,
-        padding: 0,
+        // Default padding makes sure the paper inside the paperScroller is always panable
+        // all the way left, right, bottom and top.
+        // It also makes sure that there is always at least a fragment of the paper visible.
+        // Example usage:
+        //   padding: 10
+        //   padding: { left: 20, right: 20 }
+        //   padding: function() { return 10; }
+        padding: function() {
+
+            var minVisibleSize = Math.max(this.options.minVisiblePaperSize, 1) || 1;
+            var padding = {};
+
+            padding.left = padding.right = Math.max(this.el.clientWidth - minVisibleSize, 0);
+            padding.top = padding.bottom = Math.max(this.el.clientHeight - minVisibleSize, 0);
+
+            return padding;
+        },
+        // Minimal size (px) of the paper that has to stay visible.
+        // Used by the default padding method only.
+        minVisiblePaperSize: 50,
         autoResizePaper: false,
         baseWidth: undefined,
         baseHeight: undefined,
-        contentOptions: undefined
+        contentOptions: undefined,
+        cursor: 'default'
     },
+
+    // Internal padding storage
+    _padding: { paddingLeft: 0, paddingTop: 0 },
 
     init: function() {
 
-        _.bindAll(this, 'startPanning', 'stopPanning', 'pan');
+        _.bindAll(this, 'startPanning', 'stopPanning', 'pan', 'onBackgroundEvent');
 
         var paper = this.options.paper;
 
@@ -61,16 +78,80 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
         _.isUndefined(this.options.baseWidth) && (this.options.baseWidth = paper.options.width);
         _.isUndefined(this.options.baseHeight) && (this.options.baseHeight = paper.options.height);
 
-        this.$el.append(paper.el);
-        this.addPadding();
+        this.$background = $('<div/>').addClass('paper-scroller-background')
+            .css({ width: paper.options.width, height: paper.options.height })
+            .append(paper.el)
+            .appendTo(this.el);
 
         this.listenTo(paper, 'scale', this.onScale);
         this.listenTo(paper, 'resize', this.onResize);
+        this.listenTo(paper, 'beforeprint beforeexport', this.storeScrollPosition);
+        this.listenTo(paper, 'afterprint afterexport', this.restoreScrollPosition);
 
         // automatically resize the paper
         if (this.options.autoResizePaper) {
 
             this.listenTo(paper.model, 'change add remove reset', this.adjustPaper);
+        }
+
+        this.delegateBackgroundEvents();
+        this.setCursor(this.options.cursor);
+    },
+
+    setCursor: function(cursor) {
+
+        switch (cursor) {
+            case 'grab':
+                // Make a special case for the cursor above
+                // due to bad support across browsers.
+                // It's handled in `layout.css`.
+                this.$el.css('cursor', '');
+                break;
+            default:
+                this.$el.css('cursor', cursor);
+                break;
+        }
+
+        this.$el.attr('data-cursor', cursor);
+        this.options.cursor = cursor;
+
+        return this;
+    },
+
+    // Set up listeners for passing events from outside the paper to the paper
+    delegateBackgroundEvents: function(events) {
+
+        events || (events = _.result(this.options.paper, 'events'));
+
+        var normalizedEvents = this.paperEvents = _.reduce(events, _.bind(normalizeEvents, this), {});
+
+        _.each(normalizedEvents, _.bind(delegateBackgroundEvent, this));
+
+        function normalizeEvents(events, listener, event) {
+            // skip events with selectors
+            if (event.indexOf(' ') === -1) {
+                events[event] = _.isFunction(listener) ? listener : this.options.paper[listener];
+            }
+            return events;
+        }
+
+        function delegateBackgroundEvent(listener, event) {
+            // Sending event data with `guarded=false` to prevent events from
+            // being guarded by the paper.
+            this.delegate(event, { guarded: false }, this.onBackgroundEvent);
+        }
+
+        return this;
+    },
+
+    // Pass the event outside the paper to the paper.
+    onBackgroundEvent: function(evt) {
+
+        if (this.$background.is(evt.target)) {
+            var listener = this.paperEvents[evt.type];
+            if (_.isFunction(listener)) {
+                listener.apply(this.options.paper, arguments);
+            }
         }
     },
 
@@ -92,6 +173,23 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
         if (ox || oy) this.center(ox, oy);
     },
 
+    storeScrollPosition: function() {
+
+        this._scrollLeftBeforePrint = this.el.scrollLeft;
+        this._scrollTopBeforePrint = this.el.scrollTop;
+    },
+
+    restoreScrollPosition: function() {
+
+        // Set the paper element to the scroll position before printing.
+        this.el.scrollLeft = this._scrollLeftBeforePrint;
+        this.el.scrollTop = this._scrollTopBeforePrint;
+
+        // Clean-up.
+        this._scrollLeftBeforePrint = null;
+        this._scrollTopBeforePrint = null;
+    },
+
     beforePaperManipulation: function() {
         // IE is trying to show every frame while we manipulate the paper.
         // That makes the viewport kind of jumping while zooming for example.
@@ -108,10 +206,10 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
 
         var ctm = this.options.paper.viewport.getCTM();
 
-        x += this.el.scrollLeft - this.padding.paddingLeft - ctm.e;
+        x += this.el.scrollLeft - this._padding.left - ctm.e;
         x /= ctm.a;
 
-        y += this.el.scrollTop - this.padding.paddingTop - ctm.f;
+        y += this.el.scrollTop - this._padding.top - ctm.f;
         y /= ctm.d;
 
         return g.point(x, y);
@@ -194,15 +292,15 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
             y *= ctm.d;
         }
 
-        var p = this.options.padding;
+        var p = this.getPadding();
         var cx = this.el.clientWidth / 2;
         var cy = this.el.clientHeight / 2;
 
         // calculate paddings
-        var left   = cx - p - x + x1;
-        var right  = cx - p + x - x2;
-        var top    = cy - p - y + y1;
-        var bottom = cy - p + y - y2;
+        var left = cx - p.left - x + x1;
+        var right = cx - p.right + x - x2;
+        var top = cy - p.top - y + y1;
+        var bottom = cy - p.bottom + y - y2;
 
         this.addPadding(
             Math.max(left, 0),
@@ -244,12 +342,12 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
 
         if (_.isNumber(x)) {
             var cx = this.el.clientWidth / 2;
-            change['scrollLeft'] = x - cx + ctm.e + this.padding.paddingLeft;
+            change['scrollLeft'] = x - cx + ctm.e + this._padding.left;
         }
 
         if (_.isNumber(y)) {
             var cy = this.el.clientHeight / 2;
-            change['scrollTop'] = y - cy + ctm.f + this.padding.paddingTop;
+            change['scrollTop'] = y - cy + ctm.f + this._padding.top;
         }
 
         if (opt && opt.animation) {
@@ -276,33 +374,26 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
         return this.scroll(center.x, center.y, opts);
     },
 
-    // Adds padding to the scroller element so the paper element inside can be positioned.
+    // Position the paper inside the paper wrapper and resize the wrapper.
     addPadding: function(left, right, top, bottom) {
 
-        var base = this.options.padding;
+        var base = this.getPadding();
 
-        var padding = this.padding = {
-            paddingLeft: Math.round(base + (left || 0)),
-            paddingTop: Math.round(base + (top || 0))
+        var padding = this._padding = {
+            left: Math.round(base.left + (left || 0)),
+            top: Math.round(base.top + (top || 0)),
+            bottom: Math.round(base.bottom + (bottom || 0)),
+            right: Math.round(base.right + (right || 0))
         };
 
-        // It is not possible to apply paddingBottom and paddingRight on paperScroller as it
-        // would have no effect while overflow in FF and IE.
-        // see 'https://bugzilla.mozilla.org/show_bug.cgi?id=748518'
-        var margin = {
-            marginBottom: Math.round(base + (bottom || 0)),
-            marginRight: Math.round(base + (right || 0))
-        };
-
-        // Make sure that at least a fragment of the paper is always visible on the screen.
-        // Note that paddingLeft can not be greater than paper scroller clientWidth as
-        // we would loose the scrollbars (same for paddingTop). At least 10% of visible area
-        // is used by paper.
-        padding.paddingLeft = Math.min(padding.paddingLeft, this.el.clientWidth * 0.9);
-        padding.paddingTop = Math.min(padding.paddingTop, this.el.clientHeight * 0.9);
-
-        this.$el.css(padding);
-        this.options.paper.$el.css(margin);
+        this.$background.css({
+            width: padding.left + this.options.paper.options.width + padding.right,
+            height: padding.top + this.options.paper.options.height + padding.bottom
+        });
+        this.options.paper.$el.css({
+            left: padding.left,
+            top: padding.top
+        });
 
         return this;
     },
@@ -372,8 +463,8 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
 
         // fitting bbox has exact size of the the PaperScroller
         opt.fittingBBox = opt.fittingBBox || _.extend({}, g.point(paperOrigin), {
-            width: this.$el.width() + this.padding.paddingLeft,
-            height: this.$el.height() + this.padding.paddingTop
+            width: this.$el.width(),
+            height: this.$el.height()
         });
 
         this.beforePaperManipulation();
@@ -398,10 +489,15 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
         this._clientX = evt.clientX;
         this._clientY = evt.clientY;
 
+        this.$el.addClass('is-panning');
+        this.trigger('pan:start', evt);
+
         $(document.body).on({
             'mousemove.panning touchmove.panning': this.pan,
             'mouseup.panning touchend.panning': this.stopPanning
         });
+
+        $(window).on('mouseup.panning', this.stopPanning);
     },
 
     pan: function(evt) {
@@ -418,28 +514,27 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
         this._clientY = evt.clientY;
     },
 
-    stopPanning: function() {
+    stopPanning: function(evt) {
 
         $(document.body).off('.panning');
+        $(window).off('.panning');
+        this.$el.removeClass('is-panning');
+        this.trigger('pan:stop', evt);
     },
 
-    pointerdown: function(evt) {
-        // redelagate pointerdown events from around the paper to the paper
-        if (evt.target === this.el) {
-            this.options.paper.pointerdown.apply(this.options.paper, arguments);
-        }
-    },
+    getPadding: function() {
 
-    pointermove: function(evt) {
-        // redelagate pointermove events from around the paper to the paper
-        if (evt.target === this.el) {
-            this.options.paper.pointermove.apply(this.options.paper, arguments);
+        var padding = this.options.padding;
+        if (_.isFunction(padding)) {
+            padding = padding.call(this);
         }
+
+        return joint.util.normalizeSides(padding);
     },
 
     getVisibleArea: function() {
 
-        var inverseMatrix = this.options.paper.viewport.getCTM();
+        var ctm = this.options.paper.viewport.getCTM();
         var area = {
             x: this.el.scrollLeft || 0,
             y: this.el.scrollTop || 0,
@@ -447,17 +542,21 @@ joint.ui.PaperScroller = joint.mvc.View.extend({
             height: this.el.clientHeight
         };
 
-        var transformedArea = g.rect(V.transformRect(area, inverseMatrix.inverse()));
-        transformedArea.x -= this.padding.paddingLeft || 0;
-        transformedArea.y -= this.padding.paddingTop || 0;
+        var transformedArea = V.transformRect(area, ctm.inverse());
 
-        return transformedArea;
+        transformedArea.x -= (this._padding.left || 0) / this._sx;
+        transformedArea.y -= (this._padding.top || 0) / this._sy;
+
+        return g.rect(transformedArea);
     },
 
-    isElementVisible: function(element) {
+    isElementVisible: function(element, opt) {
 
         this.checkElement(element, 'isElementVisible');
-        return this.getVisibleArea().containsRect(element.getBBox());
+
+        opt = opt || {};
+        var method = opt.strict ? 'containsRect' : 'intersect';
+        return !!this.getVisibleArea()[method](element.getBBox());
     },
 
     isPointVisible: function(point) {

@@ -1,0 +1,54 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+/* HTML Elements for dragging and highlighting the original element */
+
+.joint-tree-layout.joint-theme-material .tree-layout-box {
+    background-color: rgba(208, 230, 249, 0.3);
+    border: 2px solid #737c97;
+    border-radius: 5px;
+    margin: -2px 0 0 -2px;
+    padding: 0;
+}
+
+.joint-tree-layout.joint-theme-material .tree-layout-box.active {
+    border-style: solid;
+}
+
+/* HTML element under the cursor */
+
+.joint-tree-layout.joint-theme-material .tree-layout-box > .joint-paper {
+    opacity: 0.5;
+}
+
+.joint-tree-layout.joint-theme-material .tree-layout-box.translate {
+    border-style: dotted;
+    background-color: #d0d8e8;
+}
+
+.joint-tree-layout.joint-theme-material .tree-layout-box.translate.no-drop {
+    border-color: #d71920;
+}
+
+/* SVG preview on the main paper */
+
+.tree-layout-preview-group.joint-theme-material .tree-layout-preview {
+    stroke: #737c97;
+    stroke-width: 2;
+}
+
+.tree-layout-preview-group.joint-theme-material .tree-layout-preview.child,
+.tree-layout-preview-group.joint-theme-material .tree-layout-preview.parent {
+    fill: #d0d8e8;
+    fill-opacity: 0.3;
+}

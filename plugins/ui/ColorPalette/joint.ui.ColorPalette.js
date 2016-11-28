@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -35,18 +35,29 @@ joint.ui.ColorPalette = joint.ui.SelectBox.extend({
         }
 
         this.$options.css({ left: left, top: top });
-    },
-
-    renderOptionContent: function(option) {
-
-        var $option = $('<div/>', { 'class': 'select-box-option-content' });
-        $option.css('background-color', option.content);
-        if (option.icon) {
-            $option.prepend($('<img/>', {
-                'class': 'select-box-option-icon',
-                src: option.icon
-            }));
-        }
-        return $option;
     }
+
+}, {
+
+    // Statics
+
+    OptionsView: joint.ui.SelectBox.OptionsView.extend({
+
+        renderOptionContent: function(option) {
+
+            var $option = $('<div/>', { 'class': 'select-box-option-content' });
+
+            $option.css('background-color', option.content);
+
+            if (option.icon) {
+                $option.prepend($('<img/>', {
+                    'class': 'select-box-option-icon',
+                    src: option.icon
+                }));
+            }
+
+            return $option;
+        }
+    })
+
 });

@@ -61,8 +61,7 @@ var InputDefs = {
     'stroke-dasharray': { type: 'select', options:[{content: 'Systemic', value: '0'}, {content: 'Environmental', value: '10,5'}], defaultValue: '0', label: 'Systemic/Environmental' },
     rx: { type: 'range', min: 0, max: 30, defaultValue: 1, unit: 'px', label: 'X-axis radius' },
     ry: { type: 'range', min: 0, max: 30, defaultValue: 1, unit: 'px', label: 'Y-axis radius' },
-    'xlink:href': { type: 'text', label: 'Image URL' },
-    'filter':{label: 'Physical/Informatical', type: 'select', options:[{content: 'Physical', value:'url(#dropShadowv-51979730529)'}, {content: 'Informatical', value:'null'}], defaultValue:'null'}
+    'xlink:href': { type: 'text', label: 'Image URL' }
 };
 
 function inp(defs) {
@@ -145,7 +144,13 @@ var InspectorDefs = {
                 }),
                 rect: inp({
                     'stroke-dasharray': { group: 'presentation', index: 1 },
-                    'filter':{group: 'presentation', index: 2 },
+                    //fill: { group: 'presentation', index: 1 },
+                    /*filter: {
+                        color: {type: 'toggle', group: 'presentation', index: 2, label: 'Physical/Informatical', defaultValue: 'grey', valueRegExp: 'yellow'}
+                    },*/
+                    'dropShadow':{ 
+                        group: 'presentation', index: 2, label: 'Physical/Informatical', type: 'select', options:[{content: 'Physical', value: {args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}}, {content: 'Informatical', value: {args: {dx: 0, dy: 0, blur: 0, color: 'grey'}}}]
+                    },
                     'stroke-width': { group: 'presentation', index: 3, min: 0, max: 30, defaultValue: 1 },
                     rx: { group: 'presentation', index: 4 },
                     ry: { group: 'presentation', index: 5 },
@@ -154,6 +159,21 @@ var InspectorDefs = {
         }, CommonInspectorInputs),
         groups: CommonInspectorGroups
     },
+
+ /*   'opm.Object': {
+        inputs: {
+            attrs: {
+                rect: {
+                    'dropShadow': {
+                        color: {type: 'toggle', group: 'Type', label: 'physical', defaultValue: 'grey', valueRegExp: 'red', index: 1}
+                    }
+                }
+            }
+        },
+        groups: {
+            type: { label: 'Type', index: 1 }
+        }
+    },*/
     
     'OPM.Process': {
 
@@ -173,11 +193,42 @@ var InspectorDefs = {
                 circle: inp({
                     'stroke-dasharray': { group: 'presentation', index: 1 },
                     'stroke-width': { group: 'presentation', index: 2, min: 0, max: 30, defaultValue: 1 },
-                    'filter':{group: 'presentation', index: 2 },
                     fill: { group: 'presentation', index: 3 }
+                    //'stroke-dasharray': { type: 'select', options: ['0', '1', '5,5', '5,10', '10,5', '5,1', '15,10,5,10,15'], group: 'presentation', index: 3 }
                 })
             }
         }, CommonInspectorInputs),
         groups: CommonInspectorGroups
     }
+
+   /* 'opm.Process': {
+    	inputs: {},
+    	groups: {}
+    },
+*/
+   /* 'erd.ISA': {
+
+        inputs: _.extend({
+            attrs: {
+                'text': inp({
+                    text: { group: 'text', index: 1 },
+                    'font-size': { group: 'text', index: 2 },
+                    'font-family': { group: 'text', index: 3 },
+                    'font-weight': { group: 'text', index: 4 },
+                    fill: { group: 'text', index: 5 },
+                    stroke: { group: 'text', index: 6 },
+                    'stroke-width': { group: 'text', index: 7 },
+                    'ref-x': { group: 'text', index: 8 },
+                    'ref-y': { group: 'text', index: 9 }
+                }),
+                'polygon': inp({
+                    fill: { group: 'presentation', index: 1 },
+                    stroke: { group: 'presentation', index: 2 },
+                    'stroke-width': { group: 'presentation', index: 3, min: 0, max: 30, defaultValue: 1 },
+                    'stroke-dasharray': { group: 'presentation', index: 4 }
+                })
+            }
+        }, CommonInspectorInputs),
+        groups: CommonInspectorGroups
+    }*/
 };

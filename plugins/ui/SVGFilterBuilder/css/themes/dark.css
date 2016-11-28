@@ -1,0 +1,28 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-theme-dark.joint-svg-filter-builder .filter-graph .joint-paper-scroller {
+    background-color: #18191b;
+}
+
+.joint-theme-dark.joint-svg-filter-builder .filter-graph .joint-paper {
+    background-color: #18191b;
+}
+
+.joint-theme-dark.joint-svg-filter-builder .joint-halo .handle.switchInputs {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0FDQUNBMyIgZD0iTTEzLjk4IDIybC03Ljk4IDggNy45OCA4di02aDE0LjAydi00aC0xNC4wMnYtNnptMjguMDItNGwtNy45OC04djZoLTE0LjAydjRoMTQuMDJ2Nmw3Ljk4LTh6Ii8+PHBhdGggZD0iTTAgMGg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PC9zdmc+');
+}
+
+.joint-theme-dark.joint-svg-filter-builder .joint-halo .handle.switchInputs:hover {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2RhZGFkYSIgZD0iTTEzLjk4IDIybC03Ljk4IDggNy45OCA4di02aDE0LjAydi00aC0xNC4wMnYtNnptMjguMDItNGwtNy45OC04djZoLTE0LjAydjRoMTQuMDJ2Nmw3Ljk4LTh6Ii8+PHBhdGggZD0iTTAgMGg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PC9zdmc+');
+}

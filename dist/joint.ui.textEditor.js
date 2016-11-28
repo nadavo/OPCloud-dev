@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -176,9 +176,7 @@ joint.ui.TextEditor = joint.mvc.View.extend({
         // before the inserted text. If yes, annotate it.
         var urlBoundary = this.getURLBoundary(Math.max(selectionStart - 1, 0));
         if (urlBoundary) {
-
-            var annotations = this.getAnnotations();
-            annotations = this.annotateURL(annotations || [], urlBoundary[0], urlBoundary[1]);
+            this.annotateURL(this.getAnnotations() || [], urlBoundary[0], urlBoundary[1]);
             return true;
         }
 
@@ -287,7 +285,7 @@ joint.ui.TextEditor = joint.mvc.View.extend({
 
         if (copySupported) {
             this._copied = true;
-            var successful = document.execCommand('copy');
+            document.execCommand('copy');
         }
     },
 
@@ -557,6 +555,8 @@ joint.ui.TextEditor = joint.mvc.View.extend({
 
         _.each(annotations, function(annotation) {
 
+            var inAnnotation, removedInAnnotation;
+
             switch (opType) {
 
                 case 'insert':
@@ -597,8 +597,8 @@ joint.ui.TextEditor = joint.mvc.View.extend({
                     } else if (annotation.start >= selectionBeforeInput.start && annotation.start < selectionBeforeInput.end) {
 
                         // Part of the annotation is deleted.
-                        var inAnnotation = annotation.end - annotation.start;
-                        var removedInAnnotation = selectionBeforeInput.end - annotation.start;
+                        inAnnotation = annotation.end - annotation.start;
+                        removedInAnnotation = selectionBeforeInput.end - annotation.start;
                         annotation.start = selectionBeforeInput.start;
                         annotation.end = annotation.start + inAnnotation - removedInAnnotation;
 
@@ -629,8 +629,8 @@ joint.ui.TextEditor = joint.mvc.View.extend({
 
                         // Part of the annotation is affected.
                         var addedChars = selectionAfterInput.start - selectionBeforeInput.start;
-                        var removedInAnnotation = selectionBeforeInput.end - annotation.start;
-                        var inAnnotation = annotation.end - annotation.start;
+                        removedInAnnotation = selectionBeforeInput.end - annotation.start;
+                        inAnnotation = annotation.end - annotation.start;
                         annotation.start = selectionBeforeInput.start + addedChars;
                         annotation.end = annotation.start + inAnnotation - removedInAnnotation;
 
@@ -1222,7 +1222,7 @@ joint.ui.TextEditor = joint.mvc.View.extend({
 
     normalizeSelectionRange: function(selection) {
 
-        var selection = _.clone(selection);
+        selection = _.clone(selection);
 
         // Normalize.
         if (selection.start > selection.end) {
@@ -1393,7 +1393,6 @@ joint.ui.TextEditor = joint.mvc.View.extend({
 
     svgToRealCharNum: function(svgCharNum) {
 
-        var text = this.textarea.value;
         var newLinesBefore = 0;
         for (var i = 0; i <= svgCharNum + newLinesBefore; i++) {
             if (this.isLineEnding(i)) {
@@ -1569,13 +1568,11 @@ joint.ui.TextEditor = joint.mvc.View.extend({
             if (!this.isEmptyLineUnderSelection(selectionStart) && (this.isLineEnding(selectionStart) || text.length === selectionStart)) {
 
                 charIndex = this.selectionStartToSvgCharNum(selectionStart) - 1;
-
                 caretPosition = elText.getEndPositionOfChar(charIndex);
 
             } else {
 
                 charIndex = this.selectionStartToSvgCharNum(selectionStart);
-
                 caretPosition = elText.getStartPositionOfChar(charIndex);
             }
 

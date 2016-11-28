@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -252,9 +252,10 @@ joint.ui.FreeTransform = joint.mvc.View.extend({
 
         evt = joint.util.normalizeEvent(evt);
 
-        var clientCoords = this.options.paper.snapToGrid({ x: evt.clientX, y: evt.clientY });
-        var gridSize = this.options.paper.options.gridSize;
-        var model = this.options.cell;
+        var options = this.options;
+        var clientCoords = options.paper.snapToGrid({ x: evt.clientX, y: evt.clientY });
+        var gridSize = options.paper.options.gridSize;
+        var model = options.cell;
         var i = this._initial;
 
         switch (this._action) {
@@ -279,13 +280,13 @@ joint.ui.FreeTransform = joint.mvc.View.extend({
                 width = g.snapToGrid(width, gridSize);
                 height = g.snapToGrid(height, gridSize);
                 // Minimum
-                width = Math.max(width, this.options.minWidth || gridSize);
-                height = Math.max(height, this.options.minHeight || gridSize);
+                width = Math.max(width, options.minWidth || gridSize);
+                height = Math.max(height, options.minHeight || gridSize);
                 // Maximum
-                width = Math.min(width, this.options.maxWidth);
-                height = Math.min(height, this.options.maxHeight);
+                width = Math.min(width, options.maxWidth);
+                height = Math.min(height, options.maxHeight);
 
-                if (this.options.preserveAspectRatio) {
+                if (options.preserveAspectRatio) {
 
                     var candidateWidth = currentRect.width * height / currentRect.height;
                     var candidateHeight = currentRect.height * width / currentRect.width;
@@ -297,10 +298,17 @@ joint.ui.FreeTransform = joint.mvc.View.extend({
                 if (currentRect.width != width || currentRect.height != height) {
 
                     model.resize(width, height, {
+                        freeTransform: this.cid,
                         direction: i.direction,
                         relativeDirection: i.relativeDirection,
                         trueDirection: i.trueDirection,
-                        ui: true
+                        ui: true,
+                        // The rest of properties are important for the Snapline plugin.
+                        minWidth: options.minWidth,
+                        minHeight: options.minHeight,
+                        maxWidth: options.maxWidth,
+                        maxHeight: options.maxHeight,
+                        preserveAspectRatio: options.preserveAspectRatio
                     });
                 }
                 break;
@@ -310,7 +318,7 @@ joint.ui.FreeTransform = joint.mvc.View.extend({
                 // of rotation and y-axis and deduct the angle from the start of rotation.
                 var theta = i.startAngle - g.point(clientCoords).theta(i.centerRotation);
 
-                model.rotate(g.snapToGrid(i.modelAngle + theta, this.options.rotateAngleGrid), true);
+                model.rotate(g.snapToGrid(i.modelAngle + theta, options.rotateAngleGrid), true);
                 break;
         }
     },
@@ -323,8 +331,8 @@ joint.ui.FreeTransform = joint.mvc.View.extend({
 
         this.options.graph.trigger('batch:stop');
 
-        delete this._action;
-        delete this._initial;
+        this._action = null;
+        this._initial = null;
     },
 
     onRemove: function() {
@@ -351,7 +359,7 @@ joint.ui.FreeTransform = joint.mvc.View.extend({
         if (this._elementOp) {
             // Remove a class from the element we were operating with
             $(this._elementOp).removeClass('in-operation');
-            delete this._elementOp;
+            this._elementOp = null;
         }
 
         this.$el.removeClass('in-operation');

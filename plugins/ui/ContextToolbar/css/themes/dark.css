@@ -1,0 +1,49 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-context-toolbar.joint-theme-dark .tools {
+    border: 1px solid #0f1110;
+    padding: 5px;
+    border-radius: 3px;
+    background: #5e6366;
+}
+.joint-context-toolbar.joint-theme-dark .tool {
+    border: 1px solid #0f1110;
+    color: #d1d2d4;
+    box-shadow: -1px -1px 0 0 hsl(0, 0%, 40%) inset;
+    border-right: none;
+    background: rgba(104,108,112,1);
+    background:
+        -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(120,124,128,1)), color-stop(1%, rgba(119,123,127,1)), color-stop(100%, rgba(104,108,112,1))); /*  safari4+,chrome */
+    background:
+        -webkit-linear-gradient(270deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%); /* safari5.1+,chrome10+ */
+    background:
+        -o-linear-gradient(270deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%);  /* opera 11.10+ */
+    background:
+        -ms-linear-gradient(270deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%);  /* ie10+ */
+    background:
+        linear-gradient(180deg, rgba(120,124,128,1) 0%, rgba(119,123,127,1) 1%, rgba(104,108,112,1) 100%); /* w3c */
+
+}
+.joint-context-toolbar.joint-theme-dark .tool:last-child {
+    border-right: 1px solid #0f1110;
+}
+.joint-context-toolbar.joint-theme-dark .tool:hover,
+.joint-context-toolbar.joint-theme-dark .tool:active {
+    background: #92979b;
+    background: -webkit-linear-gradient(#3b3f40, #454a4d);
+    background: -o-linear-gradient(#3b3f40, #454a4d);
+    background: -moz-linear-gradient(#3b3f40, #454a4d);
+    background: linear-gradient(#3b3f40, #454a4d);
+    box-shadow: -1px -1px 0 0 hsl(0, 0%, 35%) inset;
+}

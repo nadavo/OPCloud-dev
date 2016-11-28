@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -156,91 +156,89 @@ joint.shapes.bpmn.Activity = joint.shapes.basic.TextBlock.extend({
 
         switch (type) {
 
-        case 'task':
+            case 'task':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'hidden'
-                },
-                '.outer': {
-                    'stroke-width': 1,
-                    'stroke-dasharray': 'none'
-                },
-                path: {
-                    ref: '.outer'
-                },
-                image: {
-                    ref: '.outer'
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'hidden'
+                    },
+                    '.outer': {
+                        'stroke-width': 1,
+                        'stroke-dasharray': 'none'
+                    },
+                    path: {
+                        ref: '.outer'
+                    },
+                    image: {
+                        ref: '.outer'
+                    }
+                });
 
-            break;
+                break;
 
-        case 'transaction':
+            case 'transaction':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'visible'
-                },
-                '.outer': {
-                    'stroke-width': 1,
-                    'stroke-dasharray': 'none'
-                },
-                path: {
-                    ref: '.inner'
-                },
-                image: {
-                    ref: '.inner'
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'visible'
+                    },
+                    '.outer': {
+                        'stroke-width': 1,
+                        'stroke-dasharray': 'none'
+                    },
+                    path: {
+                        ref: '.inner'
+                    },
+                    image: {
+                        ref: '.inner'
+                    }
+                });
 
-            break;
+                break;
 
-        case 'event-sub-process':
+            case 'event-sub-process':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'hidden'
-                },
-                '.outer': {
-                    'stroke-width': 1,
-                    'stroke-dasharray': '1,2'
-                },
-                path: {
-                    ref: '.outer'
-                },
-                image: {
-                    ref: '.outer'
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'hidden'
+                    },
+                    '.outer': {
+                        'stroke-width': 1,
+                        'stroke-dasharray': '1,2'
+                    },
+                    path: {
+                        ref: '.outer'
+                    },
+                    image: {
+                        ref: '.outer'
+                    }
+                });
 
-            break;
+                break;
 
-        case 'call-activity':
+            case 'call-activity':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'hidden'
-                },
-                '.outer': {
-                    'stroke-width': 5,
-                    'stroke-dasharray': 'none'
-                },
-                path: {
-                    ref: '.outer'
-                },
-                image: {
-                    ref: '.outer'
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'hidden'
+                    },
+                    '.outer': {
+                        'stroke-width': 5,
+                        'stroke-dasharray': 'none'
+                    },
+                    path: {
+                        ref: '.outer'
+                    },
+                    image: {
+                        ref: '.outer'
+                    }
+                });
 
-            break;
+                break;
 
-        default:
+            default:
 
-            throw 'BPMN: Unknown Activity Type: ' + type;
-
-            break;
+                throw 'BPMN: Unknown Activity Type: ' + type;
         }
     },
 
@@ -446,50 +444,48 @@ joint.shapes.bpmn.Event = joint.dia.Element.extend({
 
         switch (type) {
 
-        case 'start':
+            case 'start':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'hidden'
-                },
-                '.outer': {
-                    'stroke-width': 1
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'hidden'
+                    },
+                    '.outer': {
+                        'stroke-width': 1
+                    }
+                });
 
-            break;
+                break;
 
-        case 'end':
+            case 'end':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'hidden'
-                },
-                '.outer': {
-                    'stroke-width': 5
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'hidden'
+                    },
+                    '.outer': {
+                        'stroke-width': 5
+                    }
+                });
 
-            break;
+                break;
 
-        case 'intermediate':
+            case 'intermediate':
 
-            cell.attr({
-                '.inner': {
-                    visibility: 'visible'
-                },
-                '.outer': {
-                    'stroke-width': 1
-                }
-            });
+                cell.attr({
+                    '.inner': {
+                        visibility: 'visible'
+                    },
+                    '.outer': {
+                        'stroke-width': 1
+                    }
+                });
 
-            break;
+                break;
 
-        default:
+            default:
 
-            throw 'BPMN: Unknown Event Type: ' + type;
-
-            break;
+                throw 'BPMN: Unknown Event Type: ' + type;
         }
     }
 
@@ -532,7 +528,8 @@ joint.shapes.bpmn.Pool = joint.dia.Element.extend({
                 'pointer-events': 'visiblePainted'
             },
             '.label': {
-                transform: 'rotate(-90)' ,
+                fill: '#000000',
+                transform: 'rotate(-90)',
                 ref: '.header',
                 'ref-x': 10,
                 'ref-y': .5,
@@ -552,6 +549,7 @@ joint.shapes.bpmn.Pool = joint.dia.Element.extend({
                 'pointer-events': 'visiblePainted'
             },
             '.lane-label': {
+                fill: '#000000',
                 transform: 'rotate(-90)',
                 'text-anchor': 'middle',
                 'font-family': 'Arial',
@@ -623,8 +621,9 @@ joint.shapes.bpmn.PoolView = joint.dia.ElementView.extend({
         // index keeps track on how many lanes we created
         this.index = 0;
 
+        var headerWidth = _.isUndefined(lanes.headerWidth) ? this.options.headerWidth : lanes.headerWidth;
         this.lanesAttrs = {
-            '.header': { width : this.options.headerWidth },
+            '.header': { width : headerWidth },
             '.label': { text: lanes.label || '' }
         };
 
@@ -633,7 +632,7 @@ joint.shapes.bpmn.PoolView = joint.dia.ElementView.extend({
         if (lanes.sublanes) {
 
             // recursion start
-            this.renderSublanes(lanes.sublanes, 0, 0, 1);
+            this.renderSublanes(lanes.sublanes, headerWidth, 0, 1, 'lanes');
         }
 
         // We don't want the lanes attributes to be stored on model.
@@ -641,10 +640,10 @@ joint.shapes.bpmn.PoolView = joint.dia.ElementView.extend({
         this.update(this.model, _.merge({}, this.model.get('attrs'), this.lanesAttrs));
     },
 
-    renderSublanes: function(lanes, prevX, prevY, prevRatio) {
+    renderSublanes: function(lanes, prevX, prevY, prevRatio, prevPath) {
 
-        var headerWidth = this.options.headerWidth;
-
+        var defaultHeaderWidth = this.options.headerWidth;
+        var path = prevPath + '/sublanes/';
         var ratio = 1 / lanes.length * prevRatio;
 
         _.each(lanes, function(lane, index) {
@@ -660,16 +659,24 @@ joint.shapes.bpmn.PoolView = joint.dia.ElementView.extend({
             }
 
             // append a new lane to the pool
-            this.$lanes.append(this.laneMarkup.clone().addClass(className).node);
+            var lanePath = path + index;
+            var svgLane = this.laneMarkup.clone()
+                    .addClass(className)
+                    .attr({
+                        'data-lane-path': lanePath,
+                        'data-lane-index': this.index
+                    });
 
-            var x = prevX + headerWidth;
+            this.$lanes.append(svgLane.node);
+
+            var headerWidth = _.isUndefined(lane.headerWidth) ? defaultHeaderWidth : lane.headerWidth;
             var y = prevY + ratio * index;
 
             this.lanesAttrs[bodySelector] = {
                 ref: '.body',
                 'ref-height': ratio,
-                'ref-width': -x,
-                'ref-x': x,
+                'ref-width': -prevX,
+                'ref-x': prevX,
                 'ref-y': y
             };
 
@@ -677,7 +684,7 @@ joint.shapes.bpmn.PoolView = joint.dia.ElementView.extend({
                 width: headerWidth,
                 ref: '.body',
                 'ref-height': ratio,
-                'ref-x': x,
+                'ref-x': prevX,
                 'ref-y': y
             };
 
@@ -694,7 +701,7 @@ joint.shapes.bpmn.PoolView = joint.dia.ElementView.extend({
             if (lane.sublanes) {
 
                 // recursively render any child lanes
-                this.renderSublanes(lane.sublanes, x, y, ratio);
+                this.renderSublanes(lane.sublanes, prevX + headerWidth, y, ratio, lanePath);
             }
 
         }, this);
@@ -843,23 +850,21 @@ joint.shapes.bpmn.Conversation = joint.dia.Element.extend({
 
         switch (type) {
 
-        case 'conversation':
+            case 'conversation':
 
-            cell.attr('polygon/stroke-width', 1);
+                cell.attr('polygon/stroke-width', 1);
 
-            break;
+                break;
 
-        case 'call-conversation':
+            case 'call-conversation':
 
-            cell.attr('polygon/stroke-width', 4);
+                cell.attr('polygon/stroke-width', 4);
 
-            break;
+                break;
 
-        default:
+            default:
 
-            throw 'BPMN: Unknown Conversation Type: ' + type;
-
-            break;
+                throw 'BPMN: Unknown Conversation Type: ' + type;
         }
     }
 
@@ -1159,86 +1164,86 @@ joint.shapes.bpmn.Flow = joint.dia.Link.extend({
 
         switch (type) {
 
-        case 'default':
+            case 'default':
 
-            attrs = {
-                '.marker-source': {
-                    d: 'M 0 5 L 20 5 M 20 0 L 10 10',
-                    fill: 'none'
-                }
-            };
+                attrs = {
+                    '.marker-source': {
+                        d: 'M 0 5 L 20 5 M 20 0 L 10 10',
+                        fill: 'none'
+                    }
+                };
 
-            break;
+                break;
 
-        case 'conditional':
+            case 'conditional':
 
-            attrs = {
-                '.marker-source': {
-                    d: 'M 20 8 L 10 0 L 0 8 L 10 16 z',
-                    fill: '#FFF'
-                }
-            };
+                attrs = {
+                    '.marker-source': {
+                        d: 'M 20 8 L 10 0 L 0 8 L 10 16 z',
+                        fill: '#FFF'
+                    }
+                };
 
-            break;
+                break;
 
-        case 'normal':
+            case 'normal':
 
-            attrs = {};
+                attrs = {};
 
-            break;
+                break;
 
-        case 'message':
+            case 'message':
 
-            attrs = {
-                '.marker-target': {
-                    fill: '#FFF'
-                },
-                '.connection': {
-                    'stroke-dasharray': '4,4'
-                }
-            };
+                attrs = {
+                    '.marker-target': {
+                        fill: '#FFF'
+                    },
+                    '.connection': {
+                        'stroke-dasharray': '4,4'
+                    }
+                };
 
-            break;
+                break;
 
-        case 'association':
+            case 'association':
 
-            attrs = {
-                '.marker-target': {
-                    d: 'M 0 0'
-                },
-                '.connection': {
-                    'stroke-dasharray': '4,4'
-                }
-            };
+                attrs = {
+                    '.marker-target': {
+                        d: 'M 0 0'
+                    },
+                    '.connection': {
+                        'stroke-dasharray': '4,4'
+                    }
+                };
 
-            break;
+                break;
 
-        case 'conversation':
+            case 'conversation':
 
-            // The only way how to achieved 'spaghetti insulation effect' on links is to
-            // have the .connection-wrap covering the inner part of the .connection.
-            // The outer part of the .connection then looks like two parallel lines.
-            attrs = {
-                '.marker-target': {
-                    d: 'M 0 0'
-                },
-                '.connection': {
-                    'stroke-width': '7px'
-                },
-                '.connection-wrap': {
-                    // As the css takes priority over the svg attributes, that's only way
-                    // how to overwrite default jointjs styling.
-                    style: 'stroke: #fff; stroke-width: 5px; opacity: 1;',
-                    onMouseOver: "var s=this.style;s.stroke='#000';s.strokeWidth=15;s.opacity=.4",
-                    onMouseOut: "var s=this.style;s.stroke='#fff';s.strokeWidth=5;s.opacity=1"
-                }
-            };
+                // The only way how to achieved 'spaghetti insulation effect' on links is to
+                // have the .connection-wrap covering the inner part of the .connection.
+                // The outer part of the .connection then looks like two parallel lines.
+                attrs = {
+                    '.marker-target': {
+                        d: 'M 0 0'
+                    },
+                    '.connection': {
+                        'stroke-width': '7px'
+                    },
+                    '.connection-wrap': {
+                        // As the css takes priority over the svg attributes, that's only way
+                        // how to overwrite default jointjs styling.
+                        style: 'stroke: #fff; stroke-width: 5px; opacity: 1;',
+                        onMouseOver: "var s=this.style;s.stroke='#000';s.strokeWidth=15;s.opacity=.4",
+                        onMouseOut: "var s=this.style;s.stroke='#fff';s.strokeWidth=5;s.opacity=1"
+                    }
+                };
 
-            break;
+                break;
 
-        default:
+            default:
 
-            throw 'BPMN: Unknown Flow Type: ' + type;
+                throw 'BPMN: Unknown Flow Type: ' + type;
         }
 
         cell.attr(_.merge({}, this.defaults.attrs, attrs));

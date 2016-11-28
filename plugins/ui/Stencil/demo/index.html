@@ -8,19 +8,25 @@
         <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
 
         <style>
-            #paper, #paper2 {
+            #paper, #paper2, #paper3 {
                 border: 1px solid gray;
                 float: left;
                 position: relative;
                 width: 500px;
-                height: 300px;
+                height: 400px;
                 overflow: hidden;
             }
-            #stencil, #stencil2 {
+            #paper {
+                height: 200px;
+            }
+            #stencil, #stencil2, #stencil3 {
                position: relative;
                width: 200px;
-               height: 200px;
+               height: 400px;
                float: left;
+            }
+            #stencil {
+               height: 200px;
             }
             .stencil > .content {
                border: 1px solid gray;
@@ -40,6 +46,11 @@
 
         <div id="stencil2"></div>
         <div id="paper2"></div>
+
+        <h2 style="clear: both">Stencil with groups and group layouts</h2>
+
+        <div id="stencil3"></div>
+        <div id="paper3"></div>
 
         <!-- Dependencies: -->
         <script src="../../../../node_modules/jquery/dist/jquery.js"></script>

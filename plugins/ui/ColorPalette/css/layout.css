@@ -1,0 +1,70 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-color-palette .select-box-option-content {
+    width: 25px;
+    display: inline-block;
+    margin: 5px;
+    padding: 0;
+    height: 25px;
+    overflow: hidden;
+}
+.joint-color-palette.joint-select-box-options {
+    width: 160px;
+    margin-top: -7px;
+}
+.joint-color-palette .select-box-selection {
+    padding: 4px 24px 0 4px;
+}
+.joint-color-palette .select-box-selection .select-box-option-content {
+    float: none;
+    margin: 0;
+    width: 30px;
+    height: 20px;
+}
+.joint-color-palette .select-box-option.selected:after {
+    right: 3px;
+}
+.joint-color-palette .select-box-option-content .select-box-option-icon {
+    width: 21px;
+    height: 21px;
+    max-height: none;
+}
+.joint-color-palette .select-box-selection .select-box-option-icon {
+  margin-top: -2px;
+  margin-left: -2px;
+}
+
+/*  Arrow  */
+.joint-select-box.joint-color-palette .select-box-options-arrow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  pointer-events: none;
+  margin-left: -2px;
+  margin-top: -16px;
+}
+.joint-select-box.joint-color-palette .select-box-options-arrow:after {
+  content: ' ';
+  position: absolute;
+  left: -6px;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  pointer-events: none;
+}
+/*  Arrow  */

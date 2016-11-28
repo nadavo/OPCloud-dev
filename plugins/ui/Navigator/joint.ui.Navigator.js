@@ -1,8 +1,8 @@
-/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
 
 Copyright (c) 2015 client IO
 
- 2016-03-03 
+ 2016-09-20 
 
 
 This Source Code Form is subject to the terms of the Rappid Academic License
@@ -28,16 +28,11 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 //
 // nav.$el.appendTo('#navigator');
 // nav.render();
-
-// TODO: fix zooming for 'grid' option != 0
-
 joint.ui.Navigator = joint.mvc.View.extend({
 
     className: 'navigator',
 
     events: {
-        'mousedown .paper': 'scrollTo',
-        'touchstart .paper': 'scrollTo',
         'mousedown': 'startAction',
         'touchstart': 'startAction'
     },
@@ -45,7 +40,11 @@ joint.ui.Navigator = joint.mvc.View.extend({
     options: {
         paperConstructor: joint.dia.Paper,
         paperOptions: {},
-        zoomOptions: { min: 0.1, max: 10 },
+        /**
+         * @deprecated use zoom instead
+         */
+        zoomOptions: null,
+        zoom: { min: 0.5, max: 2 },
         width: 300,
         height: 200,
         padding: 10
@@ -53,7 +52,14 @@ joint.ui.Navigator = joint.mvc.View.extend({
 
     init: function() {
 
-        _.bindAll(this, 'updateCurrentView', 'doAction', 'stopAction');
+        if (this.options.zoomOptions) {
+            // backward compatibility
+            this.options.zoom = _.extend({}, this.options.zoom, this.options.zoomOptions);
+        } else if (this.options.zoom) {
+            this.options.zoom = _.defaults({}, this.options.zoom, this.constructor.prototype.options.zoom);
+        }
+
+        _.bindAll(this, 'updateCurrentView', 'doAction', 'stopAction', 'scrollTo');
 
         // The updateCurrentView is called everytime paperScroller's scrollbars change
         // or the paper is resized. Resize of the paper is normally also acompanied
@@ -76,6 +82,11 @@ joint.ui.Navigator = joint.mvc.View.extend({
             interactive: false
         }, this.options.paperOptions));
 
+        targetPaper.$el.on({
+            'mousedown.navigator': this.scrollTo,
+            'touchstart.navigator': this.scrollTo
+        });
+
         $(document.body).on({
             'mousemove.navigator touchmove.navigator': this.doAction,
             'mouseup.navigator touchend.navigator': this.stopAction
@@ -89,8 +100,13 @@ joint.ui.Navigator = joint.mvc.View.extend({
         // Adding cell views requires the paper element to be appended to the DOM.
         this.sourcePaper.model.get('cells').each(this.targetPaper.renderView, this.targetPaper);
 
-        this.$currentViewControl = $('<div>').addClass('current-view-control');
-        this.$currentView = $('<div>').addClass('current-view').append(this.$currentViewControl);
+        this.$currentView = $('<div>').addClass('current-view');
+
+        if (this.options.zoom) {
+            var $currentViewControl = $('<div>').addClass('current-view-control');
+            this.$currentView.append($currentViewControl);
+        }
+
         this.$el.append(this.$currentView).css({
             width: this.options.width,
             height: this.options.height,
@@ -184,9 +200,10 @@ joint.ui.Navigator = joint.mvc.View.extend({
                 break;
 
             case 'zooming':
+
                 // dx/width is the ratio of the original width and the requested width
                 var levelDiff =  - dx / this.currentViewGeometry.width;
-                this.options.paperScroller.zoom(levelDiff, this.options.zoomOptions);
+                this.options.paperScroller.zoom(levelDiff, this.options.zoom);
                 break;
         }
 
@@ -196,7 +213,7 @@ joint.ui.Navigator = joint.mvc.View.extend({
 
     stopAction: function() {
 
-        delete this._action;
+        this._action = null;
     },
 
     // Scrolls the view to the position determined by the event.
@@ -227,6 +244,7 @@ joint.ui.Navigator = joint.mvc.View.extend({
 
     onRemove: function() {
 
+        targetPaper.$el.off('.navigator');
         this.targetPaper.remove();
         this.options.paperScroller.$el.off('.navigator');
         $(document.body).off('.navigator');

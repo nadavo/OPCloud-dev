@@ -1,0 +1,53 @@
+/*! Rappid v2.0.0 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-09-20 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.joint-tooltip.joint-theme-dark {
+   color: #fff;
+   font-size: 14px;
+   background: #5e6366;
+   border: none;
+   border-radius: 10px;
+   box-shadow: 0 1px 1px #aaa;
+}
+
+.joint-tooltip.joint-theme-dark.left .tooltip-arrow-mask {
+   border-right-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.right .tooltip-arrow-mask {
+   border-left-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.top .tooltip-arrow-mask {
+   border-bottom-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.bottom .tooltip-arrow-mask {
+   border-top-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.left .tooltip-arrow {
+   border-right-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.right .tooltip-arrow {
+   border-left-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.top .tooltip-arrow {
+   border-bottom-color: #5e6366;
+}
+
+.joint-tooltip.joint-theme-dark.bottom .tooltip-arrow {
+   border-top-color: #5e6366;
+}
