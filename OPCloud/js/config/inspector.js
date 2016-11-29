@@ -58,9 +58,8 @@ App.config = App.config || {};
         ],
 
         strokeStyle: [
-            { value: '0', content: 'Solid' },
-            { value: '2,5', content: 'Dotted' },
-            { value: '10,5', content: 'Dashed' }
+            { value: '0', content: 'Systemic'},
+            { value: '10,5', content: 'Environmental'}
         ],
 
         PhysInfObj: [
@@ -429,10 +428,18 @@ App.config = App.config || {};
                             when: { ne: { 'attrs/rect/stroke': 'transparent' }},
                             index: 3
                         },
+                        'filter': {
+                            type: 'select-box',
+                            label: 'Essence',
+                            options: options.PhysInfObj,
+                            defaultValue: 'url(#dropShadowv-21979730529)',
+                            group: 'presentation',
+                            index: 4,
+                        },
                         'stroke-dasharray': {
                             type: 'select-box',
                             options: options.strokeStyle,
-                            label: 'Outline style',
+                            label: 'Affiliation',
                             group: 'presentation',
                             when: {
                                 and: [
@@ -440,14 +447,6 @@ App.config = App.config || {};
                                     { ne: { 'attrs/rect/stroke-width': 0 }}
                                 ]
                             },
-                            index: 4
-                        },
-                        'filter': {
-                            type: 'select-box',
-                            label: 'Physical/Informatical',
-                            options: options.PhysInfObj,
-                            defaultValue: 'url(#dropShadowv-21979730529)',
-                            group: 'presentation',
                             index: 5
                         }
                     }
@@ -536,25 +535,25 @@ App.config = App.config || {};
                             when: { ne: { 'attrs/circle/stroke': 'transparent' }},
                             index: 3
                         },
-                        'stroke-dasharray': {
-                            type: 'select-box',
-                            options: options.strokeStyle,
-                            label: 'Outline style',
-                            group: 'presentation',
-                            when: {
-                                and: [
-                                    { ne: { 'attrs/circle/stroke': 'transparent' }},
-                                    { ne: { 'attrs/circle/stroke-width': 0 }}
-                                ]
-                            },
-                            index: 4
-                        },
                         'filter': {
                             type: 'select-box',
-                            label: 'Physical/Informatical',
+                            label: 'Essence',
                             options: options.PhysInfProc,
                             defaultValue: 'url(#dropShadowv-2-1994481503)',
                             group: 'presentation',
+                            index: 4
+                        },
+                        'stroke-dasharray': {
+                            type: 'select-box',
+                            options: options.strokeStyle,
+                            label: 'Affiliation',
+                            group: 'presentation',
+                            when: {
+                                and: [
+                                    {ne: {'attrs/circle/stroke': 'transparent'}},
+                                    {ne: {'attrs/circle/stroke-width': 0}}
+                                ]
+                            },
                             index: 5
                         }
                     }
