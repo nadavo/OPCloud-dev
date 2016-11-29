@@ -63,12 +63,12 @@ App.config = App.config || {};
         ],
 
         PhysInfObj: [
-            {content: 'Physical', value:'url(#dropShadowv-21979730529)'},
+            {content: 'Physical', value:'url(#dropShadowv-51979730529)'},
             {content: 'Informatical', value:'null'},
         ],
 
         PhysInfProc: [
-            {content: 'Physical', value:'url(#dropShadowv-51979730529)'},
+            {content: 'Physical', value:'url(#dropShadowv-5-1994481503)'},
             {content: 'Informatical', value:'null'},
         ],
 
@@ -429,15 +429,14 @@ App.config = App.config || {};
                             index: 3
                         },
                         'filter': {
-                            type: 'select-box',
+                            type: 'select',
                             label: 'Essence',
                             options: options.PhysInfObj,
-                            defaultValue: 'url(#dropShadowv-21979730529)',
                             group: 'presentation',
                             index: 4,
                         },
                         'stroke-dasharray': {
-                            type: 'select-box',
+                            type: 'select',
                             options: options.strokeStyle,
                             label: 'Affiliation',
                             group: 'presentation',
@@ -536,15 +535,14 @@ App.config = App.config || {};
                             index: 3
                         },
                         'filter': {
-                            type: 'select-box',
+                            type: 'select',
                             label: 'Essence',
                             options: options.PhysInfProc,
-                            defaultValue: 'url(#dropShadowv-2-1994481503)',
                             group: 'presentation',
                             index: 4
                         },
                         'stroke-dasharray': {
-                            type: 'select-box',
+                            type: 'select',
                             options: options.strokeStyle,
                             label: 'Affiliation',
                             group: 'presentation',
