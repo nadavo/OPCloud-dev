@@ -6,24 +6,19 @@ html, body {
 body {
     -webkit-user-select: none;
     -moz-user-select: -moz-none;
-    -khtml-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: Arial;
     font-family: "Source Sans Pro", sans-serif;
+    text-align:center;
 }
 
 h1 {
-    position: absolute;
-    z-index: 1;
-    top: 8px;
-    color: white;
-    margin: 0;
-    padding: 0;
-    font-size: 18px;
-    width: 240px;
+    font-size: 90px;
     text-align: center;
+    color: steelblue;
+    font-family: Calibri;
 }
+
 button {
     display: inline-block;
     border-radius: 4px;
@@ -37,8 +32,6 @@ button {
     margin: 5px;
     position: relative;
     background-color: #4CAF50;
-    color: #FFFFFF;
-    text-align: center;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
     text-decoration: none;
@@ -73,7 +66,7 @@ button:active:after {
 }
 
 #button1:hover {
-    background-color:#221199 ;
+    background-color:#333 ;
     color: white;
     width: 90%
 }
