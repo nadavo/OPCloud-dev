@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+
+        <title>Navigator</title>
+
+        <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
+
+        <style>
+            #paper {
+                border: 1px solid gray;
+                position: relative;
+                width: 500px;
+                height: 300px;
+                overflow: hidden;
+                background-color: lightgray;
+            }
+            #navigator {
+                border: 1px solid black;
+                float: left;
+            }
+            .paper {
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+
+        <p></p>
+
+        <div id="paper"></div>
+        <div id="navigator"></div>
+        <button id="zoom-in">+</button>
+        <button id="zoom-out">-</button>
+
+        <!-- Dependencies: -->
+        <script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+        <script src="../../../../node_modules/lodash/index.js"></script>
+        <script src="../../../../node_modules/backbone/backbone.js"></script>
+
+        <script src="../../../../build/rappid.js"></script>
+
+        <script src="./index.js"></script>
+
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8"/>
+
+        <title>Inspector</title>
+
+        <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
+
+        <style>
+            #paper {
+                border: 1px solid gray;
+                float: left;
+                position: relative;
+                width: 500px;
+                height: 300px;
+                overflow: hidden;
+            }
+            .inspector-container {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 240px;
+                background-color: #333;
+                color: #bcbcbc;
+            }
+            .inspector .list[data-attribute="labels"] .object-property[data-property="position"] label,
+            .inspector .list[data-attribute="labels"] .object-property[data-property="attrs/text/text"] label {
+                display: inline-block;
+                line-height: 20px;
+                width: 50px;
+            }
+            .inspector .list[data-attribute="labels"] .object-property[data-property="position"] input,
+            .inspector .list[data-attribute="labels"] .object-property[data-property="attrs/text/text"] input {
+                width: 135px;
+            }
+        </style>
+    </head>
+    <body>
+
+      <button id="btn-undo">Undo</button>
+      <button id="btn-redo">Redo</button>
+        <p>Try to click an element or link option tool to bring up an Inspector.</p>
+
+        <div id="paper"></div>
+        <div class="inspector-container"></div>
+
+        <!-- Dependencies: -->
+        <script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+        <script src="../../../../node_modules/lodash/index.js"></script>
+        <script src="../../../../node_modules/backbone/backbone.js"></script>
+
+        <script src="../../../../build/rappid.js"></script>
+
+        <script src="./defs.js"></script>
+        <script src="./index.js"></script>
+
+    </body>
+</html>

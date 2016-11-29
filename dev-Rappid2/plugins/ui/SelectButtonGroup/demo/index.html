@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8"/>
+
+    <title>ui.SelectButtonGroup</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
+
+    <style>
+      #select-button-groups {
+         margin: 50px;
+      }
+      .select-button-group {
+          margin: 50px;
+      }
+      .select-thick .select-button-group-button {
+          margin-bottom: 2px;
+      }
+      .select-thick .select-button-group-button.selected:after {
+          content: '\2714';
+          display: block;
+          position: absolute;
+          bottom: 0;
+          right: -2px;
+          width: 15px;
+          height: 15px;
+          line-height: 19px;
+          font-size: 12px;
+          vertical-align: middle;
+          color: white;
+          background-color: #007ae6;
+          border-top-left-radius: 5px;
+      }      
+    </style>
+  </head>
+  <body>
+    
+    <div id="select-button-groups"></div>
+
+    <!-- Dependencies: -->
+    <script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../../../node_modules/lodash/index.js"></script>
+    <script src="../../../../node_modules/backbone/backbone.js"></script>
+
+    <script src="../../../../build/rappid.js"></script>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
