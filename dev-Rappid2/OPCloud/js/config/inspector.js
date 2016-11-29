@@ -213,24 +213,24 @@ App.config = App.config || {};
                             index: 1,
                         }
                         /*fill: {
-                            type: 'color-palette',
-                            options: options.colorPalette,
-                            group: 'marker-target',
-                            label: 'Color',
-                            when: { ne: { 'attrs/.marker-target/transform': 'scale(0.001)'}},
-                            index: 2
-                        },*/
+                         type: 'color-palette',
+                         options: options.colorPalette,
+                         group: 'marker-target',
+                         label: 'Color',
+                         when: { ne: { 'attrs/.marker-target/transform': 'scale(0.001)'}},
+                         index: 2
+                         },*/
                         /*transform: {
-                            type: 'range',
-                            min: 1,
-                            max: 15,
-                            unit: 'x scale',
-                            defaultValue: 'scale(1)',
-                            valueRegExp: '(scale\\()(.*)(\\))',
-                            group: 'marker-target',
-                            label: 'target arrowhead size',
-                            index: 3
-                        }*/
+                         type: 'range',
+                         min: 1,
+                         max: 15,
+                         unit: 'x scale',
+                         defaultValue: 'scale(1)',
+                         valueRegExp: '(scale\\()(.*)(\\))',
+                         group: 'marker-target',
+                         label: 'target arrowhead size',
+                         index: 3
+                         }*/
                         /*d: {
                          type: 'select-box',
                          options: options.arrowheadType,
@@ -248,41 +248,41 @@ App.config = App.config || {};
                          }
                          }*/
                     },
-                    smooth: {type: 'toggle', group: 'connection', index: 4},
-                    manhattan: {type: 'toggle', group: 'connection', index: 5},
-                    labels: {
-                        type: 'list',
-                        group: 'labels',
-                        attrs: {
-                            label: {'data-tooltip': 'Set (possibly multiple) labels for the link'},
-                            item: {
-                                type: 'object',
-                                properties: {
-                                    position: {
-                                        type: 'range',
-                                        min: 0.1,
-                                        max: .9,
-                                        step: .1,
-                                        defaultValue: .5,
-                                        label: 'position',
-                                        index: 2,
-                                        attrs: {label: {'data-tooltip': 'Position the label relative to the source of the link'}}
-                                    },
-                                    attrs: {
-                                        text: {
-                                            text: {
-                                                type: 'text',
-                                                label: 'text',
-                                                defaultValue: 'label',
-                                                index: 1,
-                                                attrs: {label: {'data-tooltip': 'Set text of the label'}}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    /*smooth: {type: 'toggle', group: 'connection', index: 4},
+                     manhattan: {type: 'toggle', group: 'connection', index: 5},
+                     labels: {
+                     type: 'list',
+                     group: 'labels',
+                     attrs: {
+                     label: {'data-tooltip': 'Set (possibly multiple) labels for the link'},
+                     item: {
+                     type: 'object',
+                     properties: {
+                     position: {
+                     type: 'range',
+                     min: 0.1,
+                     max: .9,
+                     step: .1,
+                     defaultValue: .5,
+                     label: 'position',
+                     index: 2,
+                     attrs: {label: {'data-tooltip': 'Position the label relative to the source of the link'}}
+                     },
+                     attrs: {
+                     text: {
+                     text: {
+                     type: 'text',
+                     label: 'text',
+                     defaultValue: 'label',
+                     index: 1,
+                     attrs: {label: {'data-tooltip': 'Set text of the label'}}
+                     }
+                     }
+                     }
+                     }
+                     }
+                     }
+                     },*/
                     /* router: {
                      name: {
                      type: 'select-button-group',
@@ -312,55 +312,55 @@ App.config = App.config || {};
                      index: 3
                      }
                      },*/
-                    /*labels: {
-                     type: 'list',
-                     group: 'labels',
-                     label: 'Labels',
-                     attrs: {
-                     label: {
-                     'data-tooltip': 'Set (possibly multiple) labels for the link',
-                     'data-tooltip-position': 'right',
-                     'data-tooltip-position-selector': '.joint-inspector'
-                     }
-                     },
-                     item: {
-                     type: 'object',
-                     properties: {
-                     attrs: {
-                     text: {
-                     text: {
-                     type: 'text',
-                     label: 'text',
-                     defaultValue: 'label',
-                     index: 1,
-                     attrs: {
-                     label: {
-                     'data-tooltip': 'Set text of the label',
-                     'data-tooltip-position': 'right',
-                     'data-tooltip-position-selector': '.joint-inspector'
-                     }
-                     }
-                     }
-                     }
-                     },
-                     position: {
-                     type: 'select-box',
-                     options: options.labelPosition || [],
-                     defaultValue: 0.5,
-                     label: 'Position',
-                     index: 2,
-                     attrs: {
-                     label: {
-                     'data-tooltip': 'Position the label relative to the source of the link',
-                     'data-tooltip-position': 'right',
-                     'data-tooltip-position-selector': '.joint-inspector'
-                     }
-                     }
-                     }
-                     }
-                     }
-                     }*/
-                }
+                    labels: {
+                        type: 'list',
+                        group: 'labels',
+                        label: 'Labels',
+                        attrs: {
+                            label: {
+                                'data-tooltip': 'Set (possibly multiple) labels for the link',
+                                'data-tooltip-position': 'right',
+                                'data-tooltip-position-selector': '.joint-inspector'
+                            }
+                        },
+                        item: {
+                            type: 'object',
+                            properties: {
+                                attrs: {
+                                    text: {
+                                        text: {
+                                            type: 'text',
+                                            label: 'text',
+                                            defaultValue: 'label',
+                                            index: 1,
+                                            attrs: {
+                                                label: {
+                                                    'data-tooltip': 'Set text of the label',
+                                                    'data-tooltip-position': 'right',
+                                                    'data-tooltip-position-selector': '.joint-inspector'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                position: {
+                                    type: 'select-box',
+                                    options: options.labelPosition || [],
+                                    defaultValue: 0.5,
+                                    label: 'Position',
+                                    index: 2,
+                                    attrs: {
+                                        label: {
+                                            'data-tooltip': 'Position the label relative to the source of the link',
+                                            'data-tooltip-position': 'right',
+                                            'data-tooltip-position-selector': '.joint-inspector'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    }
                 },
                 groups: {
                     connection: {
