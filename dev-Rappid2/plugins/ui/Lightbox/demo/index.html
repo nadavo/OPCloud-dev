@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8"/>
+
+    <title>ui.Lightbox</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../build/rappid.css" />
+
+    <style>
+      .images {
+         width: 720px;
+         margin: 50px auto;
+      }
+      .images > div {
+          float: left;
+          background-color: black;
+          width: 200px;
+          height: 140px;
+          line-height: 140px;
+          text-align: center;
+          margin-right: 10px;
+          margin-bottom: 10px;
+      }
+      .images img {
+          max-width: 90%;
+          max-height: 90%;
+          vertical-align: middle;
+          cursor: pointer;
+          border: 5px solid black;
+      }
+    </style>
+    
+  </head>
+  <body>
+
+    <div class="images">
+      <div><img src="./images/amsterdam1.jpg" /></div>
+      <div><img src="./images/prague1.jpg" /></div>
+      <div><img src="./images/amsterdam2.jpg" /></div>
+      <div><img src="./images/prague2.jpg" /></div>
+      <div><img src="./images/amsterdam3.jpg" /></div>
+      <div><img src="../../ContextToolbar/demo/images/icon-trash.png" /></div>
+    </div>
+
+    <!-- Dependencies: -->
+    <script src="../../../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../../../node_modules/lodash/index.js"></script>
+    <script src="../../../../node_modules/backbone/backbone.js"></script>
+
+    <script src="../../../../build/rappid.js"></script>
+
+    <script src="./index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+/*! Rappid v1.7.1 - HTML5 Diagramming Framework
+
+Copyright (c) 2015 client IO
+
+ 2016-03-03 
+
+
+This Source Code Form is subject to the terms of the Rappid Academic License
+, v. 1.0. If a copy of the Rappid License was not distributed with this
+file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
+ or from the Rappid archive as was distributed by client IO. See the LICENSE file.*/
+
+
+.popup {
+    position: absolute;
+    z-index: 1000;
+    border: 2px solid #007ae6;
+    box-shadow: inset 2px 2px 0 #cbe5fa, 2px -2px 0 #cbe5fa, -2px -2px 0 #cbe5fa, inset -2px -2px 0 #cbe5fa, -2px 2px 0 #cbe5fa, 2px 2px 0 #cbe5fa, 4px 4px 0 #e0e0e0;
+    background-color: white;
+}
+
+/* Arrow styling. */
+
+.popup:before,
+.popup:after {
+    content: ' ';
+    height: 0;
+    position: absolute;
+    width: 0;
+    border: 10px solid transparent; /* arrow size */
+}
+
+/* top-stacked, smaller arrow */
+.popup:before {
+    border-bottom-color: #fff;  /* arrow color */
+
+    /* positioning */
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    margin-left: -10px;
+    z-index: 2;
+}
+
+/* arrow which acts as a background shadow */
+.popup:after {
+    border-bottom-color: #007ae6;  /* arrow color */
+
+    /* positioning */
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    margin-left: -10px;
+    z-index: 1;
+}
