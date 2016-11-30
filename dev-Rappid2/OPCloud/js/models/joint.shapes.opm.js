@@ -12,7 +12,7 @@ joint.shapes.opm.Link = joint.dia.Link.extend({
         type: 'opm.Link',
         source: g.point(50,100),
         target: g.point(100,150),
-        attrs: { fill: '#f2f2f2', '.marker-target': { fill: '#f2f2f2', d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', 'stroke-width': 2 }, '.connection':{'stroke-width': 2} }
+        attrs: { fill: '#f2f2f2', '.marker-target': { fill: '#f2f2f2', d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', 'stroke-width': 2 }, '.connection':{'stroke-width': 2}, '.marker-source': {fill: '#f2f2f2', 'stroke-width': 2} }
     }, joint.dia.Link.prototype.defaults)
 });
 
@@ -30,7 +30,7 @@ joint.shapes.opm.AgentLink = joint.dia.Link.extend({
         type: 'opm.AgentLink',
         source: g.point(50,100),
         target: g.point(100,150),
-        attrs : { fill: 'black', '.marker-target': { fill: '#f2f2f2' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2},'.connection':{'stroke-width': 2} }
+        attrs : { fill: '#000000', '.marker-target': { fill: '#000000' ,d: 'M 10 10 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0','stroke-width': 2},'.connection':{'stroke-width': 2} }
     }, joint.dia.Link.prototype.defaults)
 });
 

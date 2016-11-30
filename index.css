@@ -9,14 +9,14 @@ body {
     -ms-user-select: none;
     user-select: none;
     font-family: "Source Sans Pro", sans-serif;
-    text-align:center;
+    text-align: center;
 }
 
 h1 {
     font-size: 90px;
     text-align: center;
     color: steelblue;
-    font-family: Calibri;
+    font-family: "Ubuntu", sans-serif;
 }
 
 button {
@@ -37,7 +37,7 @@ button {
     text-decoration: none;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 button:after {
@@ -66,17 +66,18 @@ button:active:after {
 }
 
 #button1:hover {
-    background-color:#333 ;
+    background-color: #333;
     color: white;
     width: 90%
 }
+
 #button2 {
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
 
 #button2:hover {
-    background-color:#47A2ED;
+    background-color: #47A2ED;
     color: white;
     width: 90%
 }
