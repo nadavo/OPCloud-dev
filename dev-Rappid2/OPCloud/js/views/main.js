@@ -35,6 +35,7 @@ var App = window.App || {};
             this.initializeToolbar();
             this.initializeKeyboardShortcuts();
             this.initializeTooltips();
+            this.initializeValidator();
         },
 
         // Create a graph, paper and wrap the paper in a PaperScroller.
@@ -242,6 +243,13 @@ var App = window.App || {};
                     this.createInspector(cell);
                 }
             }, this);
+        },
+
+        initializeValidator: function() {
+
+            this.validator = new joint.dia.Validator({commandManager: this.commandManager});
+            opmRuleSet(this.validator);
+
         },
 
         initializeNavigator: function() {
