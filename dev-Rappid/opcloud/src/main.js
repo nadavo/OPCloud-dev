@@ -41,7 +41,7 @@ var Rappid = Backbone.Router.extend({
         this.initializeToolbar();
         // Intentionally commented out. See the `initializeValidator()` method for reasons.
         // Uncomment for demo purposes.
-        // this.initializeValidator();
+        this.initializeValidator();
         // Commented out by default. You need to run `node channelHub.js` in order to make
         // channels working. See the documentation to the joint.com.Channel plugin for details.
         //this.initializeChannel('ws://jointjs.com:4141');
@@ -470,39 +470,43 @@ var Rappid = Backbone.Router.extend({
     },
 
     initializeValidator: function() {
-
-        // This is just for demo purposes. Every application has its own validation rules or no validation
-        // rules at all.
-        
-        this.validator = new joint.dia.Validator({ commandManager: this.commandManager });
-
-        this.validator.validate('change:position change:size add', _.bind(function(err, command, next) {
-
-            if (command.action === 'add' && command.batch) return next();
-
-            var cell = command.data.attributes || this.graph.getCell(command.data.id).toJSON();
-            var area = g.rect(cell.position.x, cell.position.y, cell.size.width, cell.size.height);
-
-            if (_.find(this.graph.getElements(), function(e) {
-
-	        var position = e.get('position');
-                var size = e.get('size');
-	        return (e.id !== cell.id && area.intersect(g.rect(position.x, position.y, size.width, size.height)));
-
-            })) return next("Another cell in the way!");
-        }, this));
-
-        this.validator.on('invalid',function(message) {
-            
-            $('.statusbar-container').text(message).addClass('error');
-
-            _.delay(function() {
-
-                $('.statusbar-container').text('').removeClass('error');
-                
-            }, 1500);
-        });
+        //This validator is implemented in opm.validator.
+        this.valadator = new joint.dia.opm.Validator({commandManager: this.commandManager })
     },
+    // initializeValidator: function() {
+    //
+    //     // This is just for demo purposes. Every application has its own validation rules or no validation
+    //     // rules at all.
+    //
+    //     this.validator = new joint.dia.Validator({ commandManager: this.commandManager });
+    //
+    //     this.validator.validate('change:position change:size add', _.bind(function(err, command, next) {
+    //
+    //         if (command.action === 'add' && command.batch) return next();
+    //
+    //         var cell = command.data.attributes || this.graph.getCell(command.data.id).toJSON();
+    //         var area = g.rect(cell.position.x, cell.position.y, cell.size.width, cell.size.height);
+    //
+    //         if (_.find(this.graph.getElements(), function(e) {
+    //
+	 //        var position = e.get('position');
+    //             var size = e.get('size');
+	 //        return (e.id !== cell.id && area.intersect(g.rect(position.x, position.y, size.width, size.height)));
+    //
+    //         })) return next("Another cell in the way!");
+    //     }, this));
+    //
+    //     this.validator.on('invalid',function(message) {
+    //
+    //         $('.statusbar-container').text(message).addClass('error');
+    //
+    //         _.delay(function() {
+    //
+    //             $('.statusbar-container').text('').removeClass('error');
+    //
+    //         }, 1500);
+    //     });
+    // },
 
     initializeToolbar: function() {
 
