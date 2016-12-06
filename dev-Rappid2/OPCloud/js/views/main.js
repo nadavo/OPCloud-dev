@@ -248,7 +248,7 @@ var App = window.App || {};
         initializeValidator: function() {
 
             this.validator = new joint.dia.Validator({commandManager: this.commandManager});
-            opmRuleSet(this.validator);
+            opmRuleSet(this.validator, this.graph);
 
         },
 
