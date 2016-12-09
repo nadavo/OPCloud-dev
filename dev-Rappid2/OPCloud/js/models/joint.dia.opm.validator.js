@@ -9,6 +9,14 @@ function opmRuleSet (validator, graph) {
                     if ( link.getSourceElement().attributes.type === 'opm.Object' ) {
                         return next('Objects cannot be linked together.');
                     }
+                    else
+                    {
+                        graph.updateJSON();
+                    }
+                }
+                else
+                {
+                    graph.updateJSON();
                 }
             }
             return next();

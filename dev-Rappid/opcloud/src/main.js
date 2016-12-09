@@ -471,7 +471,7 @@ var Rappid = Backbone.Router.extend({
 
     initializeValidator: function() {
         //This validator is implemented in opm.validator.
-        this.valadator = new joint.dia.opm.Validator({commandManager: this.commandManager })
+        this.validator = new joint.dia.opm.Validator({commandManager: this.commandManager })
     },
     // initializeValidator: function() {
     //

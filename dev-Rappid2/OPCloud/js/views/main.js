@@ -36,6 +36,7 @@ var App = window.App || {};
             this.initializeKeyboardShortcuts();
             this.initializeTooltips();
             this.initializeValidator();
+            this.initializeGraphJSON();
         },
 
         // Create a graph, paper and wrap the paper in a PaperScroller.
@@ -351,7 +352,54 @@ var App = window.App || {};
             });
 
             this.paperScroller.centerContent();
+        },
+
+        initializeGraphJSON: function() {
+            this.graph.JSON = {}
+            this.graph.updateJSON = function () {
+                this.JSON = this.toJSON();
+                console.log("updateJSON() --- Graph JSON updated!", this.JSON);
+            };
+            _.bind(this.graph.updateJSON, this.graph);
         }
     });
 
 })(_, joint);
+
+
+/*
+initializeValidator: function() {
+
+    // This is just for demo purposes. Every application has its own validation rules or no validation
+    // rules at all.
+
+    this.validator = new joint.dia.Validator({ commandManager: this.commandManager });
+
+    this.validator.validate('change:position change:size add', _.bind(function(err, command, next) {
+
+        if (command.action === 'add' && command.batch) return next();
+
+        var cell = command.data.attributes || this.graph.getCell(command.data.id).toJSON();
+        var area = g.rect(cell.position.x, cell.position.y, cell.size.width, cell.size.height);
+
+        if (_.find(this.graph.getElements(), function(e) {
+
+       var position = e.get('position');
+            var size = e.get('size');
+       return (e.id !== cell.id && area.intersect(g.rect(position.x, position.y, size.width, size.height)));
+
+        })) return next("Another cell in the way!");
+    }, this));
+
+    this.validator.on('invalid',function(message) {
+
+        $('.statusbar-container').text(message).addClass('error');
+
+        _.delay(function() {
+
+            $('.statusbar-container').text('').removeClass('error');
+
+        }, 1500);
+    });
+},
+*/
