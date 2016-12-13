@@ -98,7 +98,7 @@ joint.shapes.opm.Process = joint.shapes.opm.Generic.extend({
                 ry: 20,
                 cx: 30,
                 cy: 20,
-                filter: {name: 'dropShadow', args: {dx: 4, dy: 4, blur: 0, color: 'grey'}}
+                filter: {name: 'dropShadow', args: {dx: 6, dy: 6, blur: 0, color: 'grey'}}
             },
             'text': {
                 fill: 'black',
