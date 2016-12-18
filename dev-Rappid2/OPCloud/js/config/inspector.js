@@ -47,7 +47,7 @@ App.config = App.config || {};
                 attrs: {
                     '.marker-source': {
                         type: 'select-box',
-                        options: inspectorShapes.options.SourceLinkType,
+                        options: selectOptions.SourceLinkType,
                         defaultValue: {d:''},
                         group: 'marker-source',
                         label: 'Link Type',
@@ -55,7 +55,7 @@ App.config = App.config || {};
                     },
                     '.marker-target': {
                         type: 'select-box',
-                        options: inspectorShapes.options.DestLinkType,
+                        options: selectOptions.DestLinkType,
                         group: 'marker-target',
                         label: 'Link Type',
                         index: 1,
@@ -94,7 +94,7 @@ App.config = App.config || {};
                             },
                             position: {
                                 type: 'select-box',
-                                options: inspectorShapes.options.labelPosition,
+                                options: selectOptions.labelPosition,
                                 defaultValue: 0.5,
                                 label: 'Position',
                                 index: 2,
