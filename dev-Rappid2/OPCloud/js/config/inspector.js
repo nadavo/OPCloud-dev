@@ -44,90 +44,10 @@ App.config = App.config || {};
         //link parameters
         'opm.Link': {
             inputs: {
-                attrs: {
-                    '.marker-source': {
-                        type: 'select-box',
-                        options: selectOptions.SourceLinkType,
-                        defaultValue: {d:''},
-                        group: 'marker-source',
-                        label: 'Link Type',
-                        index: 1,
-                    },
-                    '.marker-target': {
-                        type: 'select-box',
-                        options: selectOptions.DestLinkType,
-                        group: 'marker-target',
-                        label: 'Link Type',
-                        index: 1,
-                    }
-                },
-                labels: {
-                    type: 'list',
-                    group: 'labels',
-                    label: 'Labels',
-                    attrs: {
-                        label: {
-                            'data-tooltip': 'Set (possibly multiple) labels for the link',
-                            'data-tooltip-position': 'right',
-                            'data-tooltip-position-selector': '.joint-inspector'
-                        }
-                    },
-                    item: {
-                        type: 'object',
-                        properties: {
-                            attrs: {
-                                text: {
-                                    text: {
-                                        type: 'text',
-                                        label: 'text',
-                                        defaultValue: 'label',
-                                        index: 1,
-                                        attrs: {
-                                            label: {
-                                                'data-tooltip': 'Set text of the label',
-                                                'data-tooltip-position': 'right',
-                                                'data-tooltip-position-selector': '.joint-inspector'
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            position: {
-                                type: 'select-box',
-                                options: selectOptions.labelPosition,
-                                defaultValue: 0.5,
-                                label: 'Position',
-                                index: 2,
-                                attrs: {
-                                    label: {
-                                        'data-tooltip': 'Position the label relative to the source of the link',
-                                        'data-tooltip-position': 'right',
-                                        'data-tooltip-position-selector': '.joint-inspector'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                attrs: inspectorLinks.linkDefinition,
+                labels: inspectorLinks.labelDefinistion
             },
-            groups: {
-                connection: {
-                    label: 'Connection',
-                    index: 1
-                },
-                'marker-source': {
-                    label: 'Source marker',
-                    index: 1
-                },
-                'marker-target': {
-                    label: 'Target marker',
-                    index: 2
-                },
-                labels: {
-                    label: 'Labels',
-                    index: 3
-                }
-            }
+            groups: inspectorLinks.groupsDefinition
         }
 
     };

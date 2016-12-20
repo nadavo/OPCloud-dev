@@ -12,7 +12,10 @@ selectOptions = {
         {value: '10,5', content: 'Environmental'}
     ],
     SourceLinkType: [
-        {value: {d: ''}, content: 'None'},
+        {
+            value: {d: ''},
+            content: 'None'
+        },
         {
             value: {fill: '#f2f2f2', d: 'M 8,33 L -12,25 L 8,17 L0,25 L 8,33 M 0,25 L 10,25', 'stroke-width': 2},
             content: 'Consumption Link'
