@@ -290,12 +290,10 @@ joint.dia.CommandManager = Backbone.Model.extend({
             switch (cmd.action) {
                 case 'add':
                     cell.remove(cmdOpt);
-                    this.graph.updateJSON();
                     break;
 
                 case 'remove':
                     this.graph.addCell(cmd.data.attributes, cmdOpt);
-                    this.graph.updateJSON();
                     break;
 
                 default:
@@ -332,12 +330,10 @@ joint.dia.CommandManager = Backbone.Model.extend({
 
                 case 'add':
                     this.graph.addCell(cmd.data.attributes, cmdOpt);
-                    this.graph.updateJSON();
                     break;
 
                 case 'remove':
                     cell.remove(cmdOpt);
-                    this.graph.updateJSON();
                     break;
 
                 default:

@@ -1,22 +1,20 @@
 function opmRuleSet (validator, graph) {
-
     validator.validate(
-        "change:position change:target change:source",
+        "change:target change:source",
         function(err,command,next) {
             if (command.data.type === 'opm.Link') {
                 var link = graph.getCell(command.data.id);
-                if (link.getSourceElement().attributes.type === link.getTargetElement().attributes.type) {
-                    if ( link.getSourceElement().attributes.type === 'opm.Object' ) {
-                        return next('Objects cannot be linked together.');
-                    }
-                    else
-                    {
-                        graph.updateJSON();
-                    }
+                if (null === link.getTargetElement())
+                {
+                    return next('A link must have a target!');
+                }
+                else if (link.getSourceElement().attributes.type === 'opm.Object' && link.getSourceElement().attributes.type === link.getTargetElement().attributes.type)
+                {
+                    return next('Objects cannot be linked together!');
                 }
                 else
                 {
-                    graph.updateJSON();
+                    console.log('Link ' + link.id + ' was created!');
                 }
             }
             return next();

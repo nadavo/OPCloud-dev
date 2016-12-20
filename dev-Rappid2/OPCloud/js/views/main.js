@@ -26,17 +26,15 @@ var App = window.App || {};
         },
 
         init: function() {
-
             this.initializePaper();
             this.initializeStencil();
             this.initializeSelection();
             this.initializeHaloAndInspector();
+            this.initializeValidator();
             this.initializeNavigator();
             this.initializeToolbar();
             this.initializeKeyboardShortcuts();
             this.initializeTooltips();
-            this.initializeValidator();
-            this.initializeGraphJSON();
         },
 
         // Create a graph, paper and wrap the paper in a PaperScroller.
@@ -44,11 +42,25 @@ var App = window.App || {};
 
             var graph = this.graph = new joint.dia.Graph;
 
+            this.graph.JSON = {}
+            this.graph.updateJSON = function () {
+                this.JSON = this.toJSON();
+                console.log("updateJSON() --- Graph JSON updated!", this.JSON);
+            };
+            _.bind(this.graph.updateJSON, this.graph);
+
             graph.on('add', function(cell, collection, opt) {
                 if (opt.stencil) this.createInspector(cell);
             }, this);
 
             this.commandManager = new joint.dia.CommandManager({ graph: graph });
+
+            graph.on('add', this.graph.updateJSON, this.graph);
+            graph.on('remove', this.graph.updateJSON, this.graph);
+            graph.on('change:position', this.graph.updateJSON, this.graph);
+            graph.on('change:attrs', this.graph.updateJSON, this.graph);
+            graph.on('change:size', this.graph.updateJSON, this.graph);
+            graph.on('change:angle', this.graph.updateJSON, this.graph);
 
             var paper = this.paper = new joint.dia.Paper({
                 width: 1000,
@@ -352,15 +364,6 @@ var App = window.App || {};
             });
 
             this.paperScroller.centerContent();
-        },
-
-        initializeGraphJSON: function() {
-            this.graph.JSON = {}
-            this.graph.updateJSON = function () {
-                this.JSON = this.toJSON();
-                console.log("updateJSON() --- Graph JSON updated!", this.JSON);
-            };
-            _.bind(this.graph.updateJSON, this.graph);
         }
     });
 
