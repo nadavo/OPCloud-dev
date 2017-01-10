@@ -25,7 +25,7 @@ App.config = App.config || {};
             'export': { index: 3 },
             'print': { index: 4 },
             'fullscreen': { index: 5 },
-            'order': { index: 6 },
+            'model': { index: 6 },
             'layout': { index: 7 },
             'zoom': { index: 8 },
             'grid': { index: 9 },
@@ -112,13 +112,13 @@ App.config = App.config || {};
             },
             {
                 type: 'button',
-                name: 'to-front',
-                group: 'order',
-                text: 'Send To Front',
+                name: 'load-model',
+                group: 'model',
+                text: 'Load model',
                 attrs: {
                     button: {
-                        id: 'btn-to-front',
-                        'data-tooltip': 'Bring Object to Front',
+                        id: 'btn-load-mdl',
+                        'data-tooltip': 'Load model',
                         'data-tooltip-position': 'top',
                         'data-tooltip-position-selector': '.toolbar-container'
                     }
@@ -126,13 +126,13 @@ App.config = App.config || {};
             },
             {
                 type: 'button',
-                name: 'to-back',
-                group: 'order',
-                text: 'Send To Back',
+                name: 'save-model',
+                group: 'model',
+                text: 'Save model as',
                 attrs: {
                     button: {
-                        id: 'btn-to-back',
-                        'data-tooltip': 'Send Object to Back',
+                        id: 'btn-save-mdl',
+                        'data-tooltip': 'Save model as',
                         'data-tooltip-position': 'top',
                         'data-tooltip-position-selector': '.toolbar-container'
                     }

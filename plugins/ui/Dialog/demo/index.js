@@ -15,16 +15,13 @@ $('#btn-open-yes-no').on('click', function() {
 
     var dialog = new joint.ui.Dialog({
         width: 400,
-        title: 'Confirm',
-        content: '<b>Are you sure?</b>',
+        title: 'Save model as',
+        content: '<b>Input model name</b>',
         buttons: [
-            { action: 'yes', content: 'Yes' },
-            { action: 'no', content: 'No' }
+            { action: 'model', content: '<input type="text" name="model"><br>' },
         ]
     });
-
-    dialog.on('action:yes', dialog.close, dialog);
-    dialog.on('action:no', dialog.close, dialog);
+    dialog.on('action:model', dialog.close, dialog);
     dialog.open();
 });
 

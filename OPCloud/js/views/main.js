@@ -26,6 +26,7 @@ var App = window.App || {};
         },
 
         init: function() {
+            this.initializeDatabase();
             this.initializePaper();
             this.initializeStencil();
             this.initializeSelection();
@@ -37,6 +38,10 @@ var App = window.App || {};
             this.initializeTooltips();
         },
 
+        initializeDatabase: function() {
+            this.fireDB = firebase.database();
+        },
+
         // Create a graph, paper and wrap the paper in a PaperScroller.
         initializePaper: function() {
 
@@ -45,7 +50,7 @@ var App = window.App || {};
             this.graph.JSON = {}
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
-                console.log("updateJSON() --- Graph JSON updated!", this.JSON);
+                console.log("updateJSON() --- Graph JSON updated!");
             };
             _.bind(this.graph.updateJSON, this.graph);
 
@@ -293,8 +298,8 @@ var App = window.App || {};
                 'svg:pointerclick': _.bind(this.openAsSVG, this),
                 'png:pointerclick': _.bind(this.openAsPNG, this),
                 'fullscreen:pointerclick': _.bind(joint.util.toggleFullScreen, joint.util, document.body),
-                'to-front:pointerclick': _.bind(this.selection.collection.invoke, this.selection.collection, 'toFront'),
-                'to-back:pointerclick': _.bind(this.selection.collection.invoke, this.selection.collection, 'toBack'),
+                'load-model:pointerclick': _.bind(this.loadModel, this),
+                'save-model:pointerclick': _.bind(this.saveModel, this),
                 'layout:pointerclick': _.bind(this.layoutDirectedGraph, this),
                 'snapline:change': _.bind(this.changeSnapLines, this),
                 'clear:pointerclick': _.bind(this.graph.clear, this.graph),
@@ -304,6 +309,30 @@ var App = window.App || {};
 
             this.$('.toolbar-container').append(toolbar.el);
             toolbar.render();
+        },
+
+        loadModel: function(checked) {
+            var models = this.fireDB.ref('models/')
+
+        },
+
+        saveModel: function(checked) {
+            // var user = firebase.auth().currentUser;
+            this.modelName = '';
+
+            var dialog = new joint.ui.Dialog({
+                width: 400,
+                title: 'Save model as',
+                content: '<b>Input model name</b><br><input type="text" name="model"><br>',
+                buttons: [
+                    { action: 'model', content: 'Save' },
+                ]
+            });
+            dialog.on('action:model', function getName(dialog) {
+                this.modelName=dialog.content.get
+                dialog.close }, dialog);
+            dialog.open();
+            this.fireDB.ref('users/demoUser/' + this.modelName).set(this.graph.JSON);
         },
 
         changeSnapLines: function(checked) {
