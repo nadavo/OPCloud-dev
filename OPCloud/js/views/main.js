@@ -325,21 +325,20 @@ var App = window.App || {};
 
         saveModel: function(checked) {
             // var user = firebase.auth().currentUser;
-            this.modelName = '';
-
-            var dialog = new joint.ui.Dialog({
-                width: 400,
-                title: 'Save model as',
-                content: '<b>Input model name</b><br><input type="text" name="model"><br>',
-                buttons: [
-                    { action: 'model', content: 'Save' },
-                ]
-            });
-            dialog.on('action:model', function getName(dialog) {
-                this.modelName=dialog.content.get
-                dialog.close }, dialog);
-            dialog.open();
-            this.fireDB.ref('users/demoUser/' + this.modelName).set(this.graph.JSON);
+            // this.modelName = '';
+            // var dialog = new joint.ui.Dialog({
+            //     width: 400,
+            //     title: 'Save model as',
+            //     content: '<b>Input model name</b><br><input type="text" name="model" id="input"><br>',
+            //     buttons: [
+            //         { action: 'model', content: 'Save' },
+            //     ]
+            // });
+            //
+            // dialog.on('action:model', function getName(dialog) {this.modelName=dialog.getElementById("input").value; dialog.close });
+            // dialog.open();
+            var modelName = prompt("Save model as:", "default");
+            this.graph.fireDB.ref('models/' + modelName).set(this.graph.JSON);
         },
 
         changeSnapLines: function(checked) {
