@@ -1,20 +1,37 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <!-- Regular -->
+        <title>OPCloud Login</title>
+        <!--<link rel="stylesheet" href="style.css">-->
+        <link rel="icon" type="image/ico" href="favicon.ico" >
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<head>
-    <meta charset="utf8"/>
-    <!--        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/> -->
-    <link rel="stylesheet" type="text/css" href="./index.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon"/>
-    <title>OPCloud Demos with Rappid</title>
-    <h1>OPCloud 2016 Demo</h1>
-</head>
+        <!-- BootStrap -->
+        <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
 
-<body>
-<br><br><br><br>
-<button id="button1" onclick="location.href='dev-Rappid/index.html';">Rappid 1</button>
-<br><br><br>
-<button id="button2" onclick="location.href='dev-Rappid2/index.html';">Rappid 2</button>
-</body>
+        <!-- FireBase -->
+        <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+        <script src="./OPCloud/fire.js"></script>
 
+        <script src="login.js"></script>
+    </head>
+    <body>
+        <div class="container" style="background-color:white;">
+            <div class="jumbotron" style="padding-bottom:0px;background-color:white;">
+                <img src="https://firebasestorage.googleapis.com/v0/b/opcloud-92f83.appspot.com/o/Images%2FOpCloud.jpg?alt=media&token=88f6247d-8587-4306-adf4-e133548ce35e" Alt="OpCloud" class="img-rounded" width="150" height="120"/>
+                <h2>Welcome to OPCloud!</h2>
+            </div>
+            <form class="form-signin" role="form">
+                <input type="email" class="form-control" placeholder="Email address" required="" autofocus="" id="email">
+                <input type="password" class="form-control" placeholder="Password" required="" id="password">
+                <label class="checkbox" >
+                    <a href="#"> Sign Up</a>
+                </label>
+                <button type="button" class="btn btn-lg btn-primary btn-block" id="btn-sign-in">Sign In</button>
+                <label id="error_label" class="error"></label>
+            </form>
+        </div>
+    </body>
 </html>
