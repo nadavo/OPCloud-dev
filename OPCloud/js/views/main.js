@@ -26,6 +26,7 @@ var App = window.App || {};
         },
 
         init: function() {
+            this.initializeDatabase();
             this.initializePaper();
             this.initializeStencil();
             this.initializeSelection();
@@ -37,37 +38,46 @@ var App = window.App || {};
             this.initializeTooltips();
         },
 
+        initializeDatabase: function() {
+            this.graph = new joint.dia.Graph;
+            this.graph.fireDB = firebase.database();
+            this.graph.updateModel = function (modelName,graphJSON) {
+                this.fireDB.ref('/models/' + modelName).set(graphJSON);
+            };
+            _.bind(this.graph.updateModel, this.graph);
+        },
+
         // Create a graph, paper and wrap the paper in a PaperScroller.
         initializePaper: function() {
 
-            var graph = this.graph = new joint.dia.Graph;
-
-            this.graph.JSON = {}
+            this.graph.JSON = {};
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
-                console.log("updateJSON() --- Graph JSON updated!", this.JSON);
+                console.log("updateJSON() --- Graph JSON updated!");
+                this.updateModel('demoModel',this.JSON);
+                console.log("updateModel() --- Graph Model updated on DB!");
             };
             _.bind(this.graph.updateJSON, this.graph);
 
-            graph.on('add', function(cell, collection, opt) {
+            this.graph.on('add', function(cell, collection, opt) {
                 if (opt.stencil) this.createInspector(cell);
             }, this);
 
-            this.commandManager = new joint.dia.CommandManager({ graph: graph });
+            this.commandManager = new joint.dia.CommandManager({ graph: this.graph });
 
-            graph.on('add', this.graph.updateJSON, this.graph);
-            graph.on('remove', this.graph.updateJSON, this.graph);
-            graph.on('change:position', this.graph.updateJSON, this.graph);
-            graph.on('change:attrs', this.graph.updateJSON, this.graph);
-            graph.on('change:size', this.graph.updateJSON, this.graph);
-            graph.on('change:angle', this.graph.updateJSON, this.graph);
+            this.graph.on('add', this.graph.updateJSON, this.graph);
+            this.graph.on('remove', this.graph.updateJSON, this.graph);
+            this.graph.on('change:position', this.graph.updateJSON, this.graph);
+            this.graph.on('change:attrs', this.graph.updateJSON, this.graph);
+            this.graph.on('change:size', this.graph.updateJSON, this.graph);
+            this.graph.on('change:angle', this.graph.updateJSON, this.graph);
 
             var paper = this.paper = new joint.dia.Paper({
                 width: 1000,
                 height: 1000,
                 gridSize: 10,
                 drawGrid: true,
-                model: graph,
+                model: this.graph,
                 defaultLink: new joint.shapes.opm.Link
             });
 
