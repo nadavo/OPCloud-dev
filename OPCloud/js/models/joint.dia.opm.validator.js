@@ -4,9 +4,10 @@ function opmRuleSet (validator, graph) {
         function(err,command,next) {
             if (command.data.type === 'opm.Link') {
                 var link = graph.getCell(command.data.id);
+                console.log('Shefi');
                 if (null === link.getTargetElement())
                 {
-                    return next('A link must have a target!');
+                    return next('A link must connect to a target element!');
                 }
                 else if (link.getSourceElement().attributes.type === 'opm.Object' && link.getSourceElement().attributes.type === link.getTargetElement().attributes.type)
                 {
@@ -20,7 +21,12 @@ function opmRuleSet (validator, graph) {
             return next();
         },
         function(err, command, next) {
-            if (err) console.log(err);
+            var errorMessage = new joint.ui.FlashMessage({
+                title: 'Validation Error!',
+                type: 'alert',
+                content: err
+            });
+            if (err) errorMessage.open();
             return next(err);
         })
 };
