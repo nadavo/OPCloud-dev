@@ -246,7 +246,9 @@ var App = window.App || {};
 
                         new joint.ui.Halo({
                             cellView: cellView,
+                            type: 'toolbar',
                             handles: App.config.halo.handles
+
                         }).render();
 
                         this.selection.collection.reset([]);

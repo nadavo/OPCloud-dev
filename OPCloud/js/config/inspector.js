@@ -235,7 +235,79 @@ App.config = App.config || {};
                 }
             }
         },
-
+        'opm.StateNorm': {
+            inputs: {
+                attrs: {
+                    text: {
+                        text: {
+                            type: 'content-editable',
+                            label: 'Text',
+                            group: 'text',
+                            index: 1
+                        },
+                        fill: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            label: 'Fill',
+                            group: 'text',
+                            when: {ne: {'attrs/text/text': ''}},
+                            index: 5
+                        }
+                    },
+                    rect: {
+/*                        fill: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            label: 'Fill',
+                            group: 'presentation',
+                            index: 1
+                        },
+                        stroke: {
+                            type: 'color-palette',
+                            options: options.colorPalette,
+                            label: 'Outline',
+                            group: 'presentation',
+                            index: 2
+                        },*/
+                        'stroke-width': {
+                            type: 'range',
+                            min: 0,
+                            max: 30,
+                            step: 1,
+                            defaultValue: 1,
+                            unit: 'px',
+                            label: 'Outline thickness',
+                            group: 'presentation',
+                            when: {ne: {'attrs/rect/stroke': 'transparent'}},
+                            index: 3
+                        },
+                        'stroke-dasharray': {
+                            type: 'select',
+                            options: options.strokeStyle,
+                            label: 'Affiliation',
+                            group: 'presentation',
+                            when: {
+                                and: [
+                                    {ne: {'attrs/rect/stroke': 'transparent'}},
+                                    {ne: {'attrs/rect/stroke-width': 0}}
+                                ]
+                            },
+                            index: 5
+                        }
+                    }
+                }
+            },
+        groups: {
+            presentation: {
+                label: 'Presentation',
+                index: 1
+            },
+            text: {
+                label: 'Text',
+                index: 2
+            }
+        }
+    },
         'opm.Object': {
             inputs: {
                 attrs: {

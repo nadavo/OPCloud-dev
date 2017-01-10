@@ -4,6 +4,7 @@ function opmRuleSet (validator, graph) {
         function(err,command,next) {
             if (command.data.type === 'opm.Link') {
                 var link = graph.getCell(command.data.id);
+                console.log('Shefi');
                 if (null === link.getTargetElement())
                 {
                     return next('A link must have a target!');

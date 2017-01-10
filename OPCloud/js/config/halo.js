@@ -47,10 +47,10 @@ App.config = App.config || {};
                     }
                 }
             },
-            {
-                name: 'clone',
+/*            {
+                name: 'add_state',
                 position: 'se',
-                events: { pointerdown: 'startCloning', pointermove: 'doClone', pointerup: 'stopCloning' },
+                events: { pointerdown: 'add_state'/!*, pointermove: 'doClone', pointerup: 'stopCloning'*!/ },
                 attrs: {
                     '.handle': {
                         'data-tooltip-class-name': 'small',
@@ -59,7 +59,7 @@ App.config = App.config || {};
                         'data-tooltip-padding': 15
                     }
                 }
-            },
+            },*/
             {
                 name: 'unlink',
                 position: 'w',
@@ -98,7 +98,20 @@ App.config = App.config || {};
                         'data-tooltip-padding': 15
                     }
                 }
-            }
+            },
+            {
+                name: 'add_state',
+                position: 'se',
+                events: { pointerdown: 'add_state' },
+                attrs: {
+                    '.handle': {
+                        'data-tooltip-class-name': 'small',
+                        'data-tooltip': 'Click to add state to the object',
+                        'data-tooltip-position': 'left',
+                        'data-tooltip-padding': 15
+                    }
+                }
+            },
         ]
     };
 
