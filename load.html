@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Regular -->
+    <title>OPCloud Load page</title>
+    <!--<link rel="stylesheet" href="style.css">-->
+    <link rel="icon" type="image/ico" href="favicon.ico" >
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- BootStrap -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
+
+    <!-- FireBase -->
+    <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+    <script src="./OPCloud/fire.js"></script>
+
+    <script src="load.js"></script>
+    <script src="globalModel.js"></script>
+
+</head>
+<body>
+<div class="container" style="background-color:white;">
+    <div class="jumbotron" style="padding-bottom:0px;background-color:white;">
+        <img src="https://firebasestorage.googleapis.com/v0/b/opcloud-92f83.appspot.com/o/Images%2FOpCloud.jpg?alt=media&token=88f6247d-8587-4306-adf4-e133548ce35e" Alt="OpCloud" class="img-rounded" width="150" height="120"/>
+        <h2>Please select a model:</h2>
+    </div>
+    <form class="form-signin" role="form">
+        <select id="load-slct"> <option value='default'></option> </select>
+        <br>
+        <br>
+        <button type="button" class="btn btn-lg btn-primary btn-block" id="btn-load">Load model</button>
+        <button type="button" class="btn btn-lg btn-primary btn-block" id="btn-new">New model</button>
+
+    </form>
+</div>
+</body>
+</html>

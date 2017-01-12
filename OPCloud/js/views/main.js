@@ -12,6 +12,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
 
 var App = window.App || {};
+var modelName = localStorage.getItem("globalName");
 
 (function(_, joint) {
 
@@ -41,20 +42,33 @@ var App = window.App || {};
         initializeDatabase: function() {
             this.graph = new joint.dia.Graph;
             this.graph.fireDB = firebase.database();
+            function getModel(model) {
+                if (app.graph.JSON == model) {
+                    console.log('my change');
+                    return;
+                }
+                app.graph.JSON = model;
+                app.graph.fromJSON(app.graph.JSON);
+            }
             this.graph.updateModel = function (modelName,graphJSON) {
+                this.fireDB.ref('/models/' + modelName).off();
                 this.fireDB.ref('/models/' + modelName).set(graphJSON);
+                // this.fireDB.ref('/models/' + modelName).on('value', function(snapshot) { getModel(snapshot.val());});
             };
             _.bind(this.graph.updateModel, this.graph);
+            if (modelName) {
+               this.graph.fireDB.ref('/models/' + modelName).on('value', function(snapshot) { getModel(snapshot.val());});
+            }
         },
 
         // Create a graph, paper and wrap the paper in a PaperScroller.
         initializePaper: function() {
 
-            this.graph.JSON = {};
+
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
                 console.log("updateJSON() --- Graph JSON updated!");
-                this.updateModel('demoModel',this.JSON);
+                this.updateModel(modelName,this.JSON);
                 console.log("updateModel() --- Graph Model updated on DB!");
             };
             _.bind(this.graph.updateJSON, this.graph);
@@ -319,8 +333,12 @@ var App = window.App || {};
         },
 
         loadModel: function(checked) {
-            var models = this.fireDB.ref('models/')
-
+            var models = this.graph.fireDB.ref('/models/');
+            models.on("value", function(snapshot) {
+                console.log(snapshot.val());
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
         },
 
         saveModel: function(checked) {
@@ -339,6 +357,7 @@ var App = window.App || {};
             // dialog.open();
             var modelName = prompt("Save model as:", "default");
             this.graph.fireDB.ref('models/' + modelName).set(this.graph.JSON);
+            // open up the same listener for the saved model!!
         },
 
         changeSnapLines: function(checked) {

@@ -35,7 +35,7 @@ function initApp() {
             // [START_EXCLUDE silent]
             document.getElementById('btn-sign-in').textContent = 'Sign out';
             firebase.auth().signOut();
-            window.location = "OPCloud.html";
+            window.location = "load.html";
 
             // [END_EXCLUDE]
         } else {
