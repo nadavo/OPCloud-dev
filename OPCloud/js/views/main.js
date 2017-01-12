@@ -42,16 +42,20 @@ var modelName = localStorage.getItem("globalName");
         initializeDatabase: function() {
             this.graph = new joint.dia.Graph;
             this.graph.fireDB = firebase.database();
+            this.graph.modelName = localStorage.getItem("globalName");
+            this.graph.myChangeLock = false;
             function getModel(model) {
-                if (app.graph.JSON == model) {
+                if (app.graph.myChangeLock) {
                     console.log('my change');
+                    app.graph.myChangeLock=false;
                     return;
                 }
                 app.graph.JSON = model;
                 app.graph.fromJSON(app.graph.JSON);
             }
             this.graph.updateModel = function (modelName,graphJSON) {
-                this.fireDB.ref('/models/' + modelName).off();
+                //this.fireDB.ref('/models/' + modelName).off();
+                this.myChangeLock = true;
                 this.fireDB.ref('/models/' + modelName).set(graphJSON);
                 // this.fireDB.ref('/models/' + modelName).on('value', function(snapshot) { getModel(snapshot.val());});
             };
