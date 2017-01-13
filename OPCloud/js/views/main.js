@@ -361,7 +361,8 @@ var modelName = localStorage.getItem("globalName");
             // dialog.on('action:model', function getName(dialog) {this.modelName=dialog.getElementById("input").value; dialog.close });
             // dialog.open();
             var modelName = prompt("Save model as:", "default");
-            this.graph.fireDB.ref('models/' + modelName).set(this.graph.JSON);
+            this.graph.fireDB.ref('models/' + modelName).set(JSON.stringify(this.graph.JSON));
+            console.log("New model saved successfully!")
             // open up the same listener for the saved model!!
         },
 
