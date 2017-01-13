@@ -51,7 +51,6 @@ var modelName = localStorage.getItem("globalName");
                     return;
                 }
                 app.graph.JSON = model;
-                console.log(app.graph.JSON);
                 app.graph.fromJSON(JSON.parse(app.graph.JSON));
             }
             this.graph.updateModel = function (modelName,graphJSON) {
@@ -360,10 +359,18 @@ var modelName = localStorage.getItem("globalName");
             //
             // dialog.on('action:model', function getName(dialog) {this.modelName=dialog.getElementById("input").value; dialog.close });
             // dialog.open();
-            var modelName = prompt("Save model as:", "default");
-            this.graph.fireDB.ref('models/' + modelName).set(JSON.stringify(this.graph.JSON));
-            console.log("New model saved successfully!")
-            // open up the same listener for the saved model!!
+            var newName = prompt("Save model as:", "default");
+            if (this.graph.JSON) {
+                modelName = newName;
+                this.graph.fireDB.ref('models/' + modelName).set(JSON.stringify(this.graph.JSON));
+                console.log("New model saved successfully!");
+            }
+            else {
+                this.graph.JSON = this.graph.toJSON();
+                modelName = newName;
+                this.graph.fireDB.ref('models/' + modelName).set(JSON.stringify(this.graph.JSON));
+                console.log("New model saved successfully!");
+            }
         },
 
         changeSnapLines: function(checked) {
