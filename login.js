@@ -3,6 +3,7 @@ function Login() {
         firebase.auth().signOut();
     } else {
         var email = document.getElementById('email').value;
+        localStorage.setItem("globalUser",email);
         var password = document.getElementById('password').value;
         // Sign in with email and pass.
         // [START authwithemail]

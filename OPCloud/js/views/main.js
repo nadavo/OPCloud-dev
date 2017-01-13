@@ -51,12 +51,13 @@ var modelName = localStorage.getItem("globalName");
                     return;
                 }
                 app.graph.JSON = model;
-                app.graph.fromJSON(app.graph.JSON);
+                console.log(app.graph.JSON);
+                app.graph.fromJSON(JSON.parse(app.graph.JSON));
             }
             this.graph.updateModel = function (modelName,graphJSON) {
                 //this.fireDB.ref('/models/' + modelName).off();
                 this.myChangeLock = true;
-                this.fireDB.ref('/models/' + modelName).set(graphJSON);
+                this.fireDB.ref('/models/' + modelName).set(JSON.stringify(graphJSON));
                 // this.fireDB.ref('/models/' + modelName).on('value', function(snapshot) { getModel(snapshot.val());});
             };
             _.bind(this.graph.updateModel, this.graph);

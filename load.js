@@ -10,11 +10,9 @@ var names = [];
 fireDB = firebase.database();
 var models = fireDB.ref('/models/');
 models.on("value", function(snapshot) {
-    console.log(snapshot.val());
     snapshot.forEach(function(child) {
         var nname = child.V.path.o[1];
         names.push(nname);
-        console.log(names);
         });
         var select = document.getElementById("load-slct");
         for(var i = 0; i < names.length; i++) {
@@ -36,5 +34,8 @@ function initLoader() {
 };
 
 window.onload = function() {
+    var user = localStorage.getItem("globalUser");
+    console.log(user);
+    document.getElementById("h2").innerHTML = "Hello " + user + ", please load or create a model";
     initLoader();
 };
