@@ -72,8 +72,10 @@ var modelName = localStorage.getItem("globalName");
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
                 console.log("updateJSON() --- Graph JSON updated!");
-                this.updateModel(modelName,this.JSON);
-                console.log("updateModel() --- Graph Model updated on DB!");
+                if (modelName != null) {
+                    this.updateModel(modelName, this.JSON);
+                    console.log("updateModel() --- Graph Model updated on DB!");
+                }
             };
             _.bind(this.graph.updateJSON, this.graph);
 
