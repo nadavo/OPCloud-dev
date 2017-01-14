@@ -30,9 +30,9 @@ var App = window.App || {};
             name: 'theme-picker',
             multi: false,
             options: [
-                { value: 'modern', content: 'Modern' },
+/*                { value: 'modern', content: 'Modern' },
                 { value: 'dark', content: 'Dark' },
-                { value: 'material', content: 'Material' }
+                { value: 'material', content: 'Material' }*/
             ],
             attrs: {
                 '.joint-select-button-group': {
