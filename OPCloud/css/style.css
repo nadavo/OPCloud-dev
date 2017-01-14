@@ -84,7 +84,7 @@ body {
 .app-title {
     display: inline-block;
     width: 240px;
-    height: 100%;
+    height: 80%;
     padding: 0;
 }
 .app-title > h1 {
@@ -107,7 +107,7 @@ body {
 .paper-container {
     position: absolute;
     top: 0;
-    height: 100%;
+    height: 80%;
     overflow: hidden;
     box-sizing: border-box;
     left: 240px;
@@ -151,8 +151,20 @@ body {
     left: 0;
     top: 0;
     width: 240px;
-    height: 100%;
+    height: 80%;
 }
+
+/*  opl  */
+.app_opl{
+    position: fixed;
+    width: 84%;
+    position: fixed;
+    background:lightblue;
+    top: 80%;
+    height: 20%;
+
+}
+
 .joint-stencil .joint-element[data-type="basic.Image"] text,
 .joint-stencil .joint-element[data-type="devs.Atomic"] .inPorts text,
 .joint-stencil .joint-element[data-type="devs.Atomic"] .outPorts text,
@@ -169,14 +181,14 @@ body {
 .toolbar-container {
     display: inline-block;
     position: absolute;
-    height: 100%;
+    height: 80%;
     left: 240px;
     right: 0;
     box-sizing: border-box;
 }
 .toolbar-container .joint-toolbar {
     width: 100%;
-    height: 100%;
+    height: 80%;
 }
 .toolbar-container label {
     white-space: nowrap;

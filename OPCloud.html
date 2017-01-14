@@ -15,8 +15,8 @@
 
 </head>
 <body>
-<div id="app">
-    <div class="app-header">
+<div id="app", style="hight: 80%;">
+    <div class="app-header" >
         <div class="app-title">
             <h1>OPCloud Demo</h1>
             <h2>made with <a href="http://www.jointjs.com/rappid/tour" target="_blank" style="color:yellow">Rappid 2</a>
@@ -29,7 +29,23 @@
         <div class="paper-container"></div>
         <div class="inspector-container"></div>
         <div class="navigator-container"></div>
+
     </div>
+    <!--itamar added-->
+    <div style="hight: 20%;">
+        <div class="app_opl"  style="overflow-y: scroll;"  >
+
+            <!--$("#header ul").append('<li><a href="/user/messages"><span class="tab">Message Center</span></a></li>');-->
+            <div id="opl">
+                <ol id="items">
+                </ol>
+            </div>
+        </div>
+
+
+    </div>
+
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
@@ -58,7 +74,8 @@
 <script src="./OPCloud/js/config/toolbar.js"></script>
 <script src="./OPCloud/js/config/sample-graphs.js"></script>
 <script src="./OPCloud/js/views/main.js"></script>
-<script src="./OPCloud/js/views/theme-picker.js"></script>
+<!--<script src="./OPCloud/js/views/theme-picker.js"></script>-->
+<script src="globalModel.js"></script>
 
 <script>
     joint.setTheme('modern');

@@ -12,7 +12,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
 
 var App = window.App || {};
-//var modelName = localStorage.getItem("globalName");
+opl_to_show="";
 
 (function(_, joint) {
 
@@ -73,13 +73,13 @@ var App = window.App || {};
         // Create a graph, paper and wrap the paper in a PaperScroller.
         initializePaper: function() {
 
-
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
                 console.log("updateJSON() --- Graph JSON updated!");
                 if (this.modelName !== 'undefined') {
                     this.updateModel(this.modelName, this.JSON);
                     console.log("updateModel() --- Graph Model updated on DB!");
+
                 }
             };
             _.bind(this.graph.updateJSON, this.graph);
@@ -91,6 +91,9 @@ var App = window.App || {};
             this.commandManager = new joint.dia.CommandManager({ graph: this.graph });
 
             this.graph.on('add', this.graph.updateJSON, this.graph);
+
+
+            // this.graph.on('add',  $("#header ul").append('<li>new_object</li>'), this.graph);
             this.graph.on('remove', this.graph.updateJSON, this.graph);
             this.graph.on('change:position', this.graph.updateJSON, this.graph);
             this.graph.on('change:attrs', this.graph.updateJSON, this.graph);

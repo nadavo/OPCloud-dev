@@ -1,10 +1,10 @@
+
 function opmRuleSet (validator, graph) {
     validator.validate(
         "change:target change:source",
         function(err,command,next) {
             if (command.data.type === 'opm.Link') {
                 var link = graph.getCell(command.data.id);
-                console.log('Shefi');
                 if (null === link.getTargetElement())
                 {
                     return next('A link must connect to a target element!');
@@ -15,6 +15,17 @@ function opmRuleSet (validator, graph) {
                 }
                 else
                 {
+                    $("opl").empty();
+                    target = link.getTargetElement().attributes.attrs.text.text;
+                    source = link.getSourceElement().attributes.attrs.text.text;
+
+                    opl_to_show = opl_to_show + target + "  is linked to " + source + "<BR>" ;
+
+                    console.log(target + " link to " + source);
+                    document.getElementById("opl").innerHTML = opl_to_show ;
+
+                    // $("#header ul").empty();
+                    //$("#items ol").append('<li>$target is linked to $source</li>');
                     console.log('Link ' + link.id + ' was created!');
                 }
             }
