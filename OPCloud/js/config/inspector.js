@@ -342,24 +342,12 @@ App.config = App.config || {};
                             group: 'presentation',
                             index: 2
                         },
-                        'stroke-width': {
-                            type: 'range',
-                            min: 0,
-                            max: 30,
-                            step: 1,
-                            defaultValue: 1,
-                            unit: 'px',
-                            label: 'Outline thickness',
-                            group: 'presentation',
-                            when: { ne: { 'attrs/rect/stroke': 'transparent' }},
-                            index: 3
-                        },
                         'filter': {
                             type: 'select',
                             label: 'Essence',
                             options: options.PhysInfObj,
                             group: 'presentation',
-                            index: 4,
+                            index: 3,
                         },
                         'stroke-dasharray': {
                             type: 'select',
@@ -372,14 +360,26 @@ App.config = App.config || {};
                                     { ne: { 'attrs/rect/stroke-width': 0 }}
                                 ]
                             },
-                            index: 5
+                            index: 4
                         }
+                        /*'stroke-width': {
+                            type: 'range',
+                            min: 0,
+                            max: 30,
+                            step: 1,
+                            defaultValue: 1,
+                            unit: 'px',
+                            label: 'Outline thickness',
+                            group: 'presentation',
+                            when: { ne: { 'attrs/rect/stroke': 'transparent' }},
+                            index: 3
+                        },*/
                     }
                 }
             },
             groups: {
                 presentation: {
-                    label: 'Presentation',
+                    label: 'Properties',
                     index: 1
                 },
                 text: {
@@ -398,7 +398,7 @@ App.config = App.config || {};
                             group: 'text',
                             index: 1
                         },
-                        'font-size': {
+                        /*'font-size': {
                             type: 'range',
                             min: 5,
                             max: 80,
@@ -407,7 +407,7 @@ App.config = App.config || {};
                             group: 'text',
                             when: { ne: { 'attrs/text/text': '' }},
                             index: 2
-                        },
+                        },*/
                         /*'font-family': {
                             type: 'select-box',
                             options: options.fontFamily,
@@ -448,7 +448,7 @@ App.config = App.config || {};
                             group: 'presentation',
                             index: 2
                         },
-                        'stroke-width': {
+                        /*'stroke-width': {
                             type: 'range',
                             min: 0,
                             max: 30,
@@ -459,7 +459,7 @@ App.config = App.config || {};
                             group: 'presentation',
                             when: { ne: { 'attrs/circle/stroke': 'transparent' }},
                             index: 3
-                        },
+                        },*/
                         'filter': {
                             type: 'select',
                             label: 'Essence',
@@ -485,7 +485,7 @@ App.config = App.config || {};
             },
             groups: {
                 presentation: {
-                    label: 'Presentation',
+                    label: 'Properties',
                     index: 1
                 },
                 text: {
