@@ -1,6 +1,12 @@
 function load(){
     var selector = document.getElementById("load-slct");
-    globalModel.name = selector.options[selector.selectedIndex].text;
+    var selectedModel = selector.options[selector.selectedIndex].text;
+    if (selectedModel == "Select a model:")
+    {
+        alert("Please select an existing model!");
+        return;
+    }
+    globalModel.name = selectedModel;
     fireDB.ref('/models/' + globalModel.name).on("value", function(snapshot) {globalModel.model=snapshot.val(); console.log(snapshot.val())});
     localStorage.setItem("globalName",globalModel.name);
     window.location = 'OPCloud.html';
