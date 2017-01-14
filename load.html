@@ -11,27 +11,29 @@
     <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="./load.css">
+
     <!-- FireBase -->
     <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
     <script src="./OPCloud/fire.js"></script>
 
-    <script src="load.js"></script>
     <script src="globalModel.js"></script>
+    <script src="load.js"></script>
 
 </head>
 <body>
-<div class="container" style="background-color:white;">
-    <div class="jumbotron" style="padding-bottom:0px;background-color:white;">
+<div class="container" style="background-color:white;width:750px;">
+    <div class="jumbotron" style="padding-bottom:0px;background-color:white;text-align:center;">
         <img src="https://firebasestorage.googleapis.com/v0/b/opcloud-92f83.appspot.com/o/Images%2FOpCloud.jpg?alt=media&token=88f6247d-8587-4306-adf4-e133548ce35e" Alt="OpCloud" class="img-rounded" width="150" height="120"/>
         <h2 id="h2"></h2>
+        <h3 id="h3"></h3>
     </div>
     <form class="form-signin" role="form">
-        <select id="load-slct"> <option value='default' selected="selected">Select a model:</option> </select>
+        <select id="load-slct" class="styled-select"> <option class="styled-option" value='default' selected disabled>Select a model:</option> </select>
         <br>
         <br>
         <button type="button" class="btn btn-lg btn-primary btn-block" id="btn-load">Load model</button>
         <button type="button" class="btn btn-lg btn-primary btn-block" id="btn-new">New model</button>
-
     </form>
 </div>
 </body>

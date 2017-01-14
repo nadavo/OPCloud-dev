@@ -12,6 +12,9 @@ var models = fireDB.ref('/models/');
 models.on("value", function(snapshot) {
     snapshot.forEach(function(child) {
         var nname = child.V.path.o[1];
+        if (nname in names) {
+            return;
+        }
         names.push(nname);
         });
         var select = document.getElementById("load-slct");
@@ -29,13 +32,15 @@ models.on("value", function(snapshot) {
 function initLoader() {
     document.getElementById("btn-load").addEventListener('click', load, false);
     document.getElementById("btn-new").addEventListener('click', function () {
+        globalModel.name = undefined;
+        localStorage.setItem("globalName",globalModel.name);
         window.location = 'OPCloud.html'
     }, false);
 };
 
 window.onload = function() {
     var user = localStorage.getItem("globalUser");
-    console.log(user);
-    document.getElementById("h2").innerHTML = "Hello " + user + ", please load or create a model";
+    document.getElementById("h2").innerHTML = "Hello " + user;
+    document.getElementById("h3").innerHTML = "Please load an existing model or create a new model";
     initLoader();
 };

@@ -12,7 +12,7 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
 
 var App = window.App || {};
-var modelName = localStorage.getItem("globalName");
+//var modelName = localStorage.getItem("globalName");
 
 (function(_, joint) {
 
@@ -43,26 +43,31 @@ var modelName = localStorage.getItem("globalName");
             this.graph = new joint.dia.Graph;
             this.graph.fireDB = firebase.database();
             this.graph.modelName = localStorage.getItem("globalName");
+            console.log(this.graph.modelName);
             this.graph.myChangeLock = false;
-            function getModel(model) {
-                if (app.graph.myChangeLock) {
-                    console.log('my change');
-                    app.graph.myChangeLock=false;
-                    return;
-                }
-                app.graph.JSON = model;
-                app.graph.fromJSON(JSON.parse(app.graph.JSON));
-            }
             this.graph.updateModel = function (modelName,graphJSON) {
-                //this.fireDB.ref('/models/' + modelName).off();
                 this.myChangeLock = true;
                 this.fireDB.ref('/models/' + modelName).set(JSON.stringify(graphJSON));
-                // this.fireDB.ref('/models/' + modelName).on('value', function(snapshot) { getModel(snapshot.val());});
             };
             _.bind(this.graph.updateModel, this.graph);
-            if (modelName) {
-               this.graph.fireDB.ref('/models/' + modelName).on('value', function(snapshot) { getModel(snapshot.val());});
-            }
+            this.graph.listen = function () {
+                function getModel(model) {
+                    if (app.graph.myChangeLock) {
+                        console.log('my change');
+                        app.graph.myChangeLock = false;
+                        return;
+                    }
+                    app.graph.JSON = model;
+                    app.graph.fromJSON(JSON.parse(app.graph.JSON));
+                };
+                if (this.modelName !== 'undefined') {
+                    this.fireDB.ref('/models/' + this.modelName).on('value', function (snapshot) {
+                        getModel(snapshot.val());
+                    });
+                }
+            };
+            _.bind(this.graph.listen,this.graph);
+            this.graph.listen();
         },
 
         // Create a graph, paper and wrap the paper in a PaperScroller.
@@ -72,8 +77,8 @@ var modelName = localStorage.getItem("globalName");
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
                 console.log("updateJSON() --- Graph JSON updated!");
-                if (modelName != null) {
-                    this.updateModel(modelName, this.JSON);
+                if (this.modelName !== 'undefined') {
+                    this.updateModel(this.modelName, this.JSON);
                     console.log("updateModel() --- Graph Model updated on DB!");
                 }
             };
@@ -337,16 +342,11 @@ var modelName = localStorage.getItem("globalName");
             toolbar.render();
         },
 
-        loadModel: function(checked) {
-            var models = this.graph.fireDB.ref('/models/');
-            models.on("value", function(snapshot) {
-                console.log(snapshot.val());
-            }, function (error) {
-                console.log("Error: " + error.code);
-            });
+        loadModel: function() {
+            window.location = "load.html";
         },
 
-        saveModel: function(checked) {
+        saveModel: function() {
             // var user = firebase.auth().currentUser;
             // this.modelName = '';
             // var dialog = new joint.ui.Dialog({
@@ -360,18 +360,17 @@ var modelName = localStorage.getItem("globalName");
             //
             // dialog.on('action:model', function getName(dialog) {this.modelName=dialog.getElementById("input").value; dialog.close });
             // dialog.open();
-            var newName = prompt("Save model as:", "default");
-            if (this.graph.JSON) {
-                modelName = newName;
-                this.graph.fireDB.ref('models/' + modelName).set(JSON.stringify(this.graph.JSON));
-                console.log("New model saved successfully!");
+            var newName = prompt("Save Model As:", "Enter a Model Name");
+            if (newName === "Enter a Model Name")
+            {
+                console.log("Model not saved");
+                return;
             }
-            else {
-                this.graph.JSON = this.graph.toJSON();
-                modelName = newName;
-                this.graph.fireDB.ref('models/' + modelName).set(JSON.stringify(this.graph.JSON));
-                console.log("New model saved successfully!");
-            }
+            this.graph.modelName = newName;
+            this.graph.JSON = this.graph.toJSON();
+            this.graph.updateModel(this.graph.modelName, this.graph.JSON);
+            console.log("New model saved successfully!");
+            this.graph.listen();
         },
 
         changeSnapLines: function(checked) {
