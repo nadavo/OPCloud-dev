@@ -30,6 +30,17 @@ function opmRuleSet (validator, graph) {
                         graph.OPL = graph.OPL + "<BR>" + target+ " consumes " + source + "<BR>";
                     }
                     console.log(target + " link to " + source);
+
+                    if (target=='Googling' && link.getTargetElement().attributes.type=='opm.Process' && link.getSourceElement().attributes.type=='opm.Object'){
+                        graph.OPL = graph.OPL + "<BR>" + target + " " + "\'" + source + "\'" + " for you " + "<BR>";
+                        var url = "https://lmgtfy.com/?q=" + source;
+                        window.open(url);
+                    }
+
+                    if (source=='Gladiator' && target=='Entertaining' && link.getTargetElement().attributes.type=='opm.Process' && link.getSourceElement().attributes.type=='opm.Object'){
+                        graph.OPL = graph.OPL + "<BR>" + source + " is " + target + "!!!!!!!" + "<BR>";
+                        window.open('https://www.youtube.com/embed/FsqJFIJ5lLs?autoplay=1');
+                    }
                     document.getElementById("opl").innerHTML = graph.OPL;
 
                     graph.updateJSON();
