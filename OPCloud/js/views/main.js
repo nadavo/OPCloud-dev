@@ -12,7 +12,6 @@ file, You can obtain one at http://jointjs.com/license/rappid_academic_v1.txt
 
 
 var App = window.App || {};
-opl_to_show="";
 
 (function(_, joint) {
 
@@ -44,10 +43,12 @@ opl_to_show="";
             this.graph.fireDB = firebase.database();
             this.graph.modelName = localStorage.getItem("globalName");
             console.log(this.graph.modelName);
+            this.graph.OPL = "";
             this.graph.myChangeLock = false;
-            this.graph.updateModel = function (modelName,graphJSON) {
+            this.graph.updateModel = function (modelName,modelToSync) {
                 this.myChangeLock = true;
-                this.fireDB.ref('/models/' + modelName).set(JSON.stringify(graphJSON));
+                this.fireDB.ref('/models/' + modelName).set(modelToSync);
+                console.log("updateModel() --- Graph Model updated on DB!");
             };
             _.bind(this.graph.updateModel, this.graph);
             this.graph.listen = function () {
@@ -57,8 +58,11 @@ opl_to_show="";
                         app.graph.myChangeLock = false;
                         return;
                     }
-                    app.graph.JSON = model;
-                    app.graph.fromJSON(JSON.parse(app.graph.JSON));
+                    app.graph.JSON_string = model.graph;
+                    app.graph.JSON = JSON.parse(app.graph.JSON_string);
+                    app.graph.fromJSON(JSON.parse(app.graph.JSON_string));
+                    app.graph.OPL = model.opl;
+                    document.getElementById("opl").innerHTML = app.graph.OPL;
                 };
                 if (this.modelName !== 'undefined') {
                     this.fireDB.ref('/models/' + this.modelName).on('value', function (snapshot) {
@@ -75,11 +79,13 @@ opl_to_show="";
 
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
+                this.JSON_string=JSON.stringify(this.JSON);
                 console.log("updateJSON() --- Graph JSON updated!");
+                console.log("OPL to sync --- " + this.OPL);
+                this.modelToSync = {graph: this.JSON_string, opl: this.OPL};
+                console.log(this.modelToSync);
                 if (this.modelName !== 'undefined') {
-                    this.updateModel(this.modelName, this.JSON);
-                    console.log("updateModel() --- Graph Model updated on DB!");
-
+                    this.updateModel(this.modelName, this.modelToSync);
                 }
             };
             _.bind(this.graph.updateJSON, this.graph);
@@ -90,10 +96,8 @@ opl_to_show="";
 
             this.commandManager = new joint.dia.CommandManager({ graph: this.graph });
 
-            this.graph.on('add', this.graph.updateJSON, this.graph);
-
-
             // this.graph.on('add',  $("#header ul").append('<li>new_object</li>'), this.graph);
+            this.graph.on('add', this.graph.updateJSON, this.graph);
             this.graph.on('remove', this.graph.updateJSON, this.graph);
             this.graph.on('change:position', this.graph.updateJSON, this.graph);
             this.graph.on('change:attrs', this.graph.updateJSON, this.graph);
@@ -370,8 +374,7 @@ opl_to_show="";
                 return;
             }
             this.graph.modelName = newName;
-            this.graph.JSON = this.graph.toJSON();
-            this.graph.updateModel(this.graph.modelName, this.graph.JSON);
+            this.graph.updateJSON();
             console.log("New model saved successfully!");
             this.graph.listen();
         },
