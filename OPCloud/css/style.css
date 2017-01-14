@@ -107,7 +107,7 @@ body {
 .paper-container {
     position: absolute;
     top: 0;
-    height: 80%;
+    height: 100%;
     overflow: hidden;
     box-sizing: border-box;
     left: 240px;
@@ -151,18 +151,7 @@ body {
     left: 0;
     top: 0;
     width: 240px;
-    height: 80%;
-}
-
-/*  opl  */
-.app_opl{
-    position: fixed;
-    width: 84%;
-    position: fixed;
-    background:lightblue;
-    top: 80%;
-    height: 20%;
-
+    height: 100%;
 }
 
 .joint-stencil .joint-element[data-type="basic.Image"] text,
