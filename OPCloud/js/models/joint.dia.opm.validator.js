@@ -15,12 +15,20 @@ function opmRuleSet (validator, graph) {
                 }
                 else
                 {
+
                     $("opl").empty();
+
                     var target = link.getTargetElement().attributes.attrs.text.text;
                     var source = link.getSourceElement().attributes.attrs.text.text;
 
-                    graph.OPL = graph.OPL + target + " is linked to " + source + "<BR>";
-
+                    if (link.getTargetElement().attributes.type=='opm.Object')
+                    {
+                        graph.OPL = graph.OPL + "<BR>" + source + " yields " +  target+ "<BR>";
+                    }
+                    else
+                    {
+                        graph.OPL = graph.OPL + "<BR>" + target+ " consumes " + source + "<BR>";
+                    }
                     console.log(target + " link to " + source);
                     document.getElementById("opl").innerHTML = graph.OPL;
 
