@@ -185,7 +185,7 @@
 
         var defaultState = new joint.shapes.opm.StateNorm({
             /*type: 'opm.StateNorm',*/
-            position: {x: x - 80, y: y + 60},
+            position: {x: x - 20 , y: y - 50},
             size: {width: 50, height: 25},
             attrs: {
                 rect: {fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 2, stroke: '#808000'},
