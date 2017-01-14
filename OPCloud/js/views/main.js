@@ -374,6 +374,8 @@ var App = window.App || {};
                 return;
             }
             this.graph.modelName = newName;
+            globalModel.name = this.graph.modelName;
+            localStorage.setItem("globalName",globalModel.name);
             this.graph.updateJSON();
             console.log("New model saved successfully!");
             this.graph.listen();
