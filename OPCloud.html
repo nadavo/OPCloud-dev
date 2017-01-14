@@ -12,6 +12,8 @@
     <link rel="stylesheet" type="text/css" href="./OPCloud/css/theme-picker.css"/>
     <link rel="icon" href="./favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="./OPCloud/css/halo.css">
+    <link rel="stylesheet" type="text/css" href="./OPCloud/css/OPCloud.css">
+
 
 </head>
 <body>
@@ -31,21 +33,17 @@
         <div class="navigator-container"></div>
 
     </div>
-    <!--itamar added-->
+<!--    &lt;!&ndash;itamar added&ndash;&gt;
     <div style="hight: 20%;">
         <div class="app_opl"  style="overflow-y: scroll;"  >
 
-            <!--$("#header ul").append('<li><a href="/user/messages"><span class="tab">Message Center</span></a></li>');-->
+            &lt;!&ndash;$("#header ul").append('<li><a href="/user/messages"><span class="tab">Message Center</span></a></li>');&ndash;&gt;
             <div id="opl">
                 <ol id="items">
                 </ol>
             </div>
         </div>
-
-
-    </div>
-
-
+    </div>-->
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
@@ -74,7 +72,7 @@
 <script src="./OPCloud/js/config/toolbar.js"></script>
 <script src="./OPCloud/js/config/sample-graphs.js"></script>
 <script src="./OPCloud/js/views/main.js"></script>
-<!--<script src="./OPCloud/js/views/theme-picker.js"></script>-->
+<script src="./OPCloud/js/views/theme-picker.js"></script>
 <script src="globalModel.js"></script>
 
 <script>
@@ -105,5 +103,26 @@
         }
     })();
 </script>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Some text in the Modal..</p>
+    </div>
+
+</div>
+
+<div class="app_opl">
+
+    <!--$("#header ul").append('<li><a href="/user/messages"><span class="tab">Message Center</span></a></li>');-->
+    <div id="opl">
+        <ol id="items">
+        </ol>
+    </div>
+</div>
+
 </body>
 </html>
