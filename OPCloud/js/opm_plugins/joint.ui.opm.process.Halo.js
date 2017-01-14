@@ -184,12 +184,12 @@
         var fatherObject = this.options.cellView.model;
 
         var defaultState = new joint.shapes.opm.StateNorm({
-            type: 'opm.StateNorm',
+            /*type: 'opm.StateNorm',*/
             position: {x: x - 80, y: y + 60},
             size: {width: 50, height: 25},
             attrs: {
                 rect: {fill: '#DCDCDC', rx: 20, ry: 20, 'stroke-width': 2, stroke: '#808000'},
-                text: {text: 'STATE', fill: 'black'}
+                text: {text: 'State', fill: 'black'}
             }
         });
 
@@ -200,20 +200,20 @@
 
         options.graph.on('change:position', function (cell) {
 
-            var parentId = cell.get('parent');
-            if (!parentId) return;
+                var parentId = cell.get('parent');
+                if (!parentId) return;
 
-            var parent = options.graph.getCell(parentId);
-            var parentBbox = parent.getBBox();
-            var cellBbox = cell.getBBox();
+                var parent = options.graph.getCell(parentId);
+                var parentBbox = parent.getBBox();
+                var cellBbox = cell.getBBox();
 
-            if (parentBbox.containsPoint(cellBbox.origin()) &&
-                parentBbox.containsPoint(cellBbox.topRight()) &&
-                parentBbox.containsPoint(cellBbox.corner()) &&
-                parentBbox.containsPoint(cellBbox.bottomLeft())) {
+                if (parentBbox.containsPoint(cellBbox.origin()) &&
+                    parentBbox.containsPoint(cellBbox.topRight()) &&
+                    parentBbox.containsPoint(cellBbox.corner()) &&
+                    parentBbox.containsPoint(cellBbox.bottomLeft())) {
 
-                // All the four corners of the child are inside
-                // the parent area.
+                    // All the four corners of the child are inside
+                    // the parent area.
                 return;
             }
 
@@ -221,6 +221,7 @@
             cell.set('position', cell.previous('position'));
         });
 
+        /*app.RuleSet(app.validator,options.graph);*/
         /*  var clone = options.clone(options.cellView.model, { clone: true });
          //
          //       if (!(clone instanceof joint.dia.Cell)) {
@@ -536,7 +537,7 @@
 
             switch (options.type) {
 
-                case 'toolbar':
+                case 'toolbar': break;
                 case 'surrounding':
 
                     // If the cell can not connect itself with the clone of

@@ -274,7 +274,7 @@ var modelName = localStorage.getItem("globalName");
 
                         new joint.ui.Halo({
                             cellView: cellView,
-                            type: 'toolbar',
+                            type: 'surrounding',
                             handles: App.config.halo.handles
 
                         }).render();
@@ -289,10 +289,9 @@ var modelName = localStorage.getItem("globalName");
         },
 
         initializeValidator: function() {
-
             this.validator = new joint.dia.Validator({commandManager: this.commandManager});
-            opmRuleSet(this.validator, this.graph);
-
+            this.RuleSet = opmRuleSet;
+            this.RuleSet(this.validator, this.graph);
         },
 
         initializeNavigator: function() {

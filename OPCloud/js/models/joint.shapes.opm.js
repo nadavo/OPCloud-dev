@@ -241,7 +241,7 @@ joint.shapes.opm.ISProc = joint.shapes.basic.Circle.extend({
                     'stroke-width': 2,
                 },
                 text: {
-                    text: 'Object',
+                    text: 'BooB',
                     fill: 'black', 'font-weight': 600
                 }
             }

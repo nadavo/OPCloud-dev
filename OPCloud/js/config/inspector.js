@@ -251,7 +251,7 @@ App.config = App.config || {};
                             label: 'Fill',
                             group: 'text',
                             when: {ne: {'attrs/text/text': ''}},
-                            index: 5
+                            index: 2
                         }
                     },
                     rect: {
@@ -286,13 +286,13 @@ App.config = App.config || {};
                             options: options.strokeStyle,
                             label: 'Affiliation',
                             group: 'presentation',
-                            when: {
+                            /*when: {
                                 and: [
                                     {ne: {'attrs/rect/stroke': 'transparent'}},
                                     {ne: {'attrs/rect/stroke-width': 0}}
                                 ]
-                            },
-                            index: 5
+                            },*/
+                            index: 4
                         }
                     }
                 }

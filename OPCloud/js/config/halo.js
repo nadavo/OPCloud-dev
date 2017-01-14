@@ -101,7 +101,7 @@ App.config = App.config || {};
             },
             {
                 name: 'add_state',
-                position: 'se',
+                position: 's',
                 events: { pointerdown: 'add_state' },
                 attrs: {
                     '.handle': {
