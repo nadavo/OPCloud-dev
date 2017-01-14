@@ -29,7 +29,7 @@ function opmRuleSet (validator, graph) {
                     {
                         graph.OPL = graph.OPL + "<BR>" + target+ " consumes " + source + "<BR>";
                     }
-                    console.log(target + " link to " + source);
+                    //console.log(target + " link to " + source);
 
                     if (target=='Googling' && link.getTargetElement().attributes.type=='opm.Process' && link.getSourceElement().attributes.type=='opm.Object'){
                         graph.OPL = graph.OPL + "<BR>" + target + " " + "\'" + source + "\'" + " for you " + "<BR>";

@@ -42,19 +42,19 @@ var App = window.App || {};
             this.graph = new joint.dia.Graph;
             this.graph.fireDB = firebase.database();
             this.graph.modelName = localStorage.getItem("globalName");
-            console.log(this.graph.modelName);
+            console.log("Model Name is: " + this.graph.modelName);
             this.graph.OPL = "";
             this.graph.myChangeLock = false;
             this.graph.updateModel = function (modelName,modelToSync) {
                 this.myChangeLock = true;
                 this.fireDB.ref('/models/' + modelName).set(modelToSync);
-                console.log("updateModel() --- Graph Model updated on DB!");
+                //console.log("updateModel() --- Graph Model updated on DB!");
             };
             _.bind(this.graph.updateModel, this.graph);
             this.graph.listen = function () {
                 function getModel(model) {
                     if (app.graph.myChangeLock) {
-                        console.log('my change');
+                        //console.log('my change');
                         app.graph.myChangeLock = false;
                         return;
                     }
@@ -80,10 +80,10 @@ var App = window.App || {};
             this.graph.updateJSON = function () {
                 this.JSON = this.toJSON();
                 this.JSON_string=JSON.stringify(this.JSON);
-                console.log("updateJSON() --- Graph JSON updated!");
-                console.log("OPL to sync --- " + this.OPL);
+                //console.log("updateJSON() --- Graph JSON updated!");
+                //console.log("OPL to sync --- " + this.OPL);
                 this.modelToSync = {graph: this.JSON_string, opl: this.OPL};
-                console.log(this.modelToSync);
+                //console.log(this.modelToSync);
                 if (this.modelName !== 'undefined') {
                     this.updateModel(this.modelName, this.modelToSync);
                 }
