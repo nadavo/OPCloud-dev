@@ -233,6 +233,7 @@
          //
          //       this._cloneView = clone.findView(options.paper);
          //       this._cloneView.pointerdown(evt, x, y);*/
+        this.stopBatch();
 
     };
     ElementHalo.prototype.startForking = function (evt, x, y) {
